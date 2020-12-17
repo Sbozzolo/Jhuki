@@ -17,26 +17,32 @@
 
 import os
 
-# import pytest
+import pytest
 
 from precactus import parfile
 
 
-def test_write_one_parfile_from_template():
-
-    outfile = "test_wo.par"
-
+@pytest.fixture(scope="module")
+def template():
     template = """
 ################################################################################
 # Grid structure
 ################################################################################
 
-dx = $dx"""
-    sub_dict = {"dx": 5}
+dx = $dx
+dy = $dy"""
+    return template
 
-    parfile.write_one_parfile_from_template(template, sub_dict, outfile)
 
-    with open(outfile, "r") as file_:
+def test_write_one_parfile_from_template(template):
+
+    out_file = "test_wo.par"
+
+    sub_dict = {"dx": 5, "dy": 6}
+
+    parfile.write_one_parfile_from_template(template, sub_dict, out_file)
+
+    with open(out_file, "r") as file_:
         par_file_str = file_.read()
 
     # We check that the content is what we expect:
@@ -45,4 +51,34 @@ dx = $dx"""
     # Variable substituted in the template
     assert "dx = 5" in par_file_str
 
-    os.remove(outfile)
+    os.remove(out_file)
+
+
+def test_write_many_parfiles_from_template(template):
+
+    out_file_prefix = "temp_"
+
+    # sub_dict_list contains lists with different lengths
+    with pytest.raises(ValueError):
+        parfile.write_many_parfiles_from_template(
+            template, {"dx": [1, 2], "dy": [3]}, out_file_prefix
+        )
+
+    sub_dict = {"dx": [5, 6], "dy": 1}
+
+    parfile.write_many_parfiles_from_template(
+        template, sub_dict, out_file_prefix
+    )
+
+    # We expect two outfiles:
+    for out_file, expected_dx in zip(
+        [out_file_prefix + "0.par", out_file_prefix + "1.par"], [5, 6]
+    ):
+        with open(out_file, "r") as file_:
+            par_file_str = file_.read()
+
+        # We check that the content is what we expect:
+        assert f"dx = {expected_dx}" in par_file_str
+        assert "dy = 1" in par_file_str
+
+        os.remove(out_file)

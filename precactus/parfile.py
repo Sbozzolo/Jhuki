@@ -20,6 +20,7 @@
 parameter files.
 """
 
+import logging
 from string import Template
 
 
@@ -64,3 +65,58 @@ def write_one_parfile_from_template(template, sub_dict, out_file):
 
     with open(out_file, "w") as file_:
         file_.write(Template(template_with_header).substitute(sub_dict))
+
+
+def write_many_parfiles_from_template(template, subs_dict, out_file_prefix):
+    """Write several parfiles from the template with substitution specified by the
+    dictionary sub_dict_list. The dictionary has to have as keys the variables to
+    be substituted and as values:
+    - "scalars" for those values that have to be the same in all the parfiles
+    - lists, with one entry per file, for those that have to be change file by file.
+
+    For example: {'dx': [1, 2], 'dy': 3} will create two files with
+    'dx = 1' and 'dx = 2' and 'dy = 3' in both cases.
+
+    We add an header with the list of variables that were introduced.
+
+    :param template: Basic template with parameters that have to be
+                     substituted. It follows Python's template
+                     conventions, so the variables to be substituted
+                     are to be prefixed with a dollar sign.
+    :type template: str
+    :param subs_dict: Dictionary that maps entries that have to be
+                     substituted with their value, one per each file.
+                     The values of the dictionary have to be lists or "scalars"
+                     (if they have to have the same value for the files).
+    :type subs_dict: dict with lists as values
+    :param out_file_prefix: Path of the output files, without the extension ".par".
+                            The parfiles will be saved as ``{out_file_prefix}1.par``,
+                            ``{out_file_prefix}2.par``, and so on.
+    :type out_file: str
+
+    """
+
+    list_lengths = [len(v) for v in subs_dict.values() if isinstance(v, list)]
+
+    # We check that all the lists have the same length
+    if len(set(list_lengths)) != 1:
+        raise ValueError("Substitution lists have different lengths.")
+
+    number_of_parfiles = list_lengths[0]
+    logging.debug(f"Writing {number_of_parfiles} parfiles")
+
+    # Now we "broadcast" the scalar elements to list. With this,
+    # sub_dict_broadcast will have lists as elements, each with the
+    # same length (= the number of parfiles)
+    sub_dict_broadcast = {
+        k: (v if isinstance(v, list) else [v] * number_of_parfiles)
+        for k, v in subs_dict.items()
+    }
+
+    # Now we loop over the sub_dict_broadcast and create one parfile
+    # for each entry
+    for num_parfile in range(number_of_parfiles):
+        file_name = f"{out_file_prefix}{num_parfile}.par"
+        logging.debug(f"Writing {file_name}")
+        subs = {k: v[num_parfile] for k, v in sub_dict_broadcast.items()}
+        write_one_parfile_from_template(template, subs, file_name)
