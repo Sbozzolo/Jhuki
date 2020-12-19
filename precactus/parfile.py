@@ -59,6 +59,7 @@ def write_one_parfile_from_template(template, sub_dict, out_file):
 ################################################################################
 
 {substituted_variables_str}
+
 """
 
     template_with_header = header + template
