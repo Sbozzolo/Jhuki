@@ -96,21 +96,32 @@ def write_many_parfiles_from_template(template, subs_dict, out_file_prefix):
 
     """
 
-    list_lengths = [len(v) for v in subs_dict.values() if isinstance(v, list)]
+    # We check that all the lists with more than one element have the same length
+    list_lengths = [len(v) for v in subs_dict.values() if (isinstance(v, list) and len(v) > 1)]
 
-    # We check that all the lists have the same length
-    if len(set(list_lengths)) != 1:
+    # Here we have greater than one because we allow for 0 elements
+    if len(set(list_lengths)) > 1:
         raise ValueError("Substitution lists have different lengths.")
 
-    number_of_parfiles = list_lengths[0]
+    if (list_lengths):
+        number_of_parfiles = list_lengths[0]
+    else:
+        number_of_parfiles = 1
     logging.debug(f"Writing {number_of_parfiles} parfiles")
 
-    # Now we "broadcast" the scalar elements to list. With this,
-    # sub_dict_broadcast will have lists as elements, each with the
-    # same length (= the number of parfiles)
-    sub_dict_broadcast = {
-        k: (v if isinstance(v, list) else [v] * number_of_parfiles)
+    # Next, we ensure that all the elements are lists
+    sub_dict_list = {
+        k: (v if isinstance(v, list) else [v])
         for k, v in subs_dict.items()
+    }
+
+    # Now we "broadcast" the scalar elements to list. With this,
+    # sub_dict_broadcast will have lists with the same length
+    # (= the number of parfiles)
+    sub_dict_broadcast = {
+        # else here is when the lists have only one element
+        k: (v if len(v) == number_of_parfiles else v * number_of_parfiles)
+        for k, v in sub_dict_list.items()
     }
 
     # Now we loop over the sub_dict_broadcast and create one parfile

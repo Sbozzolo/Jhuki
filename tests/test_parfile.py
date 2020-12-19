@@ -61,7 +61,7 @@ def test_write_many_parfiles_from_template(template):
     # sub_dict_list contains lists with different lengths
     with pytest.raises(ValueError):
         parfile.write_many_parfiles_from_template(
-            template, {"dx": [1, 2], "dy": [3]}, out_file_prefix
+            template, {"dx": [1, 2], "dy": [3, 4, 5]}, out_file_prefix
         )
 
     sub_dict = {"dx": [5, 6], "dy": 1}
@@ -82,3 +82,22 @@ def test_write_many_parfiles_from_template(template):
         assert "dy = 1" in par_file_str
 
         os.remove(out_file)
+
+    # Test with two one elements
+
+    sub_dict2 = {"dx": 2, "dy": [1]}
+
+    parfile.write_many_parfiles_from_template(
+        template, sub_dict2, out_file_prefix
+    )
+
+    # We expect one outfiles:
+    out_file = out_file_prefix + "0.par"
+    with open(out_file, "r") as file_:
+        par_file_str = file_.read()
+
+    # We check that the content is what we expect:
+    assert "dx = 2" in par_file_str
+    assert "dy = 1" in par_file_str
+
+    os.remove(out_file)
