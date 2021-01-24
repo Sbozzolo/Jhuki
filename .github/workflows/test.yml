@@ -12,10 +12,10 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Set up Python 3.7
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.8
 
       - name: Install Poetry
         uses: snok/install-poetry@v1.1.0
@@ -41,5 +41,4 @@ jobs:
       - name: Tests and produce coverage
         continue-on-error: true
         run: |
-          poetry run coverage run -m pytest
-          poetry run coverage xml
+          poetry run pytest --cov=./ --cov-report=xml

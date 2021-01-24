@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2020 Gabriele Bozzola
+# Copyright (C) 2020-2021 Gabriele Bozzola
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,15 @@
 
 
 """The :py:mod:`~.parfile` module provides functions to programmatically write
-parameter files.
+parameter files. The main functions provided are:
+
+- :py:func:`~.write_one_parfile_from_template`. This function takes a Python
+  string template, a dictionary with the instructions to perform the
+  substitution, and the name of the file where to write the output.
+- :py:func:`~.write_many_parfiles_from_template`. This function calls the
+  previous function (:py:func:`~.write_one_parfile_from_template`) multiple times
+  on a multiple substitution lists to produce multiple files.
+
 """
 
 import logging
@@ -98,13 +106,17 @@ def write_many_parfiles_from_template(template, subs_dict, out_file_prefix):
     """
 
     # We check that all the lists with more than one element have the same length
-    list_lengths = [len(v) for v in subs_dict.values() if (isinstance(v, list) and len(v) > 1)]
+    list_lengths = [
+        len(v)
+        for v in subs_dict.values()
+        if (isinstance(v, list) and len(v) > 1)
+    ]
 
     # Here we have greater than one because we allow for 0 elements
     if len(set(list_lengths)) > 1:
         raise ValueError("Substitution lists have different lengths.")
 
-    if (list_lengths):
+    if list_lengths:
         number_of_parfiles = list_lengths[0]
     else:
         number_of_parfiles = 1
@@ -112,8 +124,7 @@ def write_many_parfiles_from_template(template, subs_dict, out_file_prefix):
 
     # Next, we ensure that all the elements are lists
     sub_dict_list = {
-        k: (v if isinstance(v, list) else [v])
-        for k, v in subs_dict.items()
+        k: (v if isinstance(v, list) else [v]) for k, v in subs_dict.items()
     }
 
     # Now we "broadcast" the scalar elements to list. With this,

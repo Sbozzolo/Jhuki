@@ -38,7 +38,10 @@ if __name__ == "__main__":
         "-c", "--config", is_config_file=True, help="Path of the config file"
     )
     parser.add(
-        "-t", "--template", required=True, help="Path of the template",
+        "-t",
+        "--template",
+        required=True,
+        help="Path of the template",
     )
 
     parser.add(
@@ -73,9 +76,8 @@ if __name__ == "__main__":
         if k not in ("config", "template", "output")
     }
 
-    if (not (os.path.exists(args.template) and os.path.isfile(args.template))):
+    if not (os.path.exists(args.template) and os.path.isfile(args.template)):
         raise ValueError(f"Invalid file {args.template}")
-
 
     # Read file as string
     with open(args.template, "r") as file_:
