@@ -276,12 +276,12 @@ def test_grid_parfile_code(a_grid):
 CartGrid3D::type = "coordbase"
 Carpet::domain_from_coordbase = "yes"
 CoordBase::domainsize = "minmax"
-CoordBase::xmin = 10
-CoordBase::ymin = 10
-CoordBase::zmin = 10
 CoordBase::xmax = 10
 CoordBase::ymax = 10
 CoordBase::zmax = 10
+CoordBase::xmin = -10
+CoordBase::ymin = -10
+CoordBase::zmin = -10
 CoordBase::dx = 2.0
 CoordBase::dy = 2.0
 CoordBase::dz = 2.0
@@ -291,6 +291,8 @@ Carpet::time_refinement_factors = "[1,1,2,4,8,16]"
 {a_grid.refinement_centers[0].parfile_code}
 {a_grid.refinement_centers[1].parfile_code}\
 """
+
+    print(a_grid.parfile_code)
 
     assert a_grid.parfile_code == expected_str
 

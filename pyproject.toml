@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jhuki"
-version = "0.1.0"
+version = "0.1.0-dev0"
 description = "Utilities to prepare Einstein Toolkit simulations"
 authors = ["Gabriele Bozzola <gabrielebozzola@arizona.edu>"]
 license = "GPL-3.0-or-later"
@@ -15,6 +15,7 @@ documentation = "https://sbozzolo.github.io/Jhuki"
 [tool.poetry.dependencies]
 python = "^3.6"
 ConfigArgParse = "^1.2.3"
+sympy = "^1.7.1"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"

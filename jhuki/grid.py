@@ -107,8 +107,11 @@ def set_dt_max_grid(grid, dt_max):
         new_refinement_centers.add(new_ref_center)
 
     new_refinement_centers = tuple(new_refinement_centers)
-    return Grid(new_refinement_centers, outer_boundary=grid.outer_boundary,
-                tiny_shift=grid.tiny_shift)
+    return Grid(
+        new_refinement_centers,
+        outer_boundary=grid.outer_boundary,
+        tiny_shift=grid.tiny_shift,
+    )
 
 
 def set_dt_max(ref_center, dt_max):

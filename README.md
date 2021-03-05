@@ -22,7 +22,8 @@ simulations for the `Einstein Toolkit` (or Cactus-based codes).
   command-line arguments
 * Take care of the grid configuration given the desired resolution at the finest
   level and other details
-
+* Generate binary black hole configurations for quasi-circular mergers
+  (automatically setting the linear momenta)
 
 ## Examples
 
@@ -102,6 +103,56 @@ CarpetRegrid2::radius_2[7] = 1
 You can also add a small shift to the grid so that the origin is not on (0,0,0)
 passing the `tiny_shift` argument to `Grid`.
 
+### Working with binary black holes
+
+Problem: you want to simulate a binary black quasi-circular merger. This can be
+tricky because you have to provide the correct linear momenta. With `Juhki`,
+this is trivial:
+
+``` python
+#!/usr/bin/env python3
+
+from jhuki.twopunctures import prepare_quasicircular_inspiral
+
+mass_ratio = 1
+coordinate_distance = 12
+dimensionless_spin_plus = (0.1, 0.2, 0.3)
+dimensionless_spin_minus = (0.4, -0.1, -0.2)
+
+twopunctures = prepare_quasicircular_inspiral(mass_ratio,
+                                              coordinate_distance,
+                                              dimensionless_spin_plus,
+                                              dimensionless_spin_minus)
+print(twopunctures.parfile_code)
+```
+
+This will an output similar to the following:
+
+```
+TwoPunctures::give_bare_mass = no
+TwoPunctures::par_b = 9.0
+TwoPunctures::target_m_plus = 1
+TwoPunctures::target_m_minus = 2
+TwoPunctures::par_P_plus[0] = 0.000169968781552016
+TwoPunctures::par_P_plus[1] = -0.0474161839456146
+TwoPunctures::par_P_plus[2] = 0
+TwoPunctures::par_P_minus[0] = -0.000169968781552016
+TwoPunctures::par_P_minus[1] = 0.0474161839456146
+TwoPunctures::par_P_minus[2] = 0
+TwoPunctures::par_S_plus[0] = -0.1
+TwoPunctures::par_S_plus[1] = -0.2
+TwoPunctures::par_S_plus[2] = -0.3
+TwoPunctures::par_S_minus[0] = -1.6
+TwoPunctures::par_S_minus[1] = -2.0
+TwoPunctures::par_S_minus[2] = -2.4
+TwoPunctures::center_offset[0] = 3.0
+TwoPunctures::center_offset[1] = 0.0
+TwoPunctures::center_offset[2] = 0.0
+```
+
+This module should be used along with the `Grid` one.
+
+
 ## Installation
 
 The best way to install `Jhuki` is by cloning this repo and using
@@ -132,3 +183,8 @@ be there in the first place.
 
 The logo contains elements designed by [pngtree.com](pngtree.com).
 
+The computation of the momenta for quasi-circular mergers of binary black holes
+uses
+[NRPyPN](https://einsteintoolkit.org/thornguide/EinsteinInitialData/NRPyPN/documentation.html).
+If you use this module, please follow the citation guidelines as specified by
+the documentation in the `NRPyPN` repo.
