@@ -19,7 +19,7 @@ import os
 
 import pytest
 
-from precactus import parfile
+from jhuki import parfile
 
 
 @pytest.fixture(scope="module")
@@ -46,7 +46,7 @@ def test_write_one_parfile_from_template(template):
         par_file_str = file_.read()
 
     # We check that the content is what we expect:
-    # Variable written by PreCactus
+    # Variable written by Jhuki
     assert "# dx = 5" in par_file_str
     # Variable substituted in the template
     assert "dx = 5" in par_file_str

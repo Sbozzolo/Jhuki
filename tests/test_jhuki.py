@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2020 Gabriele Bozzola
+# Copyright (C) 2020-2021 Gabriele Bozzola
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <https://www.gnu.org/licenses/>.
 
-"""PreCactus provides utilities to prepare simulations for the Einstein Toolkit.
 
-"""
+import jhuki
 
-__version__ = "0.1.0"
+
+def test_init():
+    assert jhuki.__version__ == "0.1.0"

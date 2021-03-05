@@ -1,16 +1,16 @@
 [tool.poetry]
-name = "precactus"
+name = "jhuki"
 version = "0.1.0"
 description = "Utilities to prepare Einstein Toolkit simulations"
 authors = ["Gabriele Bozzola <gabrielebozzola@arizona.edu>"]
 license = "GPL-3.0-or-later"
 readme = "README.md"
-homepage = "https://github.com/sbozzolo/PreCactus"
-repository = "https://github.com/sbozzolo/PreCactus"
-documentation = "https://sbozzolo.github.io/PreCactus"
+homepage = "https://github.com/sbozzolo/Jhuki"
+repository = "https://github.com/sbozzolo/Jhuki"
+documentation = "https://sbozzolo.github.io/Jhuki"
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/sbozzolo/PreCactus/issues"
+"Bug Tracker" = "https://github.com/sbozzolo/Jhuki/issues"
 
 [tool.poetry.dependencies]
 python = "^3.6"

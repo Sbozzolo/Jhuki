@@ -29,7 +29,7 @@ import os.path
 
 import configargparse
 
-from precactus import parfile
+from jhuki import parfile
 
 if __name__ == "__main__":
 

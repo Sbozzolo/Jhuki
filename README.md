@@ -1,13 +1,20 @@
+<p align="center">
+<img src="https://github.com/Sbozzolo/jhuki/raw/master/logo.png" height="250">
+</p>
+
 [![GPLv3
 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
+![Tests](https://github.com/Sbozzolo/Jhuki/workflows/Tests/badge.svg)
 
-# PreCactus
 
 Writing parameter files for Cactus simulations is not easy. To achieve a
 successful evolution, one has to tune several parameters, which typically depend
 on the grid configuration or on other settings. Writing these par files by hand
-is tedious and error-prone. `PreCactus` is a Python library to prepare
+is tedious and error-prone. `Jhuki` is a Python library to prepare
 simulations for the `Einstein Toolkit` (or Cactus-based codes).
+
+> :warning: This package is currently under development. It may be full of bugs,
+>           and its interfaces might change without notice.
 
 ## Features
 
@@ -29,7 +36,7 @@ the maximum timestep on the grid never exceeds 1 to avoid numerical instability.
 ``` python
 #!/usr/bin/env python3
 
-from precactus import grid as pg
+from jhuki import grid as pg
 
 refinement_radii = tuple(2**level for level in range(7))
 
@@ -97,13 +104,13 @@ passing the `tiny_shift` argument to `Grid`.
 
 ## Installation
 
-The best way to install `PreCactus` is by cloning this repo and using
+The best way to install `Jhuki` is by cloning this repo and using
 [poetry](https://python-poetry.org/). If you have poetry install, just run
-`poetry install` in the folder where you cloned the repo to install `PreCactus`.
+`poetry install` in the folder where you cloned the repo to install `Jhuki`.
 
 ## Tests
 
-`PreCactus` comes with a suite of unit tests. To run the tests,
+`Jhuki` comes with a suite of unit tests. To run the tests,
 ```sh
 poetry run pytest --cov=./ --cov-report=term
 ```
@@ -113,3 +120,15 @@ tell you what is the test coverage.
 # Code style
 
 - We lint the code with `black -l 79`.
+
+# What does _jhuki_ mean?
+
+The word _jhuki_ belongs to the Tohono O'odham vocabulary and means *rain*. If
+[kuibit](https://githum.com/Sbozzolo/kuibit) is the tool you use to collect the
+fruit of your `Cactus` simulations, then `jhuki` is what allowed that fruit to
+be there in the first place.
+
+## Credits
+
+The logo contains elements designed by [pngtree.com](pngtree.com).
+

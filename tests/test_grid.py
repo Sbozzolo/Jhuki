@@ -17,7 +17,7 @@
 
 import pytest
 
-from precactus import grid as gr
+from jhuki import grid as gr
 
 
 @pytest.fixture(scope="module")

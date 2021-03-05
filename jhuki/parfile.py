@@ -63,7 +63,7 @@ def write_one_parfile_from_template(template, sub_dict, out_file):
 
     header = f"""\
 ################################################################################
-# Variables introduced by PreCactus
+# Variables introduced by Jhuki
 ################################################################################
 
 {substituted_variables_str}
