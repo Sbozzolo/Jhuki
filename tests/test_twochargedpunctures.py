@@ -30,6 +30,11 @@ def test_TwoChargedPunctures():
     assert tp.charge_minus == approx(-0.2)
 
     expected_str = """\
+ADMBase::initial_data = twochargedpunctures
+ADMBase::initial_lapse = twochargedpunctures-averaged
+ADMBase::initial_shift = zero
+ADMBase::initial_dtlapse = zero
+ADMBase::initial_dtshift = zero
 TwoChargedPunctures::give_bare_mass = no
 TwoChargedPunctures::par_b = 6.0
 TwoChargedPunctures::target_m_plus = 0.5

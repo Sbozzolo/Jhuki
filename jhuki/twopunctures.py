@@ -210,24 +210,45 @@ class TwoPunctures:
     def parfile_code(self):
         """Return the code you would put in your parfile."""
 
-        def assign_parameter(param, value, which_bh=None, vector=False):
+        def assign_parameter(
+            param, value, which_bh=None, vector=False, thorn=None
+        ):
+            if thorn is None:
+                thorn = "TwoPunctures"
+
             if which_bh is None:
-                return f"TwoPunctures::{param} = {value}"
+                return f"{thorn}::{param} = {value}"
 
             # which_bh is either _plus or _minus
             if vector is None:
-                return f"TwoPunctures::{param}{which_bh} = {value}"
+                return f"{thorn}::{param}{which_bh} = {value}"
 
             if vector:
                 return "\n".join(
                     [
-                        f"TwoPunctures::{param}{which_bh}[{index}] = {value[index]}"
+                        f"{thorn}::{param}{which_bh}[{index}] = {value[index]}"
                         for index in range(3)
                     ]
                 )
             return f"TwoPunctures::{param}{which_bh} = {value}"
 
         ret = []
+
+        ret.append(
+            assign_parameter("initial_data", "twopunctures", thorn="ADMBase")
+        )
+        ret.append(
+            assign_parameter(
+                "initial_lapse", "twopunctures-averaged", thorn="ADMBase"
+            )
+        )
+        ret.append(assign_parameter("initial_shift", "zero", thorn="ADMBase"))
+        ret.append(
+            assign_parameter("initial_dtlapse", "zero", thorn="ADMBase")
+        )
+        ret.append(
+            assign_parameter("initial_dtshift", "zero", thorn="ADMBase")
+        )
 
         ret.append(assign_parameter("give_bare_mass", "no"))
         ret.append(assign_parameter("par_b", self.par_b))
