@@ -117,8 +117,12 @@ def test_prepare_quasicircular_inspiral():
     assert tp3.mass_plus == 5 / 6
     assert tp3.mass_minus == 1 / 6
 
-    assert tp3.momenta_plus == approx((-0.000169968781552016, 0.0474161839456146, 0))
-    assert tp3.momenta_minus == approx((0.000169968781552016, -0.0474161839456146, 0))
+    assert tp3.momenta_plus == approx(
+        (-0.000169968781552016, 0.0474161839456146, 0)
+    )
+    assert tp3.momenta_minus == approx(
+        (0.000169968781552016, -0.0474161839456146, 0)
+    )
 
     # Test mass ratio > 1
     tp4 = jtp.prepare_quasicircular_inspiral(5, 12)
@@ -126,5 +130,9 @@ def test_prepare_quasicircular_inspiral():
     assert tp4.mass_plus == 5 / 6
     assert tp4.mass_minus == 1 / 6
 
-    assert tp4.momenta_plus == approx((-0.000169968781552016, 0.0474161839456146, 0))
-    assert tp4.momenta_minus == approx((0.000169968781552016, -0.0474161839456146, 0))
+    assert tp4.momenta_plus == approx(
+        (-0.000169968781552016, 0.0474161839456146, 0)
+    )
+    assert tp4.momenta_minus == approx(
+        (0.000169968781552016, -0.0474161839456146, 0)
+    )
