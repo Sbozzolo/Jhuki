@@ -14,7 +14,8 @@ is tedious and error-prone. `Jhuki` is a Python library to prepare
 simulations for the `Einstein Toolkit` (or Cactus-based codes).
 
 > :warning: This package is currently under development. It may be full of bugs,
->           and its interfaces might change without notice.
+>           and its interfaces might change without notice. It is also highly
+>           opinionated.
 
 ## Features
 

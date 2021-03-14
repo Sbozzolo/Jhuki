@@ -532,10 +532,14 @@ class Grid:
                                    levels.
     :vartype center_with_most_levels: :py:class:`~.RefinementCenter`
 
-
+    :ivar reflection_axis: If None, reflection symmetry is not enabled.
+                           If 'x', 'y', or 'z', enable reflection symmetry
+                           along that axis.
+    :vartype reflection_axis: str, or None
     """
 
-    def __init__(self, refinement_centers, outer_boundary, tiny_shift=False):
+    def __init__(self, refinement_centers, outer_boundary, reflection_axis=None,
+                 tiny_shift=False):
         """Constructor.
 
         The different refinement centers that form a grid must be compatible.
@@ -552,9 +556,14 @@ class Grid:
                               directions.
         :vartype outer_boundary: float or None
 
-        :ivar tiny_shift: Apply a tiny (subpixel) shift to the outer boundary so
-                          that the point (0,0,0) is not on the grid. This is
-                          hard-coded to be 1/7 of a pixel.
+        :param reflection_axis: If None, reflection symmetry is not enabled.
+                                If 'x', 'y', or 'z', enable reflection symmetry
+                                along that axis.
+        :vartype reflection_axis: str, or None
+
+        :param tiny_shift: Apply a tiny (subpixel) shift to the outer boundary so
+                           that the point (0,0,0) is not on the grid. This is
+                           hard-coded to be 1/7 of a pixel.
         :vartype tiny_shift: bool
 
         """
@@ -625,6 +634,11 @@ class Grid:
         self.outer_boundary = outer_boundary
         self.tiny_shift = tiny_shift
 
+        if reflection_axis not in ("x", "y", "z", None):
+            raise ValueError("reflaction_axis has to be one between x, y, z, or None")
+
+        self.reflection_axis = reflection_axis
+
     @property
     @lru_cache(1)
     def time_refinement_factors(self):
@@ -683,13 +697,18 @@ CoordBase::domainsize = "minmax"
 CoordBase::xmax = {outer_boundary_plus}
 CoordBase::ymax = {outer_boundary_plus}
 CoordBase::zmax = {outer_boundary_plus}
-CoordBase::xmin = {outer_boundary_minus}
-CoordBase::ymin = {outer_boundary_minus}
-CoordBase::zmin = {outer_boundary_minus}
+CoordBase::xmin = {outer_boundary_minus if self.reflection_axis != 'x' else 0}
+CoordBase::ymin = {outer_boundary_minus if self.reflection_axis != 'y' else 0}
+CoordBase::zmin = {outer_boundary_minus if self.reflection_axis != 'z' else 0}
 CoordBase::dx = {self.dx_coarse}
 CoordBase::dy = {self.dx_coarse}
-CoordBase::dz = {self.dx_coarse}"""
-        )
+CoordBase::dz = {self.dx_coarse}""")
+
+        if self.reflection_axis:
+            ret.append(f"""\
+ReflectionSymmetry::reflection_{self.reflection_axis} = yes
+ReflectionSymmetry::avoid_origin_{self.reflection_axis} = no
+CoordBase::boundary_shiftout_{self.reflection_axis}_lower = 1""")
 
         ret.append(
             assign_parameter(
