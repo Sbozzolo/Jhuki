@@ -129,23 +129,28 @@ print(twopunctures.parfile_code)
 This will an output similar to the following:
 
 ```
+ADMBase::initial_data = twopunctures
+ADMBase::initial_lapse = twopunctures-averaged
+ADMBase::initial_shift = zero
+ADMBase::initial_dtlapse = zero
+ADMBase::initial_dtshift = zero
 TwoPunctures::give_bare_mass = no
-TwoPunctures::par_b = 9.0
-TwoPunctures::target_m_plus = 1
-TwoPunctures::target_m_minus = 2
-TwoPunctures::par_P_plus[0] = 0.000169968781552016
-TwoPunctures::par_P_plus[1] = -0.0474161839456146
+TwoPunctures::par_b = 6.0
+TwoPunctures::target_m_plus = 0.5
+TwoPunctures::target_m_minus = 0.5
+TwoPunctures::par_P_plus[0] = -0.000531433937072403
+TwoPunctures::par_P_plus[1] = 0.0848055056299618
 TwoPunctures::par_P_plus[2] = 0
-TwoPunctures::par_P_minus[0] = -0.000169968781552016
-TwoPunctures::par_P_minus[1] = 0.0474161839456146
+TwoPunctures::par_P_minus[0] = 0.000531433937072403
+TwoPunctures::par_P_minus[1] = -0.0848055056299618
 TwoPunctures::par_P_minus[2] = 0
-TwoPunctures::par_S_plus[0] = -0.1
-TwoPunctures::par_S_plus[1] = -0.2
-TwoPunctures::par_S_plus[2] = -0.3
-TwoPunctures::par_S_minus[0] = -1.6
-TwoPunctures::par_S_minus[1] = -2.0
-TwoPunctures::par_S_minus[2] = -2.4
-TwoPunctures::center_offset[0] = 3.0
+TwoPunctures::par_S_plus[0] = 0.025
+TwoPunctures::par_S_plus[1] = 0.05
+TwoPunctures::par_S_plus[2] = 0.075
+TwoPunctures::par_S_minus[0] = 0.1
+TwoPunctures::par_S_minus[1] = -0.025
+TwoPunctures::par_S_minus[2] = -0.05
+TwoPunctures::center_offset[0] = 0.0
 TwoPunctures::center_offset[1] = 0.0
 TwoPunctures::center_offset[2] = 0.0
 ```
@@ -158,6 +163,7 @@ This module should be used along with the `Grid` one.
 The best way to install `Jhuki` is by cloning this repo and using
 [poetry](https://python-poetry.org/). If you have poetry install, just run
 `poetry install` in the folder where you cloned the repo to install `Jhuki`.
+Alternatively, `Jhuki` is available on PyPI.
 
 ## Tests
 
