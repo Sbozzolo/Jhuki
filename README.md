@@ -103,6 +103,10 @@ CarpetRegrid2::radius_2[7] = 1
 You can also add a small shift to the grid so that the origin is not on (0,0,0)
 passing the `tiny_shift` argument to `Grid`.
 
+Another useful method is `rl_synced_every`, which returns the number of
+iterations at which all the refinement levels are at the same time.
+
+
 ### Working with binary black holes
 
 Problem: you want to simulate a binary black quasi-circular merger. This can be

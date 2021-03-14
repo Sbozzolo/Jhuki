@@ -81,6 +81,21 @@ def test_dt(refinement_center):
     assert refinement_center.dt == expected_dt
 
 
+def test_rl_synced_every(refinement_center, refinement_center2):
+
+    # refinement_center has 3 refinement levels
+    # and num_levels_with_dt_coarse=2, so the system is
+    # OB - RL0 - RL1 - RL2 - (0,0,0)
+    #   dt    dt    dt/2  dt/4
+    #
+    # So, we have to evolve twice 4 timesteps the innermost level,
+    #
+    assert refinement_center.rl_synced_every == 4
+
+    # refinement_center2 has 5 levels instead
+    assert refinement_center2.rl_synced_every == 16
+
+
 def test_cfl(refinement_center):
     expected_cfl = (0.5, 1.0, 1.0, 1.0)
 
@@ -291,9 +306,6 @@ Carpet::time_refinement_factors = "[1,1,2,4,8,16]"
 {a_grid.refinement_centers[0].parfile_code}
 {a_grid.refinement_centers[1].parfile_code}\
 """
-
-    print(a_grid.parfile_code)
-
     assert a_grid.parfile_code == expected_str
 
 
@@ -356,11 +368,5 @@ def test_set_dt_max_grid(a_grid):
     griddo = gr.set_dt_max_grid(
         gr.Grid((mr1_2, mr2_2), outer_boundary=10), 0.13
     )
-
-    print(griddo.refinement_centers[0].get_summary())
-    print(griddo.refinement_centers[1].get_summary())
-
-    print(mr1_2.get_summary())
-    print(mr2_2.get_summary())
 
     assert griddo.time_refinement_factors == '"[1,1,1,1,1,2]"'

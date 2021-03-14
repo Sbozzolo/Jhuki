@@ -137,7 +137,7 @@ def set_dt_max(ref_center, dt_max):
     """
     # TODO: Add type checks
 
-    logging.debug(f"Working with grid:")
+    logging.debug("Working with grid:")
     logging.debug(ref_center)
 
     # What level has dt < dt_max?
@@ -382,6 +382,19 @@ class RefinementCenter:
             else self.dt_coarse
             * 0.5 ** (lvl_num - self.num_levels_with_dt_coarse + 1)
             for lvl_num in range(self.num_refinement_levels)
+        )
+
+    @property
+    @lru_cache(1)
+    def rl_synced_every(self):
+        """Number of iterations at which all the refinement levels are at the
+        same time.
+
+        :rtype: int
+
+        """
+        return 2 ** (
+            self.num_refinement_levels - self.num_levels_with_dt_coarse
         )
 
     @property
