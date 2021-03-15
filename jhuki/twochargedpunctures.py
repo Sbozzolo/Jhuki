@@ -107,12 +107,12 @@ class TwoChargedPunctures(TwoPunctures):
 
         uncharged_parfile = super().parfile_code.replace(
             "TwoPunctures", "TwoChargedPunctures"
-        )
+        ).replace("twopunctures", "twochargedpunctures")
 
         charged_parfile = (
             f"{uncharged_parfile}\n"
             f"TwoChargedPunctures::par_q_plus = {self.charge_plus}\n"
-            f"TwoChargedPunctures::par__plus = {self.charge_plus}"
+            f"TwoChargedPunctures::par_q_minus = {self.charge_minus}"
         )
 
         return charged_parfile

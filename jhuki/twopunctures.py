@@ -218,55 +218,42 @@ class TwoPunctures:
     def parfile_code(self):
         """Return the code you would put in your parfile."""
 
-        def assign_parameter(
-            param, value, which_bh=None, vector=False, thorn=None
-        ):
-            if thorn is None:
-                thorn = "TwoPunctures"
-
+        def assign_parameter(param, value, which_bh=None):
             if which_bh is None:
-                return f"{thorn}::{param} = {value}"
+                return f"TwoPunctures::{param} = {value}"
 
             # which_bh is either _plus or _minus
-            if vector is None:
-                return f"{thorn}::{param}{which_bh} = {value}"
-
-            if vector:
-                return "\n".join(
-                    [
-                        f"{thorn}::{param}{which_bh}[{index}] = {value[index]}"
-                        for index in range(3)
-                    ]
-                )
-            return f"TwoPunctures::{param}{which_bh} = {value}"
+            return "\n".join(
+                [
+                    f"TwoPunctures::{param}{which_bh}[{index}] = {value[index]}"
+                    for index in range(3)
+                ]
+            )
 
         ret = []
 
-        ret.append("""\
+        ret.append(f"""\
 ADMBase::initial_data = "twopunctures"
 ADMBase::initial_lapse = "twopunctures-averaged"
 ADMBase::initial_shift = "zero"
 ADMBase::initial_dtlapse = "zero"
 ADMBase::initial_dtshift = "zero"
 
-TwoPunctures::give_bare_mass = "no"\
-""")
+TwoPunctures::give_bare_mass = "no"
+TwoPunctures::par_b = {self.par_b}
+TwoPunctures::target_m_plus = {self.mass_plus}
+TwoPunctures::target_m_minus = {self.mass_minus}
+TwoPunctures::par_m_plus = {self.mass_plus}
+TwoPunctures::par_m_minus = {self.mass_minus}""")
 
-        ret.append(assign_parameter("par_b", self.par_b))
+        ret.append(assign_parameter("par_P", self.momenta_plus, "_plus"))
         ret.append(
-            assign_parameter("target_m", self.mass_plus, "_plus", False)
+            assign_parameter("par_P", self.momenta_minus, "_minus")
         )
+        ret.append(assign_parameter("par_S", self.S_plus, "_plus"))
+        ret.append(assign_parameter("par_S", self.S_minus, "_minus"))
         ret.append(
-            assign_parameter("target_m", self.mass_minus, "_minus", False)
-        )
-        ret.append(assign_parameter("par_P", self.momenta_plus, "_plus", True))
-        ret.append(
-            assign_parameter("par_P", self.momenta_minus, "_minus", True)
-        )
-        ret.append(assign_parameter("par_S", self.S_plus, "_plus", True))
-        ret.append(assign_parameter("par_S", self.S_minus, "_minus", True))
-        ret.append(
-            assign_parameter("center_offset", self.center_offset, "", True)
+            assign_parameter("center_offset", self.center_offset, "")
         )
 
         if self.swap_xz:
