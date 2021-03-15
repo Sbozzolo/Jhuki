@@ -75,6 +75,7 @@ TwoPunctures::center_offset[2] = 0.0\
         (0.4, 0.5, 0.6),
         (-0.1, -0.2, -0.3),
         (-0.4, -0.5, -0.6),
+        swap_xz=True,
     )
 
     assert tp2.par_b == approx(9)
@@ -113,7 +114,8 @@ TwoPunctures::par_S_minus[1] = -2.0
 TwoPunctures::par_S_minus[2] = -2.4
 TwoPunctures::center_offset[0] = 3.0
 TwoPunctures::center_offset[1] = 0.0
-TwoPunctures::center_offset[2] = 0.0\
+TwoPunctures::center_offset[2] = 0.0
+TwoPunctures::swap_xz = yes\
 """
 
     assert tp2.parfile_code == expected_str

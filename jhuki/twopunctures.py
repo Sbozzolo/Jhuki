@@ -125,6 +125,9 @@ class TwoPunctures:
 
     :ivar center_offset: Move the geometric center of the system by this amount.
     :vartype center_offset: list/tuple
+
+    :ivar swap_xz: If True, activate the ``swap_xz`` parameter in TwoPunctures.
+    :vartype swap_xz: bool
     """
 
     def __init__(
@@ -137,6 +140,7 @@ class TwoPunctures:
         chi_plus=None,
         chi_minus=None,
         center_offset=None,
+        swap_xz=False,
     ):
         """Constructor.
 
@@ -163,12 +167,14 @@ class TwoPunctures:
                          black hole on the positive side of the x (or z) axis.
         :type chi_minus: list/tuple
 
-        :ivar center_offset: Move the center of mass of the system by this amount. If None, it
-                             this is set so that the center of mass is at [0,0,0].
-        :vartype center_offset: list/tuple
+        :param center_offset: Move the center of mass of the system by this amount. If None, it
+                              this is set so that the center of mass is at [0,0,0].
+        :type center_offset: list/tuple
+
+        :param swap_xz: If True, activate the ``swap_xz`` parameter in TwoPunctures.
+        :type swap_xz: bool
         """
 
-        # TODO: Support swapping x and z axis
         # TODO: No sanity checks are performed here. We should at least check that P < m and so on
 
         def _par_or_zeros(par):
@@ -204,6 +210,8 @@ class TwoPunctures:
             self.center_offset = (self.coord_x_plus - self.par_b, 0.0, 0.0)
         else:
             self.center_offset = center_offset
+
+        self.swap_xz = swap_xz
 
     @property
     @lru_cache(1)
@@ -267,5 +275,8 @@ class TwoPunctures:
         ret.append(
             assign_parameter("center_offset", self.center_offset, "", True)
         )
+
+        if self.swap_xz:
+            ret.append(assign_parameter("swap_xz", "yes"))
 
         return "\n".join(ret)
