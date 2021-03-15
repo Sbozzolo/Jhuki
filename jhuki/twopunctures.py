@@ -242,23 +242,16 @@ class TwoPunctures:
 
         ret = []
 
-        ret.append(
-            assign_parameter("initial_data", "twopunctures", thorn="ADMBase")
-        )
-        ret.append(
-            assign_parameter(
-                "initial_lapse", "twopunctures-averaged", thorn="ADMBase"
-            )
-        )
-        ret.append(assign_parameter("initial_shift", "zero", thorn="ADMBase"))
-        ret.append(
-            assign_parameter("initial_dtlapse", "zero", thorn="ADMBase")
-        )
-        ret.append(
-            assign_parameter("initial_dtshift", "zero", thorn="ADMBase")
-        )
+        ret.append("""\
+ADMBase::initial_data = "twopunctures"
+ADMBase::initial_lapse = "twopunctures-averaged"
+ADMBase::initial_shift = "zero"
+ADMBase::initial_dtlapse = "zero"
+ADMBase::initial_dtshift = "zero"
 
-        ret.append(assign_parameter("give_bare_mass", "no"))
+TwoPunctures::give_bare_mass = "no"\
+""")
+
         ret.append(assign_parameter("par_b", self.par_b))
         ret.append(
             assign_parameter("target_m", self.mass_plus, "_plus", False)

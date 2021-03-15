@@ -38,12 +38,13 @@ def test_TwoPunctures():
     assert tp.center_offset == (0, 0, 0)
 
     expected_str = """\
-ADMBase::initial_data = twopunctures
-ADMBase::initial_lapse = twopunctures-averaged
-ADMBase::initial_shift = zero
-ADMBase::initial_dtlapse = zero
-ADMBase::initial_dtshift = zero
-TwoPunctures::give_bare_mass = no
+ADMBase::initial_data = "twopunctures"
+ADMBase::initial_lapse = "twopunctures-averaged"
+ADMBase::initial_shift = "zero"
+ADMBase::initial_dtlapse = "zero"
+ADMBase::initial_dtshift = "zero"
+
+TwoPunctures::give_bare_mass = "no"
 TwoPunctures::par_b = 6.0
 TwoPunctures::target_m_plus = 0.5
 TwoPunctures::target_m_minus = 0.5
@@ -91,12 +92,13 @@ TwoPunctures::center_offset[2] = 0.0\
     assert tp2.center_offset == (3, 0, 0)
 
     expected_str = """\
-ADMBase::initial_data = twopunctures
-ADMBase::initial_lapse = twopunctures-averaged
-ADMBase::initial_shift = zero
-ADMBase::initial_dtlapse = zero
-ADMBase::initial_dtshift = zero
-TwoPunctures::give_bare_mass = no
+ADMBase::initial_data = "twopunctures"
+ADMBase::initial_lapse = "twopunctures-averaged"
+ADMBase::initial_shift = "zero"
+ADMBase::initial_dtlapse = "zero"
+ADMBase::initial_dtshift = "zero"
+
+TwoPunctures::give_bare_mass = "no"
 TwoPunctures::par_b = 9.0
 TwoPunctures::target_m_plus = 1
 TwoPunctures::target_m_minus = 2
