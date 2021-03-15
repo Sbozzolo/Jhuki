@@ -290,6 +290,15 @@ def test_grid_parfile_code(a_grid, refinement_center, refinement_center2):
     expected_str = f"""\
 CartGrid3D::type = "coordbase"
 Carpet::domain_from_coordbase = "yes"
+
+Driver::ghost_size = 3
+CoordBase::boundary_size_x_lower = 3
+CoordBase::boundary_size_y_lower = 3
+CoordBase::boundary_size_z_lower = 3
+CoordBase::boundary_size_x_upper = 3
+CoordBase::boundary_size_y_upper = 3
+CoordBase::boundary_size_z_upper = 3
+
 CoordBase::domainsize = "minmax"
 CoordBase::xmax = 10
 CoordBase::ymax = 10
@@ -308,11 +317,25 @@ Carpet::time_refinement_factors = "[1,1,2,4,8,16]"
 """
     assert a_grid.parfile_code == expected_str
 
-    grid_symmetry_x = gr.Grid([refinement_center, refinement_center2], outer_boundary=10, reflection_axis='x')
+    grid_symmetry_x = gr.Grid(
+        [refinement_center, refinement_center2],
+        outer_boundary=10,
+        reflection_axis="x",
+        num_ghost=4,
+    )
 
     expected_str = f"""\
 CartGrid3D::type = "coordbase"
 Carpet::domain_from_coordbase = "yes"
+
+Driver::ghost_size = 4
+CoordBase::boundary_size_x_lower = 4
+CoordBase::boundary_size_y_lower = 4
+CoordBase::boundary_size_z_lower = 4
+CoordBase::boundary_size_x_upper = 4
+CoordBase::boundary_size_y_upper = 4
+CoordBase::boundary_size_z_upper = 4
+
 CoordBase::domainsize = "minmax"
 CoordBase::xmax = 10
 CoordBase::ymax = 10

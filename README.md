@@ -66,6 +66,15 @@ This will output
 CartGrid3D::type = "coordbase"
 Carpet::domain_from_coordbase = "yes"
 CoordBase::domainsize = "minmax"
+
+Driver::ghost_size = 3
+CoordBase::boundary_size_x_lower = 3
+CoordBase::boundary_size_y_lower = 3
+CoordBase::boundary_size_z_lower = 3
+CoordBase::boundary_size_x_upper = 3
+CoordBase::boundary_size_y_upper = 3
+CoordBase::boundary_size_z_upper = 3
+
 CoordBase::xmin = 1000
 CoordBase::ymin = 1000
 CoordBase::zmin = 1000

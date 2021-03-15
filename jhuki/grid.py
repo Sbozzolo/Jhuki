@@ -536,10 +536,19 @@ class Grid:
                            If 'x', 'y', or 'z', enable reflection symmetry
                            along that axis.
     :vartype reflection_axis: str, or None
+
+    :ivar num_ghost: Number of ghost zones.
+    :vartype num_ghost: int
     """
 
-    def __init__(self, refinement_centers, outer_boundary, reflection_axis=None,
-                 tiny_shift=False):
+    def __init__(
+        self,
+        refinement_centers,
+        outer_boundary,
+        num_ghost=3,
+        reflection_axis=None,
+        tiny_shift=False,
+    ):
         """Constructor.
 
         The different refinement centers that form a grid must be compatible.
@@ -564,8 +573,10 @@ class Grid:
         :param tiny_shift: Apply a tiny (subpixel) shift to the outer boundary so
                            that the point (0,0,0) is not on the grid. This is
                            hard-coded to be 1/7 of a pixel.
-        :vartype tiny_shift: bool
+        :type tiny_shift: bool
 
+        :param num_ghost: Number of ghost zones.
+        :type num_ghost: int
         """
         if not all(
             (isinstance(m, RefinementCenter) for m in refinement_centers)
@@ -635,9 +646,13 @@ class Grid:
         self.tiny_shift = tiny_shift
 
         if reflection_axis not in ("x", "y", "z", None):
-            raise ValueError("reflaction_axis has to be one between x, y, z, or None")
+            raise ValueError(
+                "reflection_axis has to be one between x, y, z, or None"
+            )
 
         self.reflection_axis = reflection_axis
+
+        self.num_ghost = num_ghost
 
     @property
     @lru_cache(1)
@@ -693,6 +708,15 @@ class Grid:
             f"""\
 CartGrid3D::type = "coordbase"
 Carpet::domain_from_coordbase = "yes"
+
+Driver::ghost_size = {self.num_ghost}
+CoordBase::boundary_size_x_lower = {self.num_ghost}
+CoordBase::boundary_size_y_lower = {self.num_ghost}
+CoordBase::boundary_size_z_lower = {self.num_ghost}
+CoordBase::boundary_size_x_upper = {self.num_ghost}
+CoordBase::boundary_size_y_upper = {self.num_ghost}
+CoordBase::boundary_size_z_upper = {self.num_ghost}
+
 CoordBase::domainsize = "minmax"
 CoordBase::xmax = {outer_boundary_plus}
 CoordBase::ymax = {outer_boundary_plus}
@@ -702,13 +726,16 @@ CoordBase::ymin = {outer_boundary_minus if self.reflection_axis != 'y' else 0}
 CoordBase::zmin = {outer_boundary_minus if self.reflection_axis != 'z' else 0}
 CoordBase::dx = {self.dx_coarse}
 CoordBase::dy = {self.dx_coarse}
-CoordBase::dz = {self.dx_coarse}""")
+CoordBase::dz = {self.dx_coarse}"""
+        )
 
         if self.reflection_axis:
-            ret.append(f"""\
+            ret.append(
+                f"""\
 ReflectionSymmetry::reflection_{self.reflection_axis} = yes
 ReflectionSymmetry::avoid_origin_{self.reflection_axis} = no
-CoordBase::boundary_shiftout_{self.reflection_axis}_lower = 1""")
+CoordBase::boundary_shiftout_{self.reflection_axis}_lower = 1"""
+            )
 
         ret.append(
             assign_parameter(
