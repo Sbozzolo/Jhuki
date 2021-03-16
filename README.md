@@ -7,6 +7,7 @@ license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.cran
 ![Tests](https://github.com/Sbozzolo/Jhuki/workflows/Tests/badge.svg)
 [![PyPI version](https://badge.fury.io/py/jhuki.svg)](https://badge.fury.io/py/Jhuki)
 [![codecov](https://codecov.io/gh/Sbozzolo/Jhuki/branch/master/graph/badge.svg)](https://codecov.io/gh/Sbozzolo/Jhuki)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/Sbozzolo/Jhuki.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Sbozzolo/Jhuki/alerts/)
 
 Writing parameter files for Cactus simulations is not easy. To achieve a
 successful evolution, one has to tune several parameters, which typically depend
