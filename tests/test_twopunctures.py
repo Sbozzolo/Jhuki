@@ -154,3 +154,19 @@ def test_prepare_quasicircular_inspiral():
     assert tp4.momenta_minus == approx(
         (0.000169968781552016, -0.0474161839456146, 0)
     )
+
+    # Test total_bare_mass = 10
+    total_bare_mass = 10
+    tp5 = jtp.prepare_quasicircular_inspiral(
+        0.2, 12, total_bare_mass=total_bare_mass
+    )
+
+    assert tp5.mass_plus == 5 / 6 * total_bare_mass
+    assert tp5.mass_minus == 1 / 6 * total_bare_mass
+    assert tp5.momenta_plus == approx(
+        (
+            -0.000169968781552016 * total_bare_mass,
+            0.0474161839456146 * total_bare_mass,
+            0,
+        )
+    )

@@ -105,9 +105,11 @@ class TwoChargedPunctures(TwoPunctures):
     def parfile_code(self):
         """Return the code you would put in your parfile."""
 
-        uncharged_parfile = super().parfile_code.replace(
-            "TwoPunctures", "TwoChargedPunctures"
-        ).replace("twopunctures", "twochargedpunctures")
+        uncharged_parfile = (
+            super()
+            .parfile_code.replace("TwoPunctures", "TwoChargedPunctures")
+            .replace("twopunctures", "twochargedpunctures")
+        )
 
         charged_parfile = (
             f"{uncharged_parfile}\n"

@@ -29,11 +29,13 @@ from functools import lru_cache
 
 from jhuki.externals.nrpypn import compute_quasicircular_momenta
 
-# TODO: This module needs unit testing
-
 
 def prepare_quasicircular_inspiral(
-    mass_ratio, coordinate_distance, chi_plus=(0, 0, 0), chi_minus=(0, 0, 0)
+    mass_ratio,
+    coordinate_distance,
+    total_bare_mass=1,
+    chi_plus=(0, 0, 0),
+    chi_minus=(0, 0, 0),
 ):
     """Return a :py:class:`~.TwoPunctures` that describes a quasi-circular inspiral.
     We always assume that the plus puncture is the most massive one.
@@ -42,6 +44,9 @@ def prepare_quasicircular_inspiral(
     :type mass_ratio: float
     :param coordinate_distance: Initial coordinate separation.
     :type coordinate_distance: float
+    :param total_bare_mass: Rescale masses and momenta so that the total bare mass of the
+                            system is this.
+    :type total_bare_mass: float
 
     :param chi_plus: Dimensionless spin of the black hole on the positive side of the x
                      (or z) axis along the three directions.
@@ -62,11 +67,13 @@ def prepare_quasicircular_inspiral(
         mass_ratio, coordinate_distance, chi_plus, chi_minus
     )
 
+    Pt, Pr = Pt * total_bare_mass, Pr * total_bare_mass
+
     momenta_plus = (-Pr, Pt, 0)
     momenta_minus = (Pr, -Pt, 0)
 
-    mass_plus = mass_ratio / (1 + mass_ratio)
-    mass_minus = 1 / (1 + mass_ratio)
+    mass_plus = mass_ratio / (1 + mass_ratio) * total_bare_mass
+    mass_minus = 1 / (1 + mass_ratio) * total_bare_mass
 
     return TwoPunctures(
         mass_plus,
@@ -232,7 +239,8 @@ class TwoPunctures:
 
         ret = []
 
-        ret.append(f"""\
+        ret.append(
+            f"""\
 ADMBase::initial_data = "twopunctures"
 ADMBase::initial_lapse = "twopunctures-averaged"
 ADMBase::initial_shift = "zero"
@@ -244,17 +252,14 @@ TwoPunctures::par_b = {self.par_b}
 TwoPunctures::target_m_plus = {self.mass_plus}
 TwoPunctures::target_m_minus = {self.mass_minus}
 TwoPunctures::par_m_plus = {self.mass_plus}
-TwoPunctures::par_m_minus = {self.mass_minus}""")
+TwoPunctures::par_m_minus = {self.mass_minus}"""
+        )
 
         ret.append(assign_parameter("par_P", self.momenta_plus, "_plus"))
-        ret.append(
-            assign_parameter("par_P", self.momenta_minus, "_minus")
-        )
+        ret.append(assign_parameter("par_P", self.momenta_minus, "_minus"))
         ret.append(assign_parameter("par_S", self.S_plus, "_plus"))
         ret.append(assign_parameter("par_S", self.S_minus, "_minus"))
-        ret.append(
-            assign_parameter("center_offset", self.center_offset, "")
-        )
+        ret.append(assign_parameter("center_offset", self.center_offset, ""))
 
         if self.swap_xz:
             ret.append(assign_parameter("swap_xz", "yes"))
