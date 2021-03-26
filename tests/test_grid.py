@@ -288,6 +288,16 @@ def test_time_refinement_factors(a_grid):
     assert expected_time_refinement == a_grid.time_refinement_factors
 
 
+def test_reflection_axis(refinement_center, refinement_center2):
+
+    with pytest.raises(ValueError):
+        gr.Grid(
+            [refinement_center, refinement_center2],
+            outer_boundary=10,
+            reflection_axis="bob",
+        )
+
+
 def test_grid_parfile_code(a_grid, refinement_center, refinement_center2):
 
     expected_str = f"""\

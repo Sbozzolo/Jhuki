@@ -146,7 +146,6 @@ class TwoPunctures:
         momenta_minus=None,
         chi_plus=None,
         chi_minus=None,
-        center_offset=None,
         swap_xz=False,
     ):
         """Constructor.
@@ -173,10 +172,6 @@ class TwoPunctures:
         :param chi_minus: Array with the dimensionless spin along the three directions for the
                          black hole on the positive side of the x (or z) axis.
         :type chi_minus: list/tuple
-
-        :param center_offset: Move the center of mass of the system by this amount. If None, it
-                              this is set so that the center of mass is at [0,0,0].
-        :type center_offset: list/tuple
 
         :param swap_xz: If True, activate the ``swap_xz`` parameter in TwoPunctures.
         :type swap_xz: bool
@@ -213,10 +208,7 @@ class TwoPunctures:
             cm * self.mass_minus ** 2 for cm in self.chi_minus
         )
 
-        if center_offset is None:
-            self.center_offset = (self.coord_x_plus - self.par_b, 0.0, 0.0)
-        else:
-            self.center_offset = center_offset
+        self.center_offset = (self.coord_x_plus - self.par_b, 0.0, 0.0)
 
         self.swap_xz = swap_xz
 

@@ -46,7 +46,6 @@ class TwoChargedPunctures(TwoPunctures):
         momenta_minus=None,
         chi_plus=None,
         chi_minus=None,
-        center_offset=None,
         charge_plus=None,
         charge_minus=None,
     ):
@@ -80,10 +79,6 @@ class TwoChargedPunctures(TwoPunctures):
         :param chi_minus: Array with the dimensionless spin along the three directions for the
                          black hole on the positive side of the x (or z) axis.
         :type chi_minus: list/tuple
-
-        :ivar center_offset: Move the center of mass of the system by this amount. If None, it
-                             this is set so that the center of mass is at [0,0,0].
-        :vartype center_offset: list/tuple
         """
 
         super().__init__(
@@ -94,7 +89,6 @@ class TwoChargedPunctures(TwoPunctures):
             momenta_minus=momenta_minus,
             chi_plus=chi_plus,
             chi_minus=chi_minus,
-            center_offset=center_offset,
         )
 
         self.charge_plus = charge_plus if charge_plus is not None else 0
