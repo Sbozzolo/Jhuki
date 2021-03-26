@@ -81,7 +81,7 @@ def test_dt(refinement_center):
     assert refinement_center.dt == expected_dt
 
 
-def test_rl_synced_every(refinement_center, refinement_center2):
+def test_rl_synced_every(refinement_center, refinement_center2, a_grid):
 
     # refinement_center has 3 refinement levels
     # and num_levels_with_dt_coarse=2, so the system is
@@ -94,6 +94,9 @@ def test_rl_synced_every(refinement_center, refinement_center2):
 
     # refinement_center2 has 5 levels instead
     assert refinement_center2.rl_synced_every == 16
+
+    # The grid should consider the one with the most levels
+    assert a_grid.rl_synced_every == 16
 
 
 def test_cfl(refinement_center):

@@ -685,6 +685,17 @@ class Grid:
 
     @property
     @lru_cache(1)
+    def rl_synced_every(self):
+        """Number of iterations at which all the refinement levels are at the
+        same time.
+
+        :rtype: int
+
+        """
+        return self.center_with_most_levels.rl_synced_every
+
+    @property
+    @lru_cache(1)
     def parfile_code(self):
         """Return the code you would put in your parfile."""
 
