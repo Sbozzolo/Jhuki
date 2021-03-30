@@ -401,11 +401,13 @@ def test_set_dt_max_grid(a_grid):
     )
 
     # Test with tiny_shift
-    grido = gr.Grid((mr1,), outer_boundary=5, tiny_shift=True)
+    grido = gr.Grid((mr1,), outer_boundary=5, tiny_shift=True, num_ghost=4)
 
     outer_boundary_plus = 5 + 0.25 / 7
 
     assert str(outer_boundary_plus) in grido.parfile_code
+
+    assert grido.num_ghost == 4
 
     # Test with one case in which an entire refinement center has to be synced
     # up
