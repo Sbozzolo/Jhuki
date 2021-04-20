@@ -42,6 +42,13 @@ def simfactory_option(name, default):
     substitution of objects with the double @ symbols. For this reason, the
     name parameter to this function has to be surrounded by @.
 
+    We convert all the numbers to floats, so if you need integers, you have to
+    explicitly cast the variable to int, for example:
+
+    .. code-block::python
+
+        num_ref_radii = int(simfactory_option("@REFLEVELS@", 10))
+
     :param name: Name of the SimFactory define key. It has to be with surrounded
                  by @, for example, @XMAX@.
     :type name: str
@@ -51,7 +58,8 @@ def simfactory_option(name, default):
 
     :returns: The default value if the define key is not passed to SimFactory,
               otherwise the value defined with SimFactory.
-    :rtype: float or str (integers are converted )
+    :rtype: float or str (integers are converted)
+
     """
     if not isinstance(name, str):
         raise TypeError(f"name has to a string, it is {name}")
