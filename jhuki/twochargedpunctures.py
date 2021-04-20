@@ -99,6 +99,7 @@ class TwoChargedPunctures(TwoPunctures):
             chi_minus=chi_minus,
             swap_xz=swap_xz,
             give_bare_mass=give_bare_mass,
+            initial_alpha="psi^n",
         )
 
         self.charge_plus = charge_plus if charge_plus is not None else 0

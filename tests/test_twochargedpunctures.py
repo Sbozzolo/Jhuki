@@ -31,7 +31,7 @@ def test_TwoChargedPunctures():
 
     expected_str = """\
 ADMBase::initial_data = "twochargedpunctures"
-ADMBase::initial_lapse = "twochargedpunctures-averaged"
+ADMBase::initial_lapse = "psi^n"
 ADMBase::initial_shift = "zero"
 ADMBase::initial_dtlapse = "zero"
 ADMBase::initial_dtshift = "zero"

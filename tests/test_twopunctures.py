@@ -80,6 +80,7 @@ TwoPunctures::center_offset[2] = 0.0\
         (-0.4, -0.5, -0.6),
         swap_xz=True,
         give_bare_mass=True,
+        initial_alpha="psi^n",
     )
 
     assert tp2.par_b == approx(9)
@@ -96,7 +97,7 @@ TwoPunctures::center_offset[2] = 0.0\
 
     expected_str = """\
 ADMBase::initial_data = "twopunctures"
-ADMBase::initial_lapse = "twopunctures-averaged"
+ADMBase::initial_lapse = "psi^n"
 ADMBase::initial_shift = "zero"
 ADMBase::initial_dtlapse = "zero"
 ADMBase::initial_dtshift = "zero"

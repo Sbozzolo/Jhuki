@@ -36,6 +36,7 @@ def prepare_quasicircular_inspiral(
     total_bare_mass=1,
     chi_plus=(0, 0, 0),
     chi_minus=(0, 0, 0),
+    **kwargs,
 ):
     """Return a :py:class:`~.TwoPunctures` that describes a quasi-circular inspiral.
     We always assume that the plus puncture is the most massive one.
@@ -55,6 +56,8 @@ def prepare_quasicircular_inspiral(
     :param chi_minus: Dimensionless spin of the black hole on the negative side of the x
                      (or z) axis along the three directions.
     :type chi_minus: tuple/list with three numbers
+
+    Unknown arguments are passed to :py:class:`~.TwoPunctures`.
 
     :returns: A :py:class:`~.TwoPunctures` for a quasi-circular inspiral.
     :rtype: :py:class:`~.TwoPunctures`
@@ -84,6 +87,7 @@ def prepare_quasicircular_inspiral(
         chi_plus=chi_plus,
         chi_minus=chi_minus,
         give_bare_mass=False,
+        **kwargs,
     )
 
 
@@ -139,6 +143,9 @@ class TwoPunctures:
 
     :ivar give_bare_mass: If True, set this parameter to True in the parfile.
     :vartype give_bare_mass: bool
+
+    :ivar initial_alpha: Prescription to use for the initial lapse.
+    :vartype initial_alpha: str
     """
 
     def __init__(
@@ -152,6 +159,7 @@ class TwoPunctures:
         chi_minus=None,
         swap_xz=False,
         give_bare_mass=False,
+        initial_alpha="twopunctures-averaged",
     ):
         """Constructor.
 
@@ -183,6 +191,9 @@ class TwoPunctures:
 
         :param give_bare_mass: If True, set this parameter to True in the parfile.
         :type give_bare_mass: bool
+
+        :param initial_alpha: Prescription to use for the initial lapse.
+        :type initial_alpha: str
         """
 
         # TODO: No sanity checks are performed here. We should at least check that P < m and so on
@@ -220,6 +231,7 @@ class TwoPunctures:
 
         self.swap_xz = swap_xz
         self.give_bare_mass = give_bare_mass
+        self.initial_alpha = initial_alpha
 
     @property
     @lru_cache(1)
@@ -243,7 +255,7 @@ class TwoPunctures:
         ret.append(
             f"""\
 ADMBase::initial_data = "twopunctures"
-ADMBase::initial_lapse = "twopunctures-averaged"
+ADMBase::initial_lapse = "{self.initial_alpha}"
 ADMBase::initial_shift = "zero"
 ADMBase::initial_dtlapse = "zero"
 ADMBase::initial_dtshift = "zero"
