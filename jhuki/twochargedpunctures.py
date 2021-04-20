@@ -48,6 +48,7 @@ class TwoChargedPunctures(TwoPunctures):
         chi_minus=None,
         charge_plus=None,
         charge_minus=None,
+        swap_xz=False,
         give_bare_mass=False,
     ):
         """Constructor.
@@ -80,6 +81,12 @@ class TwoChargedPunctures(TwoPunctures):
         :param chi_minus: Array with the dimensionless spin along the three directions for the
                          black hole on the positive side of the x (or z) axis.
         :type chi_minus: list/tuple
+
+        :param swap_xz: If True, activate the ``swap_xz`` parameter in TwoPunctures.
+        :type swap_xz: bool
+
+        :param give_bare_mass: If True, set this parameter to True in the parfile.
+        :type give_bare_mass: bool
         """
 
         super().__init__(
@@ -90,6 +97,7 @@ class TwoChargedPunctures(TwoPunctures):
             momenta_minus=momenta_minus,
             chi_plus=chi_plus,
             chi_minus=chi_minus,
+            swap_xz=swap_xz,
             give_bare_mass=give_bare_mass,
         )
 
