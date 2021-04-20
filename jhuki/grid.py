@@ -111,6 +111,7 @@ def set_dt_max_grid(grid, dt_max):
         new_refinement_centers,
         outer_boundary=grid.outer_boundary,
         num_ghost=grid.num_ghost,
+        reflection_axis=grid.reflection_axis,
         tiny_shift=grid.tiny_shift,
     )
 
