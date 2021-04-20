@@ -83,6 +83,7 @@ def prepare_quasicircular_inspiral(
         momenta_minus=momenta_minus,
         chi_plus=chi_plus,
         chi_minus=chi_minus,
+        give_bare_mass=False,
     )
 
 
@@ -135,6 +136,9 @@ class TwoPunctures:
 
     :ivar swap_xz: If True, activate the ``swap_xz`` parameter in TwoPunctures.
     :vartype swap_xz: bool
+
+    :ivar give_bare_mass: If True, set this parameter to True in the parfile.
+    :vartype give_bare_mass: bool
     """
 
     def __init__(
@@ -147,6 +151,7 @@ class TwoPunctures:
         chi_plus=None,
         chi_minus=None,
         swap_xz=False,
+        give_bare_mass=False,
     ):
         """Constructor.
 
@@ -175,6 +180,9 @@ class TwoPunctures:
 
         :param swap_xz: If True, activate the ``swap_xz`` parameter in TwoPunctures.
         :type swap_xz: bool
+
+        :param give_bare_mass: If True, set this parameter to True in the parfile.
+        :type give_bare_mass: bool
         """
 
         # TODO: No sanity checks are performed here. We should at least check that P < m and so on
@@ -211,6 +219,7 @@ class TwoPunctures:
         self.center_offset = (self.coord_x_plus - self.par_b, 0.0, 0.0)
 
         self.swap_xz = swap_xz
+        self.give_bare_mass = give_bare_mass
 
     @property
     @lru_cache(1)
@@ -239,7 +248,7 @@ ADMBase::initial_shift = "zero"
 ADMBase::initial_dtlapse = "zero"
 ADMBase::initial_dtshift = "zero"
 
-TwoPunctures::give_bare_mass = "no"
+TwoPunctures::give_bare_mass = "{"yes" if self.give_bare_mass else "no"}"
 TwoPunctures::par_b = {self.par_b}
 TwoPunctures::target_m_plus = {self.mass_plus}
 TwoPunctures::target_m_minus = {self.mass_minus}

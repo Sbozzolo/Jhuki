@@ -48,6 +48,7 @@ class TwoChargedPunctures(TwoPunctures):
         chi_minus=None,
         charge_plus=None,
         charge_minus=None,
+        give_bare_mass=False,
     ):
         """Constructor.
 
@@ -89,6 +90,7 @@ class TwoChargedPunctures(TwoPunctures):
             momenta_minus=momenta_minus,
             chi_plus=chi_plus,
             chi_minus=chi_minus,
+            give_bare_mass=give_bare_mass,
         )
 
         self.charge_plus = charge_plus if charge_plus is not None else 0

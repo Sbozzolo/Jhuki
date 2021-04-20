@@ -79,6 +79,7 @@ TwoPunctures::center_offset[2] = 0.0\
         (-0.1, -0.2, -0.3),
         (-0.4, -0.5, -0.6),
         swap_xz=True,
+        give_bare_mass=True,
     )
 
     assert tp2.par_b == approx(9)
@@ -100,7 +101,7 @@ ADMBase::initial_shift = "zero"
 ADMBase::initial_dtlapse = "zero"
 ADMBase::initial_dtshift = "zero"
 
-TwoPunctures::give_bare_mass = "no"
+TwoPunctures::give_bare_mass = "yes"
 TwoPunctures::par_b = 9.0
 TwoPunctures::target_m_plus = 1
 TwoPunctures::target_m_minus = 2
