@@ -537,7 +537,8 @@ class Grid:
     :ivar reflection_axis: If None, reflection symmetry is not enabled.
                            If 'x', 'y', or 'z', enable reflection symmetry
                            along that axis. If 'xy', 'yz', or 'xz', enable
-                           reflection symmetry along two axis.
+                           reflection symmetry along two axis. If 'xyz', enable
+                           octant symmetry.
     :vartype reflection_axis: str, or None
 
     :ivar num_ghost: Number of ghost zones.
@@ -571,7 +572,8 @@ class Grid:
         :param reflection_axis: If None, reflection symmetry is not enabled.
                                 If 'x', 'y', or 'z', enable reflection symmetry
                                 along that axis. If 'xy', 'yz', or 'xz', enable
-                                reflection symmetry along two axis.
+                                reflection symmetry along two axis. If 'xyz',
+                                enable octant symmetry.
         :vartype reflection_axis: str, or None
 
         :param tiny_shift: Apply a tiny (subpixel) shift to the outer boundary so
@@ -649,9 +651,9 @@ class Grid:
         self.outer_boundary = outer_boundary
         self.tiny_shift = tiny_shift
 
-        if reflection_axis not in ("x", "y", "z", "xy", "yz", "xz", None):
+        if reflection_axis not in ("x", "y", "z", "xy", "yz", "xz", "xyz", None):
             raise ValueError(
-                "reflection_axis has to be one between x, y, z, xy, yz, xz, or None"
+                "reflection_axis has to be one between x, y, z, xy, yz, xz, xyz, or None"
             )
 
         self.reflection_axis = reflection_axis
