@@ -95,6 +95,7 @@ TwoPunctures::center_offset[2] = 0.0\
     assert tp2.S_minus == (-1.6, -2.0, -2.4)
     assert tp2.center_offset == (3, 0, 0)
 
+    # Note, we have to swap x z in the vectors!
     expected_str = """\
 ADMBase::initial_data = "twopunctures"
 ADMBase::initial_lapse = "psi^n"
@@ -108,21 +109,21 @@ TwoPunctures::target_m_plus = 1
 TwoPunctures::target_m_minus = 2
 TwoPunctures::par_m_plus = 1
 TwoPunctures::par_m_minus = 2
-TwoPunctures::par_P_plus[0] = 0.1
+TwoPunctures::par_P_plus[0] = 0.3
 TwoPunctures::par_P_plus[1] = 0.2
-TwoPunctures::par_P_plus[2] = 0.3
-TwoPunctures::par_P_minus[0] = 0.4
+TwoPunctures::par_P_plus[2] = 0.1
+TwoPunctures::par_P_minus[0] = 0.6
 TwoPunctures::par_P_minus[1] = 0.5
-TwoPunctures::par_P_minus[2] = 0.6
-TwoPunctures::par_S_plus[0] = -0.1
+TwoPunctures::par_P_minus[2] = 0.4
+TwoPunctures::par_S_plus[0] = -0.3
 TwoPunctures::par_S_plus[1] = -0.2
-TwoPunctures::par_S_plus[2] = -0.3
-TwoPunctures::par_S_minus[0] = -1.6
+TwoPunctures::par_S_plus[2] = -0.1
+TwoPunctures::par_S_minus[0] = -2.4
 TwoPunctures::par_S_minus[1] = -2.0
-TwoPunctures::par_S_minus[2] = -2.4
-TwoPunctures::center_offset[0] = 3.0
+TwoPunctures::par_S_minus[2] = -1.6
+TwoPunctures::center_offset[0] = 0.0
 TwoPunctures::center_offset[1] = 0.0
-TwoPunctures::center_offset[2] = 0.0
+TwoPunctures::center_offset[2] = 3.0
 TwoPunctures::swap_xz = yes\
 """
 

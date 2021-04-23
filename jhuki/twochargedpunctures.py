@@ -70,16 +70,32 @@ class TwoChargedPunctures(TwoPunctures):
 
         :param momenta_plus: Array with the linear momenta along the three directions for the
                             black hole on the positive side of the x (or z) axis.
+                             If ``swap_xz`` is True, these are the values after swapping.
+                             For example ``(0, 0, 0.5)`` is a vector along the z axis.
+                             (This is the opposite of what happens in ``TwoPunctures``, where
+                              you have to define the values before swapping)
         :type momenta_plus: list/tuple
         :param momenta_minus: Array with the linear momenta along the three directions for the
                              black hole on the positive side of the x (or z) axis.
+                             If ``swap_xz`` is True, these are the values after swapping.
+                             For example ``(0, 0, 0.5)`` is a vector along the z axis.
+                             (This is the opposite of what happens in ``TwoPunctures``, where
+                              you have to define the values before swapping)
         :type momenta_minus: list/tuple
 
         :param chi_plus: Array with the dimensionless_spin along the three directions for the
                         black hole on the positive side of the x (or z) axis.
+                             If ``swap_xz`` is True, these are the values after swapping.
+                             For example ``(0, 0, 0.5)`` is a vector along the z axis.
+                             (This is the opposite of what happens in ``TwoPunctures``, where
+                              you have to define the values before swapping)
         :type chi_plus: list/tuple
         :param chi_minus: Array with the dimensionless spin along the three directions for the
                          black hole on the positive side of the x (or z) axis.
+                             If ``swap_xz`` is True, these are the values after swapping.
+                             For example ``(0, 0, 0.5)`` is a vector along the z axis.
+                             (This is the opposite of what happens in ``TwoPunctures``, where
+                              you have to define the values before swapping)
         :type chi_minus: list/tuple
 
         :param swap_xz: If True, activate the ``swap_xz`` parameter in TwoPunctures.
