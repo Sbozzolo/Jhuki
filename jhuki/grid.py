@@ -536,7 +536,8 @@ class Grid:
 
     :ivar reflection_axis: If None, reflection symmetry is not enabled.
                            If 'x', 'y', or 'z', enable reflection symmetry
-                           along that axis.
+                           along that axis. If 'xy', 'yz', or 'xz', enable
+                           reflection symmetry along two axis.
     :vartype reflection_axis: str, or None
 
     :ivar num_ghost: Number of ghost zones.
@@ -569,7 +570,8 @@ class Grid:
 
         :param reflection_axis: If None, reflection symmetry is not enabled.
                                 If 'x', 'y', or 'z', enable reflection symmetry
-                                along that axis.
+                                along that axis. If 'xy', 'yz', or 'xz', enable
+                                reflection symmetry along two axis.
         :vartype reflection_axis: str, or None
 
         :param tiny_shift: Apply a tiny (subpixel) shift to the outer boundary so
@@ -647,9 +649,9 @@ class Grid:
         self.outer_boundary = outer_boundary
         self.tiny_shift = tiny_shift
 
-        if reflection_axis not in ("x", "y", "z", None):
+        if reflection_axis not in ("x", "y", "z", "xy", "yz", "xz", None):
             raise ValueError(
-                "reflection_axis has to be one between x, y, z, or None"
+                "reflection_axis has to be one between x, y, z, xy, yz, xz, or None"
             )
 
         self.reflection_axis = reflection_axis
@@ -734,21 +736,22 @@ CoordBase::domainsize = "minmax"
 CoordBase::xmax = {outer_boundary_plus}
 CoordBase::ymax = {outer_boundary_plus}
 CoordBase::zmax = {outer_boundary_plus}
-CoordBase::xmin = {outer_boundary_minus if self.reflection_axis != 'x' else 0}
-CoordBase::ymin = {outer_boundary_minus if self.reflection_axis != 'y' else 0}
-CoordBase::zmin = {outer_boundary_minus if self.reflection_axis != 'z' else 0}
+CoordBase::xmin = {0 if (self.reflection_axis is not None and 'x' in self.reflection_axis) else outer_boundary_minus}
+CoordBase::ymin = {0 if (self.reflection_axis is not None and 'y' in self.reflection_axis) else outer_boundary_minus}
+CoordBase::zmin = {0 if (self.reflection_axis is not None and 'z' in self.reflection_axis) else outer_boundary_minus}
 CoordBase::dx = {self.dx_coarse}
 CoordBase::dy = {self.dx_coarse}
 CoordBase::dz = {self.dx_coarse}"""
         )
 
         if self.reflection_axis:
-            ret.append(
-                f"""\
-ReflectionSymmetry::reflection_{self.reflection_axis} = yes
-ReflectionSymmetry::avoid_origin_{self.reflection_axis} = no
-CoordBase::boundary_shiftout_{self.reflection_axis}_lower = 1"""
-            )
+            for ref_axis in self.reflection_axis:
+                ret.append(
+                    f"""\
+ReflectionSymmetry::reflection_{ref_axis} = yes
+ReflectionSymmetry::avoid_origin_{ref_axis} = no
+CoordBase::boundary_shiftout_{ref_axis}_lower = 1"""
+                )
 
         ret.append(
             assign_parameter(

@@ -402,7 +402,7 @@ def test_set_dt_max_grid(a_grid):
 
     # Test with tiny_shift and reflection symmetry
     grido = gr.Grid((mr1,), outer_boundary=5, tiny_shift=True, num_ghost=4,
-                    reflection_axis="z")
+                    reflection_axis="xz")
 
     outer_boundary_plus = 5 + 0.25 / 7
 
