@@ -322,12 +322,15 @@ CoordBase::zmin = -10
 CoordBase::dx = 2.0
 CoordBase::dy = 2.0
 CoordBase::dz = 2.0
+
 CarpetRegrid2::num_centres = 2
 Carpet::max_refinement_levels = 6
 Carpet::time_refinement_factors = "[1,1,2,4,8,16]"
+
 {a_grid.refinement_centers[0].parfile_code}
 {a_grid.refinement_centers[1].parfile_code}\
 """
+
     assert a_grid.parfile_code == expected_str
 
     grid_symmetry_x = gr.Grid(
@@ -359,15 +362,19 @@ CoordBase::zmin = -10
 CoordBase::dx = 2.0
 CoordBase::dy = 2.0
 CoordBase::dz = 2.0
-ReflectionSymmetry::reflection_x = yes
-ReflectionSymmetry::avoid_origin_x = no
+
+ReflectionSymmetry::reflection_x     = yes
+ReflectionSymmetry::avoid_origin_x   = no
 CoordBase::boundary_shiftout_x_lower = 1
+
 CarpetRegrid2::num_centres = 2
 Carpet::max_refinement_levels = 6
 Carpet::time_refinement_factors = "[1,1,2,4,8,16]"
+
 {a_grid.refinement_centers[0].parfile_code}
 {a_grid.refinement_centers[1].parfile_code}\
 """
+
     assert grid_symmetry_x.parfile_code == expected_str
 
 
@@ -408,7 +415,7 @@ def test_set_dt_max_grid(a_grid):
 
     assert str(outer_boundary_plus) in grido.parfile_code
 
-    assert "ReflectionSymmetry::reflection_z = yes" in grido.parfile_code
+    assert "ReflectionSymmetry::reflection_z     = yes" in grido.parfile_code
 
     assert grido.num_ghost == 4
 

@@ -743,16 +743,18 @@ CoordBase::ymin = {0 if (self.reflection_axis is not None and 'y' in self.reflec
 CoordBase::zmin = {0 if (self.reflection_axis is not None and 'z' in self.reflection_axis) else outer_boundary_minus}
 CoordBase::dx = {self.dx_coarse}
 CoordBase::dy = {self.dx_coarse}
-CoordBase::dz = {self.dx_coarse}"""
+CoordBase::dz = {self.dx_coarse}
+"""
         )
 
         if self.reflection_axis:
             for ref_axis in self.reflection_axis:
                 ret.append(
                     f"""\
-ReflectionSymmetry::reflection_{ref_axis} = yes
-ReflectionSymmetry::avoid_origin_{ref_axis} = no
-CoordBase::boundary_shiftout_{ref_axis}_lower = 1"""
+ReflectionSymmetry::reflection_{ref_axis}     = yes
+ReflectionSymmetry::avoid_origin_{ref_axis}   = no
+CoordBase::boundary_shiftout_{ref_axis}_lower = 1
+"""
                 )
 
         ret.append(
@@ -771,6 +773,10 @@ CoordBase::boundary_shiftout_{ref_axis}_lower = 1"""
                 "time_refinement_factors", self.time_refinement_factors
             )
         )
+
+        # Will add a blank line
+        ret.append("")
+
         for center in self.refinement_centers:
             ret.append(center.parfile_code)
         return "\n".join(ret)
