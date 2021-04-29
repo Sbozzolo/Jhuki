@@ -1,0 +1,163 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jhuki.simfactory &#8212; Jhuki 0.1.0-dev5 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">jhuki.simfactory</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jhuki.simfactory</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="c1"># Copyright (C) 2020-2021 Gabriele Bozzola</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software; you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation; either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful, but WITHOUT</span>
+<span class="c1"># ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS</span>
+<span class="c1"># FOR A PARTICULAR PURPOSE. See the GNU General Public License for more</span>
+<span class="c1"># details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># this program; if not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
+
+<span class="sd">&quot;&quot;&quot;The :py:mod:`~.simfactory` module provides functions to interface with</span>
+<span class="sd">SimFactory.</span>
+
+<span class="sd">The available functions are: - :py:func:`~.simfactory_option`, which helps</span>
+<span class="sd">setting up options that are controllable by SimFactory.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="simfactory_option"><a class="viewcode-back" href="../../simfactory_ref.html#jhuki.simfactory.simfactory_option">[docs]</a><span class="k">def</span> <span class="nf">simfactory_option</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set a variable to a SimFactory-controllable parameter.</span>
+
+<span class="sd">    SimFactory can define arbitrary parameters using the ``--define`` keyword.</span>
+<span class="sd">    With this function, you can define a variable that takes a specified default</span>
+<span class="sd">    value, unless the keyword is used.</span>
+
+<span class="sd">    For example:</span>
+
+<span class="sd">    .. code-block::python</span>
+
+<span class="sd">        par_b = simfactory_option(&quot;@PARB@&quot;, 6.5)</span>
+
+<span class="sd">    par_b is a Python variable with the value 6.5 unless ``--define PARB=XX`` is</span>
+<span class="sd">    passed to SimFactory. The way this works is that SimFactory performs a</span>
+<span class="sd">    substitution of objects with the double @ symbols. For this reason, the</span>
+<span class="sd">    name parameter to this function has to be surrounded by @.</span>
+
+<span class="sd">    We convert all the numbers to floats, so if you need integers, you have to</span>
+<span class="sd">    explicitly cast the variable to int, for example:</span>
+
+<span class="sd">    .. code-block::python</span>
+
+<span class="sd">        num_ref_radii = int(simfactory_option(&quot;@REFLEVELS@&quot;, 10))</span>
+
+<span class="sd">    :param name: Name of the SimFactory define key. It has to be with surrounded</span>
+<span class="sd">                 by @, for example, @XMAX@.</span>
+<span class="sd">    :type name: str</span>
+<span class="sd">    :param default: Default value that the variable has to have if define is not</span>
+<span class="sd">                    specified.</span>
+<span class="sd">    :type default: int, float, or str</span>
+
+<span class="sd">    :returns: The default value if the define key is not passed to SimFactory,</span>
+<span class="sd">              otherwise the value defined with SimFactory.</span>
+<span class="sd">    :rtype: float or str (integers are converted)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;name has to a string, it is </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># If default is a string, we will keep it a string. If it is an int, we</span>
+    <span class="c1"># convert it to float. Often one sets parameter like par_b = 6, but here 6</span>
+    <span class="c1"># has to be intended as a float, or it can cause troubles for other</span>
+    <span class="c1"># calculations.</span>
+    <span class="n">type_</span> <span class="o">=</span> <span class="nb">float</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">type_</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;@&quot;</span> <span class="k">else</span> <span class="n">type_</span><span class="p">(</span><span class="n">default</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">jhuki.simfactory</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Gabriele Bozzola.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

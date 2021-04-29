@@ -1,0 +1,237 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jhuki.parfile &#8212; Jhuki 0.1.0-dev5 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">jhuki.parfile</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jhuki.parfile</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="c1"># Copyright (C) 2020-2021 Gabriele Bozzola</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software; you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation; either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful, but WITHOUT</span>
+<span class="c1"># ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS</span>
+<span class="c1"># FOR A PARTICULAR PURPOSE. See the GNU General Public License for more</span>
+<span class="c1"># details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># this program; if not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="sd">&quot;&quot;&quot;The :py:mod:`~.parfile` module provides functions to programmatically write</span>
+<span class="sd">parameter files. The main functions provided are:</span>
+
+<span class="sd">- :py:func:`~.write_one_parfile_from_template`. This function takes a Python</span>
+<span class="sd">  string template, a dictionary with the instructions to perform the</span>
+<span class="sd">  substitution, and the name of the file where to write the output.</span>
+<span class="sd">- :py:func:`~.write_many_parfiles_from_template`. This function calls the</span>
+<span class="sd">  previous function (:py:func:`~.write_one_parfile_from_template`) multiple times</span>
+<span class="sd">  on a multiple substitution lists to produce multiple files.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">Template</span>
+
+<span class="kn">from</span> <span class="nn">jhuki</span> <span class="kn">import</span> <span class="n">__version__</span>
+
+
+<div class="viewcode-block" id="write_one_parfile_from_template"><a class="viewcode-back" href="../../parfile_ref.html#jhuki.parfile.write_one_parfile_from_template">[docs]</a><span class="k">def</span> <span class="nf">write_one_parfile_from_template</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">sub_dict</span><span class="p">,</span> <span class="n">out_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a parfile to out_file from template with substitution</span>
+<span class="sd">    specified by the dictionary sub_dict.</span>
+
+<span class="sd">    We add an header with the list of variables that were introduced.</span>
+
+<span class="sd">    :param template: Basic template with parameters that have to be</span>
+<span class="sd">                     substituted. It follows Python&#39;s template</span>
+<span class="sd">                     conventions, so the variables to be substituted</span>
+<span class="sd">                     are to be prefixed with a dollar sign.</span>
+<span class="sd">    :type template: str</span>
+<span class="sd">    :param sub_dict: Dictionary that maps entries that have to be</span>
+<span class="sd">                     substituted with their value.</span>
+<span class="sd">    :type sub_dict: dict</span>
+<span class="sd">    :param out_file: Path of the output file</span>
+<span class="sd">    :type out_file: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># We add an header to save what variables were substituted</span>
+    <span class="n">substituted_variables</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sub_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="c1"># We cast everything to string and substitute all the newlines</span>
+        <span class="c1"># with commented newlines so that we can ensure that multiline</span>
+        <span class="c1"># parameters are properly commented.</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"># &quot;</span><span class="p">)</span>
+        <span class="n">substituted_variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">substituted_variables_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">substituted_variables</span><span class="p">)</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">################################################################################</span>
+<span class="s2"># Variables introduced by Jhuki (version: </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">################################################################################</span>
+
+<span class="si">{</span><span class="n">substituted_variables_str</span><span class="si">}</span><span class="s2"></span>
+
+<span class="s2">&quot;&quot;&quot;</span>
+
+    <span class="n">template_with_header</span> <span class="o">=</span> <span class="n">header</span> <span class="o">+</span> <span class="n">template</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_</span><span class="p">:</span>
+        <span class="n">file_</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Template</span><span class="p">(</span><span class="n">template_with_header</span><span class="p">)</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">sub_dict</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="write_many_parfiles_from_template"><a class="viewcode-back" href="../../parfile_ref.html#jhuki.parfile.write_many_parfiles_from_template">[docs]</a><span class="k">def</span> <span class="nf">write_many_parfiles_from_template</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">subs_dict</span><span class="p">,</span> <span class="n">out_file_prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write several parfiles from the template with substitution specified by the</span>
+<span class="sd">    dictionary sub_dict_list. The dictionary has to have as keys the variables to</span>
+<span class="sd">    be substituted and as values:</span>
+<span class="sd">    - &quot;scalars&quot; for those values that have to be the same in all the parfiles</span>
+<span class="sd">    - lists, with one entry per file, for those that have to be change file by file.</span>
+
+<span class="sd">    For example: {&#39;dx&#39;: [1, 2], &#39;dy&#39;: 3} will create two files with</span>
+<span class="sd">    &#39;dx = 1&#39; and &#39;dx = 2&#39; and &#39;dy = 3&#39; in both cases.</span>
+
+<span class="sd">    We add an header with the list of variables that were introduced.</span>
+
+<span class="sd">    :param template: Basic template with parameters that have to be</span>
+<span class="sd">                     substituted. It follows Python&#39;s template</span>
+<span class="sd">                     conventions, so the variables to be substituted</span>
+<span class="sd">                     are to be prefixed with a dollar sign.</span>
+<span class="sd">    :type template: str</span>
+<span class="sd">    :param subs_dict: Dictionary that maps entries that have to be</span>
+<span class="sd">                     substituted with their value, one per each file.</span>
+<span class="sd">                     The values of the dictionary have to be lists or &quot;scalars&quot;</span>
+<span class="sd">                     (if they have to have the same value for the files).</span>
+<span class="sd">    :type subs_dict: dict with lists as values</span>
+<span class="sd">    :param out_file_prefix: Path of the output files, without the extension &quot;.par&quot;.</span>
+<span class="sd">                            The parfiles will be saved as ``{out_file_prefix}1.par``,</span>
+<span class="sd">                            ``{out_file_prefix}2.par``, and so on.</span>
+<span class="sd">    :type out_file: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># We check that all the lists with more than one element have the same length</span>
+    <span class="n">list_lengths</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">subs_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Here we have greater than one because we allow for 0 elements</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">list_lengths</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Substitution lists have different lengths.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">list_lengths</span><span class="p">:</span>
+        <span class="n">number_of_parfiles</span> <span class="o">=</span> <span class="n">list_lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">number_of_parfiles</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing </span><span class="si">{</span><span class="n">number_of_parfiles</span><span class="si">}</span><span class="s2"> parfiles&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Next, we ensure that all the elements are lists</span>
+    <span class="n">sub_dict_list</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">v</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">subs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Now we &quot;broadcast&quot; the scalar elements to list. With this,</span>
+    <span class="c1"># sub_dict_broadcast will have lists with the same length</span>
+    <span class="c1"># (= the number of parfiles)</span>
+    <span class="n">sub_dict_broadcast</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># else here is when the lists have only one element</span>
+        <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">v</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">number_of_parfiles</span> <span class="k">else</span> <span class="n">v</span> <span class="o">*</span> <span class="n">number_of_parfiles</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sub_dict_list</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Now we loop over the sub_dict_broadcast and create one parfile</span>
+    <span class="c1"># for each entry</span>
+    <span class="k">for</span> <span class="n">num_parfile</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_parfiles</span><span class="p">):</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">out_file_prefix</span><span class="si">}{</span><span class="n">num_parfile</span><span class="si">}</span><span class="s2">.par&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">subs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">num_parfile</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sub_dict_broadcast</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">write_one_parfile_from_template</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">subs</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">jhuki.parfile</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Gabriele Bozzola.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

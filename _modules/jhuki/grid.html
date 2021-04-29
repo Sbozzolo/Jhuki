@@ -1,0 +1,872 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jhuki.grid &#8212; Jhuki 0.1.0-dev5 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">jhuki.grid</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jhuki.grid</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="c1"># Copyright (C) 2020-2021 Gabriele Bozzola</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software; you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation; either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful, but WITHOUT</span>
+<span class="c1"># ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS</span>
+<span class="c1"># FOR A PARTICULAR PURPOSE. See the GNU General Public License for more</span>
+<span class="c1"># details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># this program; if not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="sd">&quot;&quot;&quot;The :py:mod:`~.grid` module provides infrastructure to work with the grid</span>
+<span class="sd">structure of a simulation.</span>
+
+<span class="sd">The module provides a class :py:class:`~.RefinementCenter` which contains all</span>
+<span class="sd">information for the refinement structure around a given refinement center. One</span>
+<span class="sd">or more :py:class:`~.RefinementCenter` objects form a :py:class:`~.Grid`, which</span>
+<span class="sd">has the entire information on a computational grid. The object can produce</span>
+<span class="sd">parfile code or can be printed to give an overview of the grid structure.</span>
+
+<span class="sd">One of the most important functions provided in this module is</span>
+<span class="sd">:py:func:`~.set_dt_max_grid`. The function takes two arguments: a</span>
+<span class="sd">:py:class:`~.Grid` and the maximum timestep that you want the grid to have. The</span>
+<span class="sd">return value is a new :py:class:`~.Grid` which is identical to the input one,</span>
+<span class="sd">with the exception that the timestep of the outermost refinement levels is</span>
+<span class="sd">synced so that the maximum timestep on the grid is the one you provided. This</span>
+<span class="sd">function is important because it can be used to produce grids that satisfy CFL</span>
+<span class="sd">conditions (like the ones due to damp_lorenz or eta_beta).</span>
+
+<span class="sd">Warning: at the moment we only support grids in which the three dimensions are</span>
+<span class="sd">the same in resolution and extent.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+
+<div class="viewcode-block" id="set_dt_max_grid"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.set_dt_max_grid">[docs]</a><span class="k">def</span> <span class="nf">set_dt_max_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">dt_max</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Grid` with maximum timestep smaller than</span>
+<span class="sd">    the given one.</span>
+
+<span class="sd">    This is achieved by applying :py:func:`~.set_dt_max` to each refinement</span>
+<span class="sd">    center.</span>
+
+<span class="sd">    This function is very important! Several equations have a maximum timestep</span>
+<span class="sd">    allowed for numerical stability (e.g., the shift gauge evolution equation</span>
+<span class="sd">    and its parameter eta_beta).</span>
+
+<span class="sd">    :param grid: Grid that has to be adjusted.</span>
+<span class="sd">    :type grid: :py:class:`~.Grid`</span>
+<span class="sd">    :param dt_max: Maximum timestep allowed.</span>
+<span class="sd">    :type dt_max: float</span>
+
+<span class="sd">    :returns: Grid with maximum timestep smaller than the given one.</span>
+<span class="sd">    :rtype: :py:class:`~.Grid`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: Add type checks</span>
+
+    <span class="c1"># When we work with grids where different refinement centers have a</span>
+    <span class="c1"># different number of levels, it can happen that some centers end up</span>
+    <span class="c1"># completely synced up. But at the end of the day, we only care about the</span>
+    <span class="c1"># center with the largest number of levels. we have already checked that all</span>
+    <span class="c1"># the refinement centers are compatible. So here we can just focus on the</span>
+    <span class="c1"># one with the most number of levels.</span>
+
+    <span class="n">new_center_with_most_levels</span> <span class="o">=</span> <span class="n">set_dt_max</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">center_with_most_levels</span><span class="p">,</span> <span class="n">dt_max</span>
+    <span class="p">)</span>
+    <span class="n">num_levels_synced</span> <span class="o">=</span> <span class="n">new_center_with_most_levels</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span>
+
+    <span class="n">new_refinement_centers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="c1"># TODO: FINISH HERE</span>
+
+    <span class="k">for</span> <span class="n">ref_center</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">refinement_centers</span><span class="p">:</span>
+        <span class="c1"># We set dx and cfl reading it from new_center_with_most_levels.</span>
+        <span class="c1"># The -1 is because we start counting from zero</span>
+        <span class="n">index_level</span> <span class="o">=</span> <span class="n">ref_center</span><span class="o">.</span><span class="n">num_refinement_levels</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="c1"># Here we take care of the two options: we have to sync all the levels,</span>
+        <span class="c1"># or we have to sync only some of the levels</span>
+        <span class="n">num_levels_with_dt_coarse</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">index_level</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">index_level</span> <span class="o">&lt;</span> <span class="n">num_levels_synced</span>
+            <span class="k">else</span> <span class="n">num_levels_synced</span>
+        <span class="p">)</span>
+
+        <span class="n">new_ref_center</span> <span class="o">=</span> <span class="n">RefinementCenter</span><span class="p">(</span>
+            <span class="n">refinement_radii</span><span class="o">=</span><span class="n">ref_center</span><span class="o">.</span><span class="n">refinement_radii</span><span class="p">,</span>
+            <span class="n">dx_fine</span><span class="o">=</span><span class="n">new_center_with_most_levels</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="n">index_level</span><span class="p">],</span>
+            <span class="n">cfl_fine</span><span class="o">=</span><span class="n">new_center_with_most_levels</span><span class="o">.</span><span class="n">cfl</span><span class="p">[</span><span class="n">index_level</span><span class="p">],</span>
+            <span class="n">center_num</span><span class="o">=</span><span class="n">ref_center</span><span class="o">.</span><span class="n">center_num</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">ref_center</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
+            <span class="n">num_levels_with_dt_coarse</span><span class="o">=</span><span class="n">num_levels_with_dt_coarse</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">new_refinement_centers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_ref_center</span><span class="p">)</span>
+
+    <span class="n">new_refinement_centers</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">new_refinement_centers</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Grid</span><span class="p">(</span>
+        <span class="n">new_refinement_centers</span><span class="p">,</span>
+        <span class="n">outer_boundary</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">outer_boundary</span><span class="p">,</span>
+        <span class="n">num_ghost</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span>
+        <span class="n">reflection_axis</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">,</span>
+        <span class="n">tiny_shift</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">tiny_shift</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="set_dt_max"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.set_dt_max">[docs]</a><span class="k">def</span> <span class="nf">set_dt_max</span><span class="p">(</span><span class="n">ref_center</span><span class="p">,</span> <span class="n">dt_max</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.RefinementCenter` with maximum timestep smaller than</span>
+<span class="sd">    the given one. This is achieved by changing the parameter</span>
+<span class="sd">    `~.num_levels_with_dt_coarse`.</span>
+
+<span class="sd">    This function is smart enough to preserve existing synced levels, so you can</span>
+<span class="sd">    apply it as many times as you want (for diverse conditions).</span>
+
+<span class="sd">    This function is very important! Several equations have a maximum timestep</span>
+<span class="sd">    allowed for numerical stability (e.g., the shift gauge evolution equation</span>
+<span class="sd">    and its parameter eta_beta).</span>
+
+<span class="sd">    :param ref_center: Grid that has to be adjusted.</span>
+<span class="sd">    :type ref_center: :py:class:`~.RefinementCenter`</span>
+<span class="sd">    :param dt_max: Maximum allowed timestep.</span>
+<span class="sd">    :type dt_max: float</span>
+
+<span class="sd">    :returns: New grid with maximum timestep smaller than ``dt_max``.</span>
+<span class="sd">    :rtype: :py:class:`~.RefinementCenter`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Add type checks</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Working with grid:&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">ref_center</span><span class="p">)</span>
+
+    <span class="c1"># What level has dt &lt; dt_max?</span>
+    <span class="c1">#</span>
+    <span class="c1"># ref_center.dt is from the coarsest, so if we can walk through the list and</span>
+    <span class="c1"># see when dt_max &gt;= dt. In this, we have to pay attention to the fact that</span>
+    <span class="c1"># ref_center might have num_levels_with_dt_coarse != 1. In this case, we have</span>
+    <span class="c1"># to skip the refinement levels that are synced and starting from the latest</span>
+    <span class="c1"># synced one. This explains the `ref_center.num_levels_with_dt_coarse - 1`, if</span>
+    <span class="c1"># we have three levels evolving with dt_coarse, the index of the last level</span>
+    <span class="c1"># of this group is 2.</span>
+    <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+        <span class="n">ref_center</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">ref_center</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">ref_center</span><span class="o">.</span><span class="n">dt</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">dt_max</span> <span class="o">&gt;=</span> <span class="n">dt</span><span class="p">:</span>
+            <span class="c1"># Let us go through an example. Say we have 3 refinement levels (2</span>
+            <span class="c1"># refinement radii), with dx = [4, 2, 1] and dt = [2, 1, 0.5]. We</span>
+            <span class="c1"># then set dt_max = 0.75, what we want is that all the three levels</span>
+            <span class="c1"># evolve with the same dt = 0.5. num_levels_with_dt_coarse has to</span>
+            <span class="c1"># be 3. This explains the `+ 1`; we always have to at least one</span>
+            <span class="c1"># level evolving at dt_coarse</span>
+            <span class="n">num_levels_with_dt_coarse</span> <span class="o">=</span> <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="c1"># Here we create a new object and what we change is only</span>
+            <span class="c1"># num_levels_with_dt_coarse</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;New num_levels_with_dt_coarse: </span><span class="si">{</span><span class="n">num_levels_with_dt_coarse</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">RefinementCenter</span><span class="p">(</span>
+                <span class="n">refinement_radii</span><span class="o">=</span><span class="n">ref_center</span><span class="o">.</span><span class="n">refinement_radii</span><span class="p">,</span>
+                <span class="n">dx_fine</span><span class="o">=</span><span class="n">ref_center</span><span class="o">.</span><span class="n">dx_fine</span><span class="p">,</span>
+                <span class="n">cfl_fine</span><span class="o">=</span><span class="n">ref_center</span><span class="o">.</span><span class="n">cfl_fine</span><span class="p">,</span>
+                <span class="n">center_num</span><span class="o">=</span><span class="n">ref_center</span><span class="o">.</span><span class="n">center_num</span><span class="p">,</span>
+                <span class="n">position</span><span class="o">=</span><span class="n">ref_center</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
+                <span class="n">num_levels_with_dt_coarse</span><span class="o">=</span><span class="n">num_levels_with_dt_coarse</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Given dt_max </span><span class="si">{</span><span class="n">dt_max</span><span class="si">}</span><span class="s2"> is larger than the smallest timestep in &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;the grid </span><span class="si">{</span><span class="n">ref_center</span><span class="o">.</span><span class="n">dt_fine</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RefinementCenter"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.RefinementCenter">[docs]</a><span class="k">class</span> <span class="nc">RefinementCenter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The :py:class:`~.RefinementCenter` class contains all the information related</span>
+<span class="sd">    to the grid structure around one single refinement center. This is not the</span>
+<span class="sd">    entire grid structure for a simulation (unless you have only one refinement</span>
+<span class="sd">    center).</span>
+
+<span class="sd">    This class is immutable.</span>
+
+<span class="sd">    To understand this class always keep in mind the following example, where we</span>
+<span class="sd">    draw a simple grid with three refinement levels (two refinement radii). The</span>
+<span class="sd">    numbers 500, 250, 125, 0 are hypothetical refinement radii that you would</span>
+<span class="sd">    put in CarpetRegrid.</span>
+
+<span class="sd">    ..code-block::</span>
+
+<span class="sd">        |------------------|------------------|------------------|</span>
+<span class="sd">       500                250                125                 0</span>
+<span class="sd">       O.B.             R.R. 1             R.R. 2</span>
+<span class="sd">              R.L. 0              R.L. 1             R.L. 2</span>
+
+
+<span class="sd">    :ivar refinement_radii: Radii over which a change in refinement happens.</span>
+<span class="sd">                            This is what you would write in CarpetRegrid.</span>
+<span class="sd">                            Refinement levels are always stored from the largest</span>
+<span class="sd">                            to the smallest (as in Carpet).</span>
+<span class="sd">    :vartype refinement_radii: list of float</span>
+
+<span class="sd">    :ivar center_num: Identifier of the current mesh refinement hierarchy in the</span>
+<span class="sd">                      context of the entire grid. In CarpetRegrid, you specify</span>
+<span class="sd">                      num_centers, then each hierarchy is identified with</span>
+<span class="sd">                      numbers from 1 to num_centers. This is that number.</span>
+<span class="sd">    :vartype center_num: int</span>
+
+<span class="sd">    :ivar position: (x, y, z) position of the refinement center in the overall</span>
+<span class="sd">                     grid.</span>
+<span class="sd">    :vartype position: list or tuple of float</span>
+
+<span class="sd">    :ivar dx_fine: Resolution at the finest level (near the center).</span>
+<span class="sd">                   We assume that the three directions have the same resolution.</span>
+<span class="sd">    :vartype dx_fine: float</span>
+
+<span class="sd">    :ivar cfl_fine: CFL number at the finest level (near the center).</span>
+<span class="sd">                      This is dt_finest/dx_finest.</span>
+<span class="sd">    :vartype cfl_fine: float</span>
+
+<span class="sd">    :ivar dt_fine: Timestep at the finest level (near the center).</span>
+<span class="sd">    :vartype dt_fine: float</span>
+
+<span class="sd">    :ivar num_levels_with_dt_coarse: How many refinement levels should have the</span>
+<span class="sd">                                     same dt as the coarsest refinement level.</span>
+<span class="sd">                                     This will translate to</span>
+<span class="sd">                                     Carpet::time_refinement_factors. The</span>
+<span class="sd">                                     minimum is 1 (the coarsest level itself).</span>
+<span class="sd">    :vartype num_levels_with_dt_coarse: int</span>
+
+<span class="sd">    :ivar num_refinement_radii: Number of radii over which a change in</span>
+<span class="sd">                                refinement happens. This is not the number of</span>
+<span class="sd">                                refinement levels (while the two are off by</span>
+<span class="sd">                                one). This is the number of radii in</span>
+<span class="sd">                                CarpetRegrid.</span>
+<span class="sd">    :vartype num_refinement_radii: int</span>
+
+<span class="sd">    :ivar num_refinement_levels: Number of distinct refinement levels. This is</span>
+<span class="sd">                                 the same as the number of different resolutions</span>
+<span class="sd">                                 over a grid and it is equal to the number of</span>
+<span class="sd">                                 refinement radii + 1.</span>
+
+<span class="sd">    :vartype num_refinement_levels: int</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">refinement_radii</span><span class="p">,</span>
+        <span class="n">dx_fine</span><span class="p">,</span>
+        <span class="n">cfl_fine</span><span class="p">,</span>
+        <span class="n">center_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">num_levels_with_dt_coarse</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        :param refinement_radii: Radii over which a change in refinement happens.</span>
+<span class="sd">                                 This is what you would write in CarpetRegrid.</span>
+<span class="sd">        :type refinement_radii: list of float</span>
+
+<span class="sd">        :param center_num: Identifier of the current mesh refinement hierarchy</span>
+<span class="sd">                           in the context of the entire grid. In CarpetRegrid,</span>
+<span class="sd">                           you specify num_centers, then each hierarchy is</span>
+<span class="sd">                           identified with numbers from 1 to num_centers. This</span>
+<span class="sd">                           is that number.</span>
+<span class="sd">        :type center_num: int</span>
+
+<span class="sd">        :param position: (x, y, z) position of the refinement center in the</span>
+<span class="sd">                         overall grid.</span>
+<span class="sd">        :type position: list or tuple of float</span>
+
+<span class="sd">        :param dx_fine: Resolution at the finest level (near the center).</span>
+<span class="sd">                        We assume that the three directions have the same</span>
+<span class="sd">                        resolution.</span>
+<span class="sd">        :type dx_fine: float</span>
+
+<span class="sd">        :param cfl_fine: CFL number at the finest level (near the center).</span>
+<span class="sd">                           This is dt_finest/dx_finest.</span>
+<span class="sd">        :type cfl_fine: float</span>
+
+<span class="sd">        :param num_levels_with_dt_coarse: How many refinement levels should have</span>
+<span class="sd">                                     the same dt as the coarsest refinement</span>
+<span class="sd">                                     level. This will translate to</span>
+<span class="sd">                                     Carpet::time_refinement_factors. The</span>
+<span class="sd">                                     minimum is 1 (the coarsest level itself).</span>
+<span class="sd">        :type num_levels_with_dt_coarse: int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">refinement_radii</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">refinement_radii</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;refinement_radii has to be a list or a tuple&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">refinement_radii</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;refinement_radii cannot be empty&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">refinement_radii</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">refinement_radii</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_num</span> <span class="o">=</span> <span class="n">center_num</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dx_fine</span> <span class="o">=</span> <span class="n">dx_fine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfl_fine</span> <span class="o">=</span> <span class="n">cfl_fine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt_fine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfl_fine</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx_fine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span> <span class="o">=</span> <span class="n">num_levels_with_dt_coarse</span>
+
+        <span class="c1"># If I have only one level evolving with dt_coarse, this has to be the</span>
+        <span class="c1"># outermost level, so I have no levels synced-up, which means that the</span>
+        <span class="c1"># CFL factor has to be the same for all the levels, up to the coarsest.</span>
+        <span class="c1"># Then, for every additional level evolved with dt_coarse, the CFL</span>
+        <span class="c1"># factor is halved.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfl_coarse</span> <span class="o">=</span> <span class="n">cfl_fine</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">**</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_radii</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refinement_radii</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_radii</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># If I have 0 levels, then dx_coarse and dx_fine are the same, and then</span>
+        <span class="c1"># for each level I gain a factor of 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx_fine</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt_coarse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfl_coarse</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="mi">1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;num_levels_with_dt_coarse has to be between 1 and &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;its value is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">dx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Grid spacing at each refinement level.</span>
+
+<span class="sd">        :rtype: tuple of float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">**</span> <span class="n">level_num</span>
+            <span class="k">for</span> <span class="n">level_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Timesteps at each refinement level.</span>
+
+<span class="sd">        :rtype: tuple of float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Here we have to take care of the synced levels.</span>
+        <span class="c1">#</span>
+        <span class="c1"># Consider the example with 4 refinement levels, 2 evolving at</span>
+        <span class="c1"># dt_coarse.</span>
+        <span class="c1">#</span>
+        <span class="c1"># Let&#39;s set dt_coarse = dt0</span>
+        <span class="c1">#</span>
+        <span class="c1"># OB---------RR1----------RR2---------RR3----------RR4---------0</span>
+        <span class="c1">#      dt0        dt0         dt0/2       dt0/4         dt/8</span>
+        <span class="c1">#</span>
+        <span class="c1"># We have a factor 0.5 ** (lvl_num - self.num_levels_with_dt_coarse + 1)</span>
+        <span class="c1"># because when we have to start dividing by two the first level in which</span>
+        <span class="c1"># lvl_num = self.num_levels_with_dt_coarse, at which point the exponent</span>
+        <span class="c1"># has to be 1. We have to start dividing when lvl_num =</span>
+        <span class="c1"># self.num_levels_with_dt_coarse because we start counting from 0, so in</span>
+        <span class="c1"># the previous example we had num_levels_with_dt_coarse = 2, so levels 0</span>
+        <span class="c1"># and 1 evolve with dt0, but level 2 evolves with dt0/2.</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dt_coarse</span>
+            <span class="k">if</span> <span class="n">lvl_num</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_coarse</span>
+            <span class="o">*</span> <span class="mf">0.5</span> <span class="o">**</span> <span class="p">(</span><span class="n">lvl_num</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">lvl_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">rl_synced_every</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of iterations at which all the refinement levels are at the</span>
+<span class="sd">        same time.</span>
+
+<span class="sd">        :rtype: int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parfile_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">assign_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;CarpetRegrid2::</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">center_num</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;CarpetRegrid2::</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">center_num</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assign_parameter</span><span class="p">(</span><span class="s2">&quot;num_levels&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="p">))</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assign_parameter</span><span class="p">(</span><span class="s2">&quot;position_x&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assign_parameter</span><span class="p">(</span><span class="s2">&quot;position_y&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assign_parameter</span><span class="p">(</span><span class="s2">&quot;position_z&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+        <span class="k">for</span> <span class="n">radius_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_radii</span><span class="p">):</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">assign_parameter</span><span class="p">(</span>
+                    <span class="s2">&quot;radius&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">refinement_radii</span><span class="p">[</span><span class="n">radius_num</span><span class="p">],</span>
+                    <span class="n">index</span><span class="o">=</span><span class="n">radius_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># radii are counted from 1 in Carpet</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;:py:class:`~.RefinementCenter` is an immutable object.&quot;&quot;&quot;</span>
+        <span class="n">hash_refinement_radii</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refinement_radii</span><span class="p">)</span>
+        <span class="n">hash_center_num</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">center_num</span><span class="p">)</span>
+        <span class="n">hash_position</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+        <span class="n">hash_dx_fine</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_fine</span><span class="p">)</span>
+        <span class="n">hash_cfl_fine</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfl_fine</span><span class="p">)</span>
+        <span class="n">hash_num_levels_with_dt_coarse</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span><span class="p">)</span>
+
+        <span class="c1"># ^ = bitwise xor</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">hash_refinement_radii</span>
+            <span class="o">^</span> <span class="n">hash_center_num</span>
+            <span class="o">^</span> <span class="n">hash_position</span>
+            <span class="o">^</span> <span class="n">hash_dx_fine</span>
+            <span class="o">^</span> <span class="n">hash_cfl_fine</span>
+            <span class="o">^</span> <span class="n">hash_num_levels_with_dt_coarse</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">cfl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return dt/dx at every level.</span>
+
+<span class="sd">        :returns: Courant factor on every refinement level.</span>
+<span class="sd">        :rtype: tuple</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">ref_level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="RefinementCenter.get_summary"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.RefinementCenter.get_summary">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outer_boundary</span><span class="o">=</span><span class="mf">9999.999</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a summary of all the refinement levels.</span>
+
+<span class="sd">        :param outer_boundary: Outer boundary of the grid. Used only for the</span>
+<span class="sd">                               aesthetics of having a table full of data. If</span>
+<span class="sd">                               None, a large number full of nines will be used.</span>
+<span class="sd">        :type outer_boundary: float or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">refinement_level_boundaries</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">outer_boundary</span><span class="p">,)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">refinement_radii</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,)</span>
+        <span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Refinement center </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">center_num</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(x = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2"> 4.2f</span><span class="si">}</span><span class="s2">,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; y = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2"> 4.2f</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; z = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2"> 4.2f</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ref_level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="p">):</span>
+            <span class="n">prev_radius</span> <span class="o">=</span> <span class="n">refinement_level_boundaries</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span>
+            <span class="n">curr_radius</span> <span class="o">=</span> <span class="n">refinement_level_boundaries</span><span class="p">[</span><span class="n">ref_level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Ref level </span><span class="si">{</span><span class="n">ref_level</span><span class="si">:</span><span class="s2">2</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Radius range = (</span><span class="si">{</span><span class="n">prev_radius</span><span class="si">:</span><span class="s2"> 9.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">curr_radius</span><span class="si">:</span><span class="s2"> 9.3f</span><span class="si">}</span><span class="s2">), &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;dx = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;dt = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;cfl = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cfl</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Grid"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.Grid">[docs]</a><span class="k">class</span> <span class="nc">Grid</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A grid is a collection of :py:class:`~.RefinementCenter` objects. For example,</span>
+<span class="sd">    a binary black hole simulation will likely have two</span>
+<span class="sd">    :py:class:`~.RefinementCenter`, centered each black hole.</span>
+
+<span class="sd">    This class immutable.</span>
+
+<span class="sd">    :ivar outer_boundary: Radius of the outer boundary of the overall grid. We</span>
+<span class="sd">                          assume that it is the same for the three directions.</span>
+<span class="sd">    :vartype outer_boundary: float or None</span>
+
+<span class="sd">    :ivar num_levels_with_dt_coarse: How many refinement levels should have the</span>
+<span class="sd">                                     same dt as the coarsest refinement level.</span>
+<span class="sd">                                     This will translate to</span>
+<span class="sd">                                     Carpet::time_refinement_factors. The</span>
+<span class="sd">                                     minimum is 1 (the coarsest level itself).</span>
+<span class="sd">                                     This is extracted from the refinement center</span>
+<span class="sd">                                     with the most number of levels.</span>
+<span class="sd">    :vartype num_levels_with_dt_coarse: int</span>
+
+<span class="sd">    :ivar max_num_refinement_levels: Maximum number of refinement levels on the</span>
+<span class="sd">                                     grid.</span>
+<span class="sd">    :vartype max_num_refinement_levels: int</span>
+
+<span class="sd">    :ivar refinement_centers: Input list, sorted by ``center_num``.</span>
+<span class="sd">    :vartype refinement_centers: list or tuple of :py:class:`~.RefinementCenter`</span>
+
+<span class="sd">    :ivar dx_coarse: Resolution on the coarsest level.</span>
+<span class="sd">    :vartype dx_coarse: float</span>
+<span class="sd">    :ivar dt_coarse: Timestep on the coarsest level.</span>
+<span class="sd">    :vartype dt_coarse: float</span>
+<span class="sd">    :ivar cfl_coarse: Courant factor on the coarsest level.</span>
+<span class="sd">    :vartype cfl_coarse: float</span>
+
+<span class="sd">    :ivar center_with_most_levels: Refinement center that has the largest number of</span>
+<span class="sd">                                   levels.</span>
+<span class="sd">    :vartype center_with_most_levels: :py:class:`~.RefinementCenter`</span>
+
+<span class="sd">    :ivar reflection_axis: If None, reflection symmetry is not enabled.</span>
+<span class="sd">                           If &#39;x&#39;, &#39;y&#39;, or &#39;z&#39;, enable reflection symmetry</span>
+<span class="sd">                           along that axis. If &#39;xy&#39;, &#39;yz&#39;, or &#39;xz&#39;, enable</span>
+<span class="sd">                           reflection symmetry along two axis. If &#39;xyz&#39;, enable</span>
+<span class="sd">                           octant symmetry.</span>
+<span class="sd">    :vartype reflection_axis: str, or None</span>
+
+<span class="sd">    :ivar num_ghost: Number of ghost zones.</span>
+<span class="sd">    :vartype num_ghost: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">refinement_centers</span><span class="p">,</span>
+        <span class="n">outer_boundary</span><span class="p">,</span>
+        <span class="n">num_ghost</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">reflection_axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">tiny_shift</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        The different refinement centers that form a grid must be compatible.</span>
+<span class="sd">        They must have different ``center_num`` (as they identify different</span>
+<span class="sd">        refinement centers) and compatible resolutions and timesteps in the</span>
+<span class="sd">        outer levels. They can have different number of levels.</span>
+
+<span class="sd">        :param refinement_centers: List of mesh refinements corresponding to</span>
+<span class="sd">                                   the various different centers.</span>
+<span class="sd">        :type refinement_centers: list or tuple of :py:class:`~.RefinementCenter`</span>
+
+<span class="sd">        :ivar outer_boundary: Radius of the outer boundary of the overall grid.</span>
+<span class="sd">                              We assume that it is the same for the three</span>
+<span class="sd">                              directions.</span>
+<span class="sd">        :vartype outer_boundary: float or None</span>
+
+<span class="sd">        :param reflection_axis: If None, reflection symmetry is not enabled.</span>
+<span class="sd">                                If &#39;x&#39;, &#39;y&#39;, or &#39;z&#39;, enable reflection symmetry</span>
+<span class="sd">                                along that axis. If &#39;xy&#39;, &#39;yz&#39;, or &#39;xz&#39;, enable</span>
+<span class="sd">                                reflection symmetry along two axis. If &#39;xyz&#39;,</span>
+<span class="sd">                                enable octant symmetry.</span>
+<span class="sd">        :vartype reflection_axis: str, or None</span>
+
+<span class="sd">        :param tiny_shift: Apply a tiny (subpixel) shift to the outer boundary so</span>
+<span class="sd">                           that the point (0,0,0) is not on the grid. This is</span>
+<span class="sd">                           hard-coded to be 1/7 of a pixel.</span>
+<span class="sd">        :type tiny_shift: bool</span>
+
+<span class="sd">        :param num_ghost: Number of ghost zones.</span>
+<span class="sd">        :type num_ghost: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">RefinementCenter</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">refinement_centers</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input is not a list of RefinementCenter&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_centers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">refinement_centers</span><span class="p">)</span>
+
+        <span class="c1"># Check that all the grids have different center_num</span>
+        <span class="n">centers</span> <span class="o">=</span> <span class="p">{</span><span class="n">ref_center</span><span class="o">.</span><span class="n">center_num</span> <span class="k">for</span> <span class="n">ref_center</span> <span class="ow">in</span> <span class="n">refinement_centers</span><span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">centers</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_centers</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Grids do not have all different IDs&quot;</span><span class="p">)</span>
+
+        <span class="c1"># The grids are compatible if the have the same dx_coarse, dt_coarse,</span>
+        <span class="c1"># and num_levels_with_dt_coarse</span>
+
+        <span class="n">dx_coarse</span> <span class="o">=</span> <span class="p">{</span><span class="n">ref_center</span><span class="o">.</span><span class="n">dx_coarse</span> <span class="k">for</span> <span class="n">ref_center</span> <span class="ow">in</span> <span class="n">refinement_centers</span><span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dx_coarse</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Grids have different resolution at the coarsest level&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">dt_coarse</span> <span class="o">=</span> <span class="p">{</span><span class="n">ref_center</span><span class="o">.</span><span class="n">dt_coarse</span> <span class="k">for</span> <span class="n">ref_center</span> <span class="ow">in</span> <span class="n">refinement_centers</span><span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt_coarse</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Grids have different timesteps at the coarsest level&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Tuple unpacking on a set with one single element extract the only</span>
+        <span class="c1"># element</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="p">,)</span> <span class="o">=</span> <span class="n">dx_coarse</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_coarse</span><span class="p">,)</span> <span class="o">=</span> <span class="n">dt_coarse</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfl_coarse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_coarse</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_num_refinement_levels</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="n">ref_center</span><span class="o">.</span><span class="n">num_refinement_levels</span>
+            <span class="k">for</span> <span class="n">ref_center</span> <span class="ow">in</span> <span class="n">refinement_centers</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Now we go level by level and check that they all have the same timestep</span>
+        <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_num_refinement_levels</span><span class="p">):</span>
+            <span class="n">dts</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">ref_center</span><span class="o">.</span><span class="n">dt</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">ref_center</span> <span class="ow">in</span> <span class="n">refinement_centers</span>
+                <span class="k">if</span> <span class="n">level</span> <span class="o">&lt;</span> <span class="n">ref_center</span><span class="o">.</span><span class="n">num_refinement_levels</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Grids have different timesteps at level </span><span class="si">{level}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># num_levels_with_dt_coarse is the one of the center with the most levels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_with_most_levels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">refinement_centers</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">num_refinement_levels</span>
+        <span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">center_with_most_levels</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">refinement_centers</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">refinement_centers</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">center_num</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_boundary</span> <span class="o">=</span> <span class="n">outer_boundary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tiny_shift</span> <span class="o">=</span> <span class="n">tiny_shift</span>
+
+        <span class="k">if</span> <span class="n">reflection_axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;xy&quot;</span><span class="p">,</span> <span class="s2">&quot;yz&quot;</span><span class="p">,</span> <span class="s2">&quot;xz&quot;</span><span class="p">,</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;reflection_axis has to be one between x, y, z, xy, yz, xz, xyz, or None&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span> <span class="o">=</span> <span class="n">reflection_axis</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span> <span class="o">=</span> <span class="n">num_ghost</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">time_refinement_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return parameters for Carpet to set up time_refinement_factors.&quot;&quot;&quot;</span>
+
+        <span class="n">time_refinement</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">time_refinement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&quot;[&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Let us consider an example with four levels (two radii), two levels</span>
+        <span class="c1"># synced. In this case, max_levels = 4, synced_levels = 2. What we want</span>
+        <span class="c1"># as output is &quot;[1,1,2,4]&quot;. So, we have to append &#39;1&#39; twice, one for</span>
+        <span class="c1"># each synced_levels, then 2 and 3. What we do is we define a variable</span>
+        <span class="c1"># `power` that takes the value 0 when we are in the &quot;synced_levels&quot;</span>
+        <span class="c1"># region, and then it grows after that.</span>
+
+        <span class="n">power</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_num_refinement_levels</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">level</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span><span class="p">:</span>
+                <span class="n">power</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">time_refinement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">2</span><span class="o">**</span><span class="n">power</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">time_refinement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Adding a comma at each iteration leaves us with a trailing comma that</span>
+        <span class="c1"># we don&#39;t want. Instead, we want the closing bracket.</span>
+        <span class="n">time_refinement</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;]&quot;&#39;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">time_refinement</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">rl_synced_every</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of iterations at which all the refinement levels are at the</span>
+<span class="sd">        same time.</span>
+
+<span class="sd">        :rtype: int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_with_most_levels</span><span class="o">.</span><span class="n">rl_synced_every</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parfile_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">assign_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">thorn</span><span class="o">=</span><span class="s2">&quot;Carpet&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">thorn</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiny_shift</span><span class="p">:</span>
+            <span class="n">dx_fine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">**</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_num_refinement_levels</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="p">)</span>
+            <span class="c1"># We add a 1/7 of a grid point</span>
+            <span class="n">outer_boundary_plus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_boundary</span> <span class="o">+</span> <span class="n">dx_fine</span> <span class="o">/</span> <span class="mf">7.0</span>
+            <span class="n">outer_boundary_minus</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">outer_boundary</span> <span class="o">+</span> <span class="n">dx_fine</span> <span class="o">/</span> <span class="mf">7.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outer_boundary_plus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_boundary</span>
+            <span class="n">outer_boundary_minus</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">outer_boundary</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">CartGrid3D::type = &quot;coordbase&quot;</span>
+<span class="s2">Carpet::domain_from_coordbase = &quot;yes&quot;</span>
+
+<span class="s2">Driver::ghost_size = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::boundary_size_x_lower = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::boundary_size_y_lower = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::boundary_size_z_lower = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::boundary_size_x_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::boundary_size_y_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::boundary_size_z_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
+
+<span class="s2">CoordBase::domainsize = &quot;minmax&quot;</span>
+<span class="s2">CoordBase::xmax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::ymax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::zmax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::xmin = </span><span class="si">{</span><span class="mi">0</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;x&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">)</span> <span class="k">else</span> <span class="n">outer_boundary_minus</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::ymin = </span><span class="si">{</span><span class="mi">0</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;y&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">)</span> <span class="k">else</span> <span class="n">outer_boundary_minus</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::zmin = </span><span class="si">{</span><span class="mi">0</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;z&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">)</span> <span class="k">else</span> <span class="n">outer_boundary_minus</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::dx = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::dy = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::dz = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ref_axis</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">ReflectionSymmetry::reflection_</span><span class="si">{</span><span class="n">ref_axis</span><span class="si">}</span><span class="s2">     = yes</span>
+<span class="s2">ReflectionSymmetry::avoid_origin_</span><span class="si">{</span><span class="n">ref_axis</span><span class="si">}</span><span class="s2">   = no</span>
+<span class="s2">CoordBase::boundary_shiftout_</span><span class="si">{</span><span class="n">ref_axis</span><span class="si">}</span><span class="s2">_lower = 1</span>
+<span class="s2">&quot;&quot;&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">assign_parameter</span><span class="p">(</span>
+                <span class="s2">&quot;num_centres&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_centers</span><span class="p">,</span> <span class="n">thorn</span><span class="o">=</span><span class="s2">&quot;CarpetRegrid2&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">assign_parameter</span><span class="p">(</span>
+                <span class="s2">&quot;max_refinement_levels&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num_refinement_levels</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">assign_parameter</span><span class="p">(</span>
+                <span class="s2">&quot;time_refinement_factors&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_refinement_factors</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Will add a blank line</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">center</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">refinement_centers</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">center</span><span class="o">.</span><span class="n">parfile_code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">jhuki.grid</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Gabriele Bozzola.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

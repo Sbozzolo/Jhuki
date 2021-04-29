@@ -1,0 +1,171 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reference on jhuki.parfile &#8212; Jhuki 0.1.0-dev5 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reference on jhuki.grid" href="grid_ref.html" />
+    <link rel="prev" title="Overview" href="index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="grid_ref.html" title="Reference on jhuki.grid"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Overview"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Reference on jhuki.parfile</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-jhuki.parfile">
+<span id="reference-on-jhuki-parfile"></span><h1>Reference on jhuki.parfile<a class="headerlink" href="#module-jhuki.parfile" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-jhuki.parfile" title="jhuki.parfile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">parfile</span></code></a> module provides functions to programmatically write
+parameter files. The main functions provided are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#jhuki.parfile.write_one_parfile_from_template" title="jhuki.parfile.write_one_parfile_from_template"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_one_parfile_from_template()</span></code></a>. This function takes a Python
+string template, a dictionary with the instructions to perform the
+substitution, and the name of the file where to write the output.</p></li>
+<li><p><a class="reference internal" href="#jhuki.parfile.write_many_parfiles_from_template" title="jhuki.parfile.write_many_parfiles_from_template"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_many_parfiles_from_template()</span></code></a>. This function calls the
+previous function (<a class="reference internal" href="#jhuki.parfile.write_one_parfile_from_template" title="jhuki.parfile.write_one_parfile_from_template"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_one_parfile_from_template()</span></code></a>) multiple times
+on a multiple substitution lists to produce multiple files.</p></li>
+</ul>
+<dl class="py function">
+<dt id="jhuki.parfile.write_many_parfiles_from_template">
+<code class="sig-prename descclassname"><span class="pre">jhuki.parfile.</span></code><code class="sig-name descname"><span class="pre">write_many_parfiles_from_template</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subs_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file_prefix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/parfile.html#write_many_parfiles_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.parfile.write_many_parfiles_from_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write several parfiles from the template with substitution specified by the
+dictionary sub_dict_list. The dictionary has to have as keys the variables to
+be substituted and as values:
+- “scalars” for those values that have to be the same in all the parfiles
+- lists, with one entry per file, for those that have to be change file by file.</p>
+<p>For example: {‘dx’: [1, 2], ‘dy’: 3} will create two files with
+‘dx = 1’ and ‘dx = 2’ and ‘dy = 3’ in both cases.</p>
+<p>We add an header with the list of variables that were introduced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template</strong> (<em>str</em>) – Basic template with parameters that have to be
+substituted. It follows Python’s template
+conventions, so the variables to be substituted
+are to be prefixed with a dollar sign.</p></li>
+<li><p><strong>subs_dict</strong> (<em>dict with lists as values</em>) – Dictionary that maps entries that have to be
+substituted with their value, one per each file.
+The values of the dictionary have to be lists or “scalars”
+(if they have to have the same value for the files).</p></li>
+<li><p><strong>out_file_prefix</strong> – Path of the output files, without the extension “.par”.
+The parfiles will be saved as <code class="docutils literal notranslate"><span class="pre">{out_file_prefix}1.par</span></code>,
+<code class="docutils literal notranslate"><span class="pre">{out_file_prefix}2.par</span></code>, and so on.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jhuki.parfile.write_one_parfile_from_template">
+<code class="sig-prename descclassname"><span class="pre">jhuki.parfile.</span></code><code class="sig-name descname"><span class="pre">write_one_parfile_from_template</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/parfile.html#write_one_parfile_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.parfile.write_one_parfile_from_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a parfile to out_file from template with substitution
+specified by the dictionary sub_dict.</p>
+<p>We add an header with the list of variables that were introduced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template</strong> (<em>str</em>) – Basic template with parameters that have to be
+substituted. It follows Python’s template
+conventions, so the variables to be substituted
+are to be prefixed with a dollar sign.</p></li>
+<li><p><strong>sub_dict</strong> (<em>dict</em>) – Dictionary that maps entries that have to be
+substituted with their value.</p></li>
+<li><p><strong>out_file</strong> (<em>str</em>) – Path of the output file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Overview</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="grid_ref.html"
+                        title="next chapter">Reference on jhuki.grid</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="grid_ref.html" title="Reference on jhuki.grid"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Overview"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Reference on jhuki.parfile</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Gabriele Bozzola.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reference on jhuki.simfactory &#8212; Jhuki 0.1.0-dev5 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reference on jhuki.twopunctures" href="twopunctures_ref.html" />
+    <link rel="prev" title="Reference on jhuki.grid" href="grid_ref.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="twopunctures_ref.html" title="Reference on jhuki.twopunctures"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="grid_ref.html" title="Reference on jhuki.grid"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Reference on jhuki.simfactory</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-jhuki.simfactory">
+<span id="reference-on-jhuki-simfactory"></span><h1>Reference on jhuki.simfactory<a class="headerlink" href="#module-jhuki.simfactory" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-jhuki.simfactory" title="jhuki.simfactory"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simfactory</span></code></a> module provides functions to interface with
+SimFactory.</p>
+<p>The available functions are: - <a class="reference internal" href="#jhuki.simfactory.simfactory_option" title="jhuki.simfactory.simfactory_option"><code class="xref py py-func docutils literal notranslate"><span class="pre">simfactory_option()</span></code></a>, which helps
+setting up options that are controllable by SimFactory.</p>
+<dl class="py function">
+<dt id="jhuki.simfactory.simfactory_option">
+<code class="sig-prename descclassname"><span class="pre">jhuki.simfactory.</span></code><code class="sig-name descname"><span class="pre">simfactory_option</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/simfactory.html#simfactory_option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.simfactory.simfactory_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a variable to a SimFactory-controllable parameter.</p>
+<p>SimFactory can define arbitrary parameters using the <code class="docutils literal notranslate"><span class="pre">--define</span></code> keyword.
+With this function, you can define a variable that takes a specified default
+value, unless the keyword is used.</p>
+<p>For example:</p>
+<p>par_b is a Python variable with the value 6.5 unless <code class="docutils literal notranslate"><span class="pre">--define</span> <span class="pre">PARB=XX</span></code> is
+passed to SimFactory. The way this works is that SimFactory performs a
+substitution of objects with the double &#64; symbols. For this reason, the
+name parameter to this function has to be surrounded by &#64;.</p>
+<p>We convert all the numbers to floats, so if you need integers, you have to
+explicitly cast the variable to int, for example:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the SimFactory define key. It has to be with surrounded
+by &#64;, for example, &#64;XMAX&#64;.</p></li>
+<li><p><strong>default</strong> (<em>int</em><em>, </em><em>float</em><em>, or </em><em>str</em>) – Default value that the variable has to have if define is not
+specified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The default value if the define key is not passed to SimFactory,
+otherwise the value defined with SimFactory.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float or str (integers are converted)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="grid_ref.html"
+                        title="previous chapter">Reference on jhuki.grid</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="twopunctures_ref.html"
+                        title="next chapter">Reference on jhuki.twopunctures</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="twopunctures_ref.html" title="Reference on jhuki.twopunctures"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="grid_ref.html" title="Reference on jhuki.grid"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Reference on jhuki.simfactory</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Gabriele Bozzola.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>
