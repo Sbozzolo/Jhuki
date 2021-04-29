@@ -31,6 +31,8 @@ parameter files. The main functions provided are:
 import logging
 from string import Template
 
+from jhuki import __version__
+
 
 def write_one_parfile_from_template(template, sub_dict, out_file):
     """Write a parfile to out_file from template with substitution
@@ -63,7 +65,7 @@ def write_one_parfile_from_template(template, sub_dict, out_file):
 
     header = f"""\
 ################################################################################
-# Variables introduced by Jhuki
+# Variables introduced by Jhuki (version: {__version__})
 ################################################################################
 
 {substituted_variables_str}
