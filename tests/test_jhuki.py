@@ -20,4 +20,4 @@ import jhuki
 
 
 def test_init():
-    assert jhuki.__version__ == "0.1.0"
+    assert jhuki.__version__ == "0.1.0-dev5"

@@ -28,6 +28,9 @@ simulations for the `Einstein Toolkit` (or Cactus-based codes).
 * Generate binary black hole configurations for quasi-circular mergers
   (automatically setting the linear momenta)
 
+You can find the reference material at the website
+[sbozzolo.github.io/Jhuki](https://sbozzolo.github.io/Jhuki).
+
 ## Examples
 
 ### Working with grid structures

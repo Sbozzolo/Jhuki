@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jhuki"
-version = "0.1.0-dev3"
+version = "0.1.0-dev5"
 description = "Utilities to prepare Einstein Toolkit simulations"
 authors = ["Gabriele Bozzola <gabrielebozzola@arizona.edu>"]
 license = "GPL-3.0-or-later"
@@ -21,6 +21,7 @@ sympy = "^1.7.1"
 black = "^20.8b1"
 pytest = "^6.2.1"
 pytest-cov = "^2.10.1"
+Sphinx = "^3.5.4"
 
 [tool.black]
 line-length = 79
