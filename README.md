@@ -27,6 +27,7 @@ simulations for the `Einstein Toolkit` (or Cactus-based codes).
   level and other details
 * Generate binary black hole configurations for quasi-circular mergers
   (automatically setting the linear momenta)
+* Add dissipation
 
 You can find the reference material at the website
 [sbozzolo.github.io/Jhuki](https://sbozzolo.github.io/Jhuki).
