@@ -197,6 +197,7 @@ tell you what is the test coverage.
 # Code style
 
 - We lint the code with `black -l 79`.
+- We work only with immutable structures.
 
 # What does _jhuki_ mean?
 
