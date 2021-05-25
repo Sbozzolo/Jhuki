@@ -31,8 +31,10 @@ where 0.3 is the value of ``eps_dis`` at the finest level.
 
 from functools import lru_cache
 
+from jhuki.base import BaseThorn
 
-class Dissipation:
+
+class Dissipation(BaseThorn):
     """Class that describes the dissipation. Best used in combination with helper
     functions.
 

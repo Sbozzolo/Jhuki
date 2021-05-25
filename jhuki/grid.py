@@ -43,6 +43,8 @@ from functools import lru_cache
 
 import logging
 
+from jhuki.base import BaseThorn
+
 
 def set_dt_max_grid(grid, dt_max):
     """Return a new :py:class:`~.Grid` with maximum timestep smaller than
@@ -184,7 +186,7 @@ def set_dt_max(ref_center, dt_max):
     )
 
 
-class RefinementCenter:
+class RefinementCenter(BaseThorn):
     """The :py:class:`~.RefinementCenter` class contains all the information related
     to the grid structure around one single refinement center. This is not the
     entire grid structure for a simulation (unless you have only one refinement
@@ -496,7 +498,7 @@ class RefinementCenter:
         return "\n".join(ret)
 
 
-class Grid:
+class Grid(BaseThorn):
     """A grid is a collection of :py:class:`~.RefinementCenter` objects. For example,
     a binary black hole simulation will likely have two
     :py:class:`~.RefinementCenter`, centered each black hole.
@@ -651,7 +653,16 @@ class Grid:
         self.outer_boundary = outer_boundary
         self.tiny_shift = tiny_shift
 
-        if reflection_axis not in ("x", "y", "z", "xy", "yz", "xz", "xyz", None):
+        if reflection_axis not in (
+            "x",
+            "y",
+            "z",
+            "xy",
+            "yz",
+            "xz",
+            "xyz",
+            None,
+        ):
             raise ValueError(
                 "reflection_axis has to be one between x, y, z, xy, yz, xz, xyz, or None"
             )

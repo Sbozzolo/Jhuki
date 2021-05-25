@@ -64,7 +64,7 @@ center2 = pg.RefinementCenter(refinement_radii,
 grid_not_synced = pg.Grid((center1, center2), outer_boundary=1000)
 grid_synced = pg.set_dt_max_grid(grid_not_synced, dt_max=1)
 
-print(grid_synced.parfile_code)
+print(grid_synced)
 ```
 This will output
 
@@ -143,10 +143,10 @@ twopunctures = prepare_quasicircular_inspiral(mass_ratio,
                                               coordinate_distance,
                                               dimensionless_spin_plus,
                                               dimensionless_spin_minus)
-print(twopunctures.parfile_code)
+print(twopunctures)
 ```
 
-This will an output similar to the following:
+This will produce an output similar to the following:
 
 ```
 ADMBase::initial_data = twopunctures

@@ -28,6 +28,7 @@ Some functions are provided:
 from functools import lru_cache
 
 from jhuki.externals.nrpypn import compute_quasicircular_momenta
+from jhuki.base import BaseThorn
 
 
 def prepare_quasicircular_inspiral(
@@ -91,7 +92,7 @@ def prepare_quasicircular_inspiral(
     )
 
 
-class TwoPunctures:
+class TwoPunctures(BaseThorn):
     """The :py:class:`~.TwoPunctures` class contains all the information related to
     one or two black holes, their locations, and properties.
 

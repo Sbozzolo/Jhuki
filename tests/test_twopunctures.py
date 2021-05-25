@@ -68,6 +68,7 @@ TwoPunctures::center_offset[2] = 0.0\
 """
 
     assert tp.parfile_code == expected_str
+    assert str(tp) == tp.parfile_code
 
     # Mass-ratio 2, everything else bizarre
     tp2 = jtp.TwoPunctures(
