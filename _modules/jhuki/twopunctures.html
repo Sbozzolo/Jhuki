@@ -73,6 +73,7 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 
 <span class="kn">from</span> <span class="nn">jhuki.externals.nrpypn</span> <span class="kn">import</span> <span class="n">compute_quasicircular_momenta</span>
+<span class="kn">from</span> <span class="nn">jhuki.base</span> <span class="kn">import</span> <span class="n">BaseThorn</span>
 
 
 <div class="viewcode-block" id="prepare_quasicircular_inspiral"><a class="viewcode-back" href="../../twopunctures_ref.html#jhuki.twopunctures.prepare_quasicircular_inspiral">[docs]</a><span class="k">def</span> <span class="nf">prepare_quasicircular_inspiral</span><span class="p">(</span>
@@ -136,7 +137,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TwoPunctures"><a class="viewcode-back" href="../../twopunctures_ref.html#jhuki.twopunctures.TwoPunctures">[docs]</a><span class="k">class</span> <span class="nc">TwoPunctures</span><span class="p">:</span>
+<div class="viewcode-block" id="TwoPunctures"><a class="viewcode-back" href="../../twopunctures_ref.html#jhuki.twopunctures.TwoPunctures">[docs]</a><span class="k">class</span> <span class="nc">TwoPunctures</span><span class="p">(</span><span class="n">BaseThorn</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The :py:class:`~.TwoPunctures` class contains all the information related to</span>
 <span class="sd">    one or two black holes, their locations, and properties.</span>
 

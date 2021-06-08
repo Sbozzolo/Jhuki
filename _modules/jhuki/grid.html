@@ -88,6 +88,8 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
+<span class="kn">from</span> <span class="nn">jhuki.base</span> <span class="kn">import</span> <span class="n">BaseThorn</span>
+
 
 <div class="viewcode-block" id="set_dt_max_grid"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.set_dt_max_grid">[docs]</a><span class="k">def</span> <span class="nf">set_dt_max_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">dt_max</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Grid` with maximum timestep smaller than</span>
@@ -229,7 +231,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="RefinementCenter"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.RefinementCenter">[docs]</a><span class="k">class</span> <span class="nc">RefinementCenter</span><span class="p">:</span>
+<div class="viewcode-block" id="RefinementCenter"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.RefinementCenter">[docs]</a><span class="k">class</span> <span class="nc">RefinementCenter</span><span class="p">(</span><span class="n">BaseThorn</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The :py:class:`~.RefinementCenter` class contains all the information related</span>
 <span class="sd">    to the grid structure around one single refinement center. This is not the</span>
 <span class="sd">    entire grid structure for a simulation (unless you have only one refinement</span>
@@ -541,7 +543,7 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Grid"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.Grid">[docs]</a><span class="k">class</span> <span class="nc">Grid</span><span class="p">:</span>
+<div class="viewcode-block" id="Grid"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.Grid">[docs]</a><span class="k">class</span> <span class="nc">Grid</span><span class="p">(</span><span class="n">BaseThorn</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A grid is a collection of :py:class:`~.RefinementCenter` objects. For example,</span>
 <span class="sd">    a binary black hole simulation will likely have two</span>
 <span class="sd">    :py:class:`~.RefinementCenter`, centered each black hole.</span>
@@ -696,7 +698,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">outer_boundary</span> <span class="o">=</span> <span class="n">outer_boundary</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tiny_shift</span> <span class="o">=</span> <span class="n">tiny_shift</span>
 
-        <span class="k">if</span> <span class="n">reflection_axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;xy&quot;</span><span class="p">,</span> <span class="s2">&quot;yz&quot;</span><span class="p">,</span> <span class="s2">&quot;xz&quot;</span><span class="p">,</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">reflection_axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;xy&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;yz&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;xz&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;reflection_axis has to be one between x, y, z, xy, yz, xz, xyz, or None&quot;</span>
             <span class="p">)</span>

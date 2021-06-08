@@ -49,8 +49,145 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="reference-on-jhuki-twopunctures">
-<h1>Reference on jhuki.twopunctures<a class="headerlink" href="#reference-on-jhuki-twopunctures" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-jhuki.twopunctures">
+<span id="reference-on-jhuki-twopunctures"></span><h1>Reference on jhuki.twopunctures<a class="headerlink" href="#module-jhuki.twopunctures" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-jhuki.twopunctures" title="jhuki.twopunctures"><code class="xref py py-mod docutils literal notranslate"><span class="pre">twopunctures</span></code></a> module provides infrastructure to prepare
+binary black simulations.</p>
+<p>Some functions are provided:
+- <a class="reference internal" href="#jhuki.twopunctures.prepare_quasicircular_inspiral" title="jhuki.twopunctures.prepare_quasicircular_inspiral"><code class="xref py py-func docutils literal notranslate"><span class="pre">prepare_quasicircular_inspiral()</span></code></a>, which returns a <a class="reference internal" href="#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a></p>
+<blockquote>
+<div><p>with parameters set up to lead to a quasi-circular inspiral. The linear momenta
+required for this are computed with a 3.5PN expansion by NRPyPN.</p>
+</div></blockquote>
+<dl class="py class">
+<dt id="jhuki.twopunctures.TwoPunctures">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jhuki.twopunctures.</span></code><code class="sig-name descname"><span class="pre">TwoPunctures</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass_plus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_minus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momenta_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momenta_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_xz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">give_bare_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'twopunctures-averaged'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/twopunctures.html#TwoPunctures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.twopunctures.TwoPunctures" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a> class contains all the information related to
+one or two black holes, their locations, and properties.</p>
+<p>This class can set up parameters for the <code class="docutils literal notranslate"><span class="pre">TwoPunctures</span></code> thorn making sure that
+the center of mass is in the center of the grid (unless differently specified).</p>
+<p>This class is immutable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mass_plus</strong> (<em>float</em>) – Mass of the black hole on the positive side of the x (or z) axis.</p></li>
+<li><p><strong>mass_minus</strong> (<em>float</em>) – Mass of the black hole on the negative side of the x (or z) axis.</p></li>
+<li><p><strong>coordinate_separation</strong> (<em>float</em>) – Initial coordinate separation.</p></li>
+<li><p><strong>coord_x_plus</strong> (<em>float</em>) – Initial coordinate location of the center of the black hole on the
+positive side of the x (or z) axis.</p></li>
+<li><p><strong>coord_x_minus</strong> (<em>float</em>) – Initial coordinate location of the center of the black hole on the
+negative side of the x (or z) axis.</p></li>
+<li><p><strong>momenta_plus</strong> (<em>list/tuple</em>) – Array with the linear momenta along the three directions for the
+black hole on the positive side of the x (or z) axis.</p></li>
+<li><p><strong>momenta_minus</strong> (<em>list/tuple</em>) – Array with the linear momenta along the three directions for the
+black hole on the positive side of the x (or z) axis.</p></li>
+<li><p><strong>chi_plus</strong> (<em>list/tuple</em>) – Array with the dimensionless_spin along the three directions for the
+black hole on the positive side of the x (or z) axis.</p></li>
+<li><p><strong>chi_minus</strong> (<em>list/tuple</em>) – Array with the dimensionless spin along the three directions for the
+black hole on the positive side of the x (or z) axis.</p></li>
+<li><p><strong>S_plus</strong> (<em>list/tuple</em>) – Array with the angular momentum along the three directions for the
+black hole on the positive side of the x (or z) axis.</p></li>
+<li><p><strong>S_minus</strong> (<em>list/tuple</em>) – Array with the angular momentum along the three directions for the
+black hole on the positive side of the x (or z) axis.</p></li>
+<li><p><strong>center_offset</strong> (<em>list/tuple</em>) – Move the geometric center of the system by this amount.</p></li>
+<li><p><strong>swap_xz</strong> (<em>bool</em>) – If True, activate the <code class="docutils literal notranslate"><span class="pre">swap_xz</span></code> parameter in TwoPunctures.</p></li>
+<li><p><strong>give_bare_mass</strong> (<em>bool</em>) – If True, set this parameter to True in the parfile.</p></li>
+<li><p><strong>initial_alpha</strong> (<em>str</em>) – Prescription to use for the initial lapse.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mass_plus</strong> (<em>float</em>) – Mass of the black hole on the positive side of the x (or z) axis.</p></li>
+<li><p><strong>mass_minus</strong> (<em>float</em>) – Mass of the black hole on the negative side of the x (or z) axis.</p></li>
+<li><p><strong>coordinate_separation</strong> (<em>float</em>) – Initial coordinate separation.</p></li>
+<li><p><strong>par_b</strong> (<em>float</em>) – Half of the initial separation.</p></li>
+<li><p><strong>momenta_plus</strong> (<em>list/tuple</em>) – <p>Array with the linear momenta along the three directions for the
+black hole on the positive side of the x (or z) axis.
+If <code class="docutils literal notranslate"><span class="pre">swap_xz</span></code> is True, these are the values after swapping.
+For example <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0.5)</span></code> is a vector along the z axis.
+(This is the opposite of what happens in <code class="docutils literal notranslate"><span class="pre">TwoPunctures</span></code>, where</p>
+<blockquote>
+<div><p>you have to define the values before swapping)</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>momenta_minus</strong> (<em>list/tuple</em>) – <p>Array with the linear momenta along the three directions for the
+black hole on the positive side of the x (or z) axis.
+If <code class="docutils literal notranslate"><span class="pre">swap_xz</span></code> is True, these are the values after swapping.
+For example <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0.5)</span></code> is a vector along the z axis.
+(This is the opposite of what happens in <code class="docutils literal notranslate"><span class="pre">TwoPunctures</span></code>, where</p>
+<blockquote>
+<div><p>you have to define the values before swapping)</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>chi_plus</strong> (<em>list/tuple</em>) – <p>Array with the dimensionless_spin along the three directions for the
+black hole on the positive side of the x (or z) axis.</p>
+<blockquote>
+<div><p>If <code class="docutils literal notranslate"><span class="pre">swap_xz</span></code> is True, these are the values after swapping.
+For example <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0.5)</span></code> is a vector along the z axis.
+(This is the opposite of what happens in <code class="docutils literal notranslate"><span class="pre">TwoPunctures</span></code>, where</p>
+<blockquote>
+<div><p>you have to define the values before swapping)</p>
+</div></blockquote>
+</div></blockquote>
+</p></li>
+<li><p><strong>chi_minus</strong> (<em>list/tuple</em>) – <p>Array with the dimensionless spin along the three directions for the
+black hole on the positive side of the x (or z) axis.</p>
+<blockquote>
+<div><p>If <code class="docutils literal notranslate"><span class="pre">swap_xz</span></code> is True, these are the values after swapping.
+For example <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0.5)</span></code> is a vector along the z axis.
+(This is the opposite of what happens in <code class="docutils literal notranslate"><span class="pre">TwoPunctures</span></code>, where</p>
+<blockquote>
+<div><p>you have to define the values before swapping)</p>
+</div></blockquote>
+</div></blockquote>
+</p></li>
+<li><p><strong>swap_xz</strong> (<em>bool</em>) – If True, activate the <code class="docutils literal notranslate"><span class="pre">swap_xz</span></code> parameter in TwoPunctures.</p></li>
+<li><p><strong>give_bare_mass</strong> (<em>bool</em>) – If True, set this parameter to True in the parfile.</p></li>
+<li><p><strong>initial_alpha</strong> (<em>str</em>) – Prescription to use for the initial lapse.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="jhuki.twopunctures.TwoPunctures.parfile_code">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">parfile_code</span></code><a class="headerlink" href="#jhuki.twopunctures.TwoPunctures.parfile_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the code you would put in your parfile.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jhuki.twopunctures.prepare_quasicircular_inspiral">
+<code class="sig-prename descclassname"><span class="pre">jhuki.twopunctures.</span></code><code class="sig-name descname"><span class="pre">prepare_quasicircular_inspiral</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_bare_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/twopunctures.html#prepare_quasicircular_inspiral"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.twopunctures.prepare_quasicircular_inspiral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a> that describes a quasi-circular inspiral.
+We always assume that the plus puncture is the most massive one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mass_ratio</strong> (<em>float</em>) – Mass ratio of the binary.</p></li>
+<li><p><strong>coordinate_distance</strong> (<em>float</em>) – Initial coordinate separation.</p></li>
+<li><p><strong>total_bare_mass</strong> (<em>float</em>) – Rescale masses and momenta so that the total bare mass of the
+system is this.</p></li>
+<li><p><strong>chi_plus</strong> (<em>tuple/list with three numbers</em>) – Dimensionless spin of the black hole on the positive side of the x
+(or z) axis along the three directions.</p></li>
+<li><p><strong>chi_minus</strong> (<em>tuple/list with three numbers</em>) – Dimensionless spin of the black hole on the negative side of the x
+(or z) axis along the three directions.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Unknown arguments are passed to <a class="reference internal" href="#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A <a class="reference internal" href="#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a> for a quasi-circular inspiral.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
