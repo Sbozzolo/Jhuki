@@ -81,7 +81,9 @@ def test_create_dissipation_from_grid():
     }
 
     # constant
-    ds = dis.create_dissipation_from_grid(grid, 0.1, prescription="const")
+    ds = dis.create_dissipation_from_grid(
+        grid, 0.1, prescription=dis.DissPrescription.const
+    )
 
     assert ds.epsdis_per_level == {
         0: 0.1,
@@ -94,7 +96,9 @@ def test_create_dissipation_from_grid():
     }
 
     # continuous
-    ds = dis.create_dissipation_from_grid(grid, 0.1, prescription="continuous")
+    ds = dis.create_dissipation_from_grid(
+        grid, 0.1, prescription=dis.DissPrescription.continuous
+    )
 
     assert ds.epsdis_per_level == {
         0: 0.1 / 2 ** 30,

@@ -29,6 +29,7 @@ where 0.3 is the value of ``eps_dis`` at the finest level.
 
 """
 
+import enum
 from functools import lru_cache
 
 from jhuki.base import BaseThorn
@@ -85,16 +86,27 @@ Dissipation::vars  = "{vars_str}"
 {eps_dis_str}"""
 
 
-def create_dissipation_from_grid(
-    grid, eps_dis_finest, variables=None, prescription="dtfac"
-):
-    """Create a :py:class:`~.Dissipation` object from a given :py:class:`~.Grid`.
+class DissPrescription(enum.Enum):
+    """DissPrescription for how to set up the dissipation.
 
     Three different prescriptions are available:
     - ``const``: set the same ``eps_dis`` everywhere,
     - ``dtfac``: set ``eps_dis`` proportional to the local dtfac,
-    - ``cont``: set ``eps_dis`` proportional to the local grid spacing to the power
-                of the order
+    - ``continuous``: set ``eps_dis`` proportional to the local grid spacing
+                      to the power of the order
+
+    """
+
+    const = enum.auto()
+    dtfact = enum.auto()
+    continuous = enum.auto()
+
+
+def create_dissipation_from_grid(
+    grid, eps_dis_finest, variables=None, prescription=DissPrescription.dtfact
+):
+    """Create a :py:class:`~.Dissipation` object from a given :py:class:`~.Grid`.
+
 
     The order of the dissipation is deduced from the number of ghost zones.
 
@@ -109,17 +121,16 @@ def create_dissipation_from_grid(
                       applied.
     :type variables: list of str
     :param prescription: How to set ``eps_dis``.
-    :type prescription: str
+    :type prescription: :py:class:`~.DissPrescription`
 
     :returns: Dissipation object.
     :rtype: :py:class:`~.Dissipation`
 
     """
-    known_presc = ("const", "dtfac", "continuous")
-
-    if prescription not in known_presc:
+    if not isinstance(prescription, DissPrescription):
         raise ValueError(
-            f"Unknown prescription {prescription}. Accepted values: {known_presc}"
+            f"Unknown prescription {prescription}. "
+            "Accepted values: {list(DissPrescription.__members__.keys())}"
         )
 
     order = 2 * grid.num_ghost - 1
@@ -128,10 +139,10 @@ def create_dissipation_from_grid(
     # If we have N levels, we need to set up dissipation on N + 1 zones
     num_levels = grid.max_num_refinement_levels + 1
 
-    if prescription == "const":
+    if prescription == DissPrescription.const:
         # Same everywhere
         eps_dis_levels = {level: eps_dis_finest for level in range(num_levels)}
-    elif prescription == "dtfac":
+    elif prescription == DissPrescription.dtfact:
         # Same everywhere, halved by two every time a level is synced
         # For example, if have 4 levels, 2 synced, then we should have
         # [1/4, 1/2, 1, 1] * eps_dis
@@ -155,7 +166,7 @@ def create_dissipation_from_grid(
             }
         )
 
-    elif prescription == "continuous":
+    elif prescription == DissPrescription.continuous:
         # Proportional to the local size, so there's a factor of 2**order for every
         # refinement level
         eps_dis_levels = {
