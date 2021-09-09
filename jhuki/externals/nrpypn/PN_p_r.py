@@ -61,7 +61,7 @@
 # Step 0: Add NRPy's directory to the path
 # https://stackoverflow.com/questions/16780014/import-file-from-parent-directory
 import sympy as sp  # SymPy: The Python computer algebra package upon which NRPy+ depends
-from jhuki.externals.nrpypn.NRPyPN_shortcuts import (
+from .NRPyPN_shortcuts import (
     Pt,
     Pr,
     nU,
@@ -106,7 +106,7 @@ def f_Htot_xyplane_binary(m1, m2, n12U, n21U, S1U, S2U, p1U, p2U, r):
             .subs(nU[2], zero)
         )
 
-    import jhuki.externals.nrpypn.PN_Hamiltonian_NS as H_NS
+    from . import PN_Hamiltonian_NS as H_NS
 
     H_NS.f_H_Newt__H_NS_1PN__H_NS_2PN(m1, m2, p1U, n12U, r)
     H_NS.f_H_NS_3PN(m1, m2, p1U, n12U, r)
@@ -116,7 +116,7 @@ def f_Htot_xyplane_binary(m1, m2, n12U, n21U, S1U, S2U, p1U, p2U, r):
         +H_NS.H_Newt + H_NS.H_NS_1PN + H_NS.H_NS_2PN + H_NS.H_NS_3PN
     )
 
-    import jhuki.externals.nrpypn.PN_Hamiltonian_SO as H_SO
+    from . import PN_Hamiltonian_SO as H_SO
 
     H_SO.f_H_SO_1p5PN(m1, m2, n12U, n21U, S1U, S2U, p1U, p2U, r)
     H_SO.f_H_SO_2p5PN(m1, m2, n12U, n21U, S1U, S2U, p1U, p2U, r)
@@ -125,7 +125,7 @@ def f_Htot_xyplane_binary(m1, m2, n12U, n21U, S1U, S2U, p1U, p2U, r):
         +H_SO.H_SO_1p5PN + H_SO.H_SO_2p5PN + H_SO.H_SO_3p5PN
     )
 
-    import jhuki.externals.nrpypn.PN_Hamiltonian_SS as H_SS
+    from . import PN_Hamiltonian_SS as H_SS
 
     H_SS.f_H_SS_2PN(m1, m2, S1U, S2U, nU, r)
     H_SS.f_H_SS_S1S2_3PN(m1, m2, n12U, S1U, S2U, p1U, p2U, r)
@@ -134,7 +134,7 @@ def f_Htot_xyplane_binary(m1, m2, n12U, n21U, S1U, S2U, p1U, p2U, r):
         +H_SS.H_SS_2PN + H_SS.H_SS_S1S2_3PN + H_SS.H_SS_S1sq_S2sq_3PN
     )
 
-    import jhuki.externals.nrpypn.PN_Hamiltonian_SSS as H_SSS
+    from . import PN_Hamiltonian_SSS as H_SSS
 
     H_SSS.f_H_SSS_3PN(m1, m2, n12U, n21U, S1U, S2U, p1U, p2U, r)
     Htot_xyplane_binary += make_replacements(+H_SSS.H_SSS_3PN)
@@ -143,7 +143,7 @@ def f_Htot_xyplane_binary(m1, m2, n12U, n21U, S1U, S2U, p1U, p2U, r):
 # Function for computing dr/dt
 def f_dr_dt(Htot_xyplane_binary, m1, m2, n12U, chi1U, chi2U, S1U, S2U, r):
     # First compute p_t
-    import jhuki.externals.nrpypn.PN_p_t as pt
+    from . import PN_p_t as pt
 
     pt.f_p_t(m1, m2, chi1U, chi2U, r)
 
@@ -156,12 +156,12 @@ def f_dr_dt(Htot_xyplane_binary, m1, m2, n12U, chi1U, chi2U, S1U, S2U, r):
     )
 
     # Then compute M\Omega
-    import jhuki.externals.nrpypn.PN_MOmega as MOm
+    from . import PN_MOmega as MOm
 
     MOm.f_MOmega(m1, m2, chi1U, chi2U, r)
 
     # Next compute dE_GW_dt_plus_dM_dt
-    import jhuki.externals.nrpypn.PN_dE_GW_dt_and_dM_dt as dEdt
+    from . import PN_dE_GW_dt_and_dM_dt as dEdt
 
     dEdt.f_dE_GW_dt_and_dM_dt(MOm.MOmega, m1, m2, n12U, S1U, S2U)
 

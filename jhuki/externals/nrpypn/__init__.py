@@ -25,7 +25,7 @@
 
 from sympy import N
 
-from jhuki.externals.nrpypn.NRPyPN_shortcuts import eval__P_t__and__P_r
+from .NRPyPN_shortcuts import eval__P_t__and__P_r
 
 
 def compute_quasicircular_momenta(

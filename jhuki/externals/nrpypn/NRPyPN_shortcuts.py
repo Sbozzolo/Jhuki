@@ -39,7 +39,9 @@
 # Step 0: Add NRPy's directory to the path
 # https://stackoverflow.com/questions/16780014/import-file-from-parent-directory
 import sympy as sp  # SymPy: The Python computer algebra package upon which NRPy+ depends
-import jhuki.externals.nrpypn.indexedexpNRPyPN as ixp  # NRPy+: Symbolic indexed expression (e.g., tensors, vectors, etc.) support
+from . import (
+    indexedexpNRPyPN as ixp,
+)  # NRPy+: Symbolic indexed expression (e.g., tensors, vectors, etc.) support
 
 # Step 1: Declare several global variables used
 #         throughout NRPyPN
@@ -176,12 +178,12 @@ def eval__P_t__and__P_r(
 ):
 
     # Compute p_t, the tangential component of momentum
-    import jhuki.externals.nrpypn.PN_p_t as pt
+    from . import PN_p_t as pt
 
     pt.f_p_t(m1, m2, chi1U, chi2U, r)
 
     # Compute p_r, the radial component of momentum
-    import jhuki.externals.nrpypn.PN_p_r as pr
+    from . import PN_p_r as pr
 
     pr.f_p_r(m1, m2, n12U, n21U, chi1U, chi2U, S1U, S2U, p1U, p2U, r)
 

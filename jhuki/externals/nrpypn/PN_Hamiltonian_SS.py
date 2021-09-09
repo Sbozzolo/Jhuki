@@ -44,8 +44,10 @@
 
 # Step 0: Add NRPy's directory to the path
 # https://stackoverflow.com/questions/16780014/import-file-from-parent-directory
-import jhuki.externals.nrpypn.indexedexpNRPyPN as ixp  # NRPy+: Symbolic indexed expression (e.g., tensors, vectors, etc.) support
-from jhuki.externals.nrpypn.NRPyPN_shortcuts import (
+from . import (
+    indexedexpNRPyPN as ixp,
+)  # NRPy+: Symbolic indexed expression (e.g., tensors, vectors, etc.) support
+from .NRPyPN_shortcuts import (
     div,
     dot,
     cross,

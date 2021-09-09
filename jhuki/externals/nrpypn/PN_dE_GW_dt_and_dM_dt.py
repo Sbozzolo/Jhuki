@@ -41,8 +41,10 @@
 # https://stackoverflow.com/questions/16780014/import-file-from-parent-directory
 import sys  # Standard Python modules for multiplatform OS-level functions
 import sympy as sp  # SymPy: The Python computer algebra package upon which NRPy+ depends
-import jhuki.externals.nrpypn.indexedexpNRPyPN as ixp  # NRPy+: Symbolic indexed expression (e.g., tensors, vectors, etc.) support
-from jhuki.externals.nrpypn.NRPyPN_shortcuts import (
+from . import (
+    indexedexpNRPyPN as ixp,
+)  # NRPy+: Symbolic indexed expression (e.g., tensors, vectors, etc.) support
+from .NRPyPN_shortcuts import (
     div,
     dot,
     gamma_EulerMascheroni,
