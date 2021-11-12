@@ -141,8 +141,8 @@ dimensionless_spin_minus = (0.4, -0.1, -0.2)
 
 twopunctures = prepare_quasicircular_inspiral(mass_ratio,
                                               coordinate_distance,
-                                              dimensionless_spin_plus,
-                                              dimensionless_spin_minus)
+                                              chi_plus=dimensionless_spin_plus,
+                                              chi_minus=dimensionless_spin_minus)
 print(twopunctures)
 ```
 
