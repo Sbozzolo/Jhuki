@@ -32,6 +32,7 @@ import logging
 from string import Template
 
 from jhuki import __version__
+from jhuki.base import BaseThorn
 
 
 def write_one_parfile_from_template(template, sub_dict, out_file):
@@ -55,11 +56,14 @@ def write_one_parfile_from_template(template, sub_dict, out_file):
     # We add an header to save what variables were substituted
     substituted_variables = []
     for key, val in sorted(sub_dict.items()):
-        # We cast everything to string and substitute all the newlines
-        # with commented newlines so that we can ensure that multiline
-        # parameters are properly commented.
-        val = str(val).replace("\n", "\n# ")
-        substituted_variables.append(f"# {key} = {val}")
+        # We ignore BaseThorns because they clutter the header with information
+        # that is already available in the parfile
+        if not isinstance(val, BaseThorn):
+            # We cast everything to string and substitute all the newlines with
+            # commented newlines so that we can ensure that multiline
+            # parameters are properly commented.
+            val = str(val).replace("\n", "\n# ")
+            substituted_variables.append(f"# {key} = {val}")
 
     substituted_variables_str = "\n".join(substituted_variables)
 
