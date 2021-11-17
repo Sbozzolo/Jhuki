@@ -165,8 +165,18 @@
     <span class="n">frame</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># frame.f_locals is the locals() of the calling function</span>
+        <span class="n">subs</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_locals</span>
+
+        <span class="c1"># From here, we have to remove the template variable itself (otherwise</span>
+        <span class="c1"># we would have a template-ception)</span>
+        <span class="c1">#</span>
+        <span class="c1"># The easiest way to do this is to match the value in the dictionary</span>
+        <span class="c1"># subs. This is not particularly efficient, but we expect subs to be</span>
+        <span class="c1"># small</span>
+        <span class="n">subs_no_template</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">subs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">template</span><span class="p">}</span>
+
         <span class="n">write_one_parfile_from_template</span><span class="p">(</span>
-            <span class="n">template</span><span class="p">,</span> <span class="n">sub_dict</span><span class="o">=</span><span class="n">frame</span><span class="o">.</span><span class="n">f_locals</span><span class="p">,</span> <span class="n">out_file</span><span class="o">=</span><span class="n">output_file_name</span>
+            <span class="n">template</span><span class="p">,</span> <span class="n">sub_dict</span><span class="o">=</span><span class="n">subs_no_template</span><span class="p">,</span> <span class="n">out_file</span><span class="o">=</span><span class="n">output_file_name</span>
         <span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="c1"># Ensure that we release the resources</span>
