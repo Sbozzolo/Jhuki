@@ -1,0 +1,329 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jhuki.dissipation &#8212; Jhuki 0.1.0-dev5 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">jhuki.dissipation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jhuki.dissipation</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="c1"># Copyright (C) 2020-2021 Gabriele Bozzola</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software; you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation; either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful, but WITHOUT</span>
+<span class="c1"># ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS</span>
+<span class="c1"># FOR A PARTICULAR PURPOSE. See the GNU General Public License for more</span>
+<span class="c1"># details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># this program; if not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="sd">&quot;&quot;&quot;The :py:mod:`~.dissipation` module takes care of setting parameters for the</span>
+<span class="sd">dissipation thorn. The main class is :py:class:`~.Dissipation`, but it is more</span>
+<span class="sd">convenient to use helper functions to setup this object. For example, to set</span>
+<span class="sd">up dissipation for a simulation with Lean, the simplest way is:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">   dis = add_gauge(add_Lean(create_dissipation_from_grid(grid, 0.3)))</span>
+
+<span class="sd">where 0.3 is the value of ``eps_dis`` at the finest level.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="kn">from</span> <span class="nn">jhuki.base</span> <span class="kn">import</span> <span class="n">BaseThorn</span>
+
+
+<div class="viewcode-block" id="Dissipation"><a class="viewcode-back" href="../../dissipation_ref.html#jhuki.dissipation.Dissipation">[docs]</a><span class="k">class</span> <span class="nc">Dissipation</span><span class="p">(</span><span class="n">BaseThorn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class that describes the dissipation. Best used in combination with helper</span>
+<span class="sd">    functions.</span>
+
+<span class="sd">    This class is immutable.</span>
+
+<span class="sd">    :ivar epsdis_per_level: Dictionary that maps the value of the dissipation on</span>
+<span class="sd">                            each refinement level.</span>
+<span class="sd">    :type epsdis_per_level: dict</span>
+<span class="sd">    :ivar order: Order of the dissipation.</span>
+<span class="sd">    :type order: int</span>
+<span class="sd">    :ivar variables: List of variables to which the dissipation has to be applied.</span>
+<span class="sd">    :type variables: list of str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsdis_per_level</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;It is your responsibility to provide meaningful eps_dis_per_level.</span>
+
+<span class="sd">        :param epsdis_per_level: Dictionary that maps the value of the</span>
+<span class="sd">                                 dissipation on each refinement level.</span>
+<span class="sd">        :type epsdis_per_level: dict</span>
+<span class="sd">        :param order: Order of the dissipation.</span>
+<span class="sd">        :type order: int</span>
+<span class="sd">        :param variables: List of variables to which the dissipation has to be</span>
+<span class="sd">                          applied.</span>
+<span class="sd">        :type variables: list of str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsdis_per_level</span> <span class="o">=</span> <span class="n">epsdis_per_level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="o">=</span> <span class="n">variables</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parfile_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
+
+        <span class="n">eps_dis_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Dissipation::epsdis_for_level[</span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">epsdis</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">level</span><span class="p">,</span> <span class="n">epsdis</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsdis_per_level</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="n">vars_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">Dissipation::order = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">Dissipation::vars  = &quot;</span><span class="si">{</span><span class="n">vars_str</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="si">{</span><span class="n">eps_dis_str</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="DissPrescription"><a class="viewcode-back" href="../../dissipation_ref.html#jhuki.dissipation.DissPrescription">[docs]</a><span class="k">class</span> <span class="nc">DissPrescription</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;DissPrescription for how to set up the dissipation.</span>
+
+<span class="sd">    Three different prescriptions are available:</span>
+<span class="sd">    - ``const``: set the same ``eps_dis`` everywhere,</span>
+<span class="sd">    - ``dtfac``: set ``eps_dis`` proportional to the local dtfac,</span>
+<span class="sd">    - ``continuous``: set ``eps_dis`` proportional to the local grid spacing</span>
+<span class="sd">                      to the power of the order</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">const</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+    <span class="n">dtfact</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+    <span class="n">continuous</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="create_dissipation_from_grid"><a class="viewcode-back" href="../../dissipation_ref.html#jhuki.dissipation.create_dissipation_from_grid">[docs]</a><span class="k">def</span> <span class="nf">create_dissipation_from_grid</span><span class="p">(</span>
+    <span class="n">grid</span><span class="p">,</span> <span class="n">eps_dis_finest</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prescription</span><span class="o">=</span><span class="n">DissPrescription</span><span class="o">.</span><span class="n">dtfact</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a :py:class:`~.Dissipation` object from a given :py:class:`~.Grid`.</span>
+
+
+<span class="sd">    The order of the dissipation is deduced from the number of ghost zones.</span>
+
+<span class="sd">    :param grid: Simulation grid.</span>
+<span class="sd">    :type grid: :py:class:`~.Grid`</span>
+<span class="sd">    :param epsdis_per_level: Dictionary that maps the value of the dissipation</span>
+<span class="sd">                             on each refinement level.</span>
+<span class="sd">    :type epsdis_per_level: dict</span>
+<span class="sd">    :param order: Order of the dissipation.</span>
+<span class="sd">    :type order: int</span>
+<span class="sd">    :param variables: List of variables to which the dissipation has to be</span>
+<span class="sd">                      applied.</span>
+<span class="sd">    :type variables: list of str</span>
+<span class="sd">    :param prescription: How to set ``eps_dis``.</span>
+<span class="sd">    :type prescription: :py:class:`~.DissPrescription`</span>
+
+<span class="sd">    :returns: Dissipation object.</span>
+<span class="sd">    :rtype: :py:class:`~.Dissipation`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prescription</span><span class="p">,</span> <span class="n">DissPrescription</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown prescription </span><span class="si">{</span><span class="n">prescription</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="s2">&quot;Accepted values: {list(DissPrescription.__members__.keys())}&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">order</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_ghost</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">variables</span>
+
+    <span class="c1"># If we have N levels, we need to set up dissipation on N + 1 zones</span>
+    <span class="n">num_levels</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">max_num_refinement_levels</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">prescription</span> <span class="o">==</span> <span class="n">DissPrescription</span><span class="o">.</span><span class="n">const</span><span class="p">:</span>
+        <span class="c1"># Same everywhere</span>
+        <span class="n">eps_dis_levels</span> <span class="o">=</span> <span class="p">{</span><span class="n">level</span><span class="p">:</span> <span class="n">eps_dis_finest</span> <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_levels</span><span class="p">)}</span>
+    <span class="k">elif</span> <span class="n">prescription</span> <span class="o">==</span> <span class="n">DissPrescription</span><span class="o">.</span><span class="n">dtfact</span><span class="p">:</span>
+        <span class="c1"># Same everywhere, halved by two every time a level is synced</span>
+        <span class="c1"># For example, if have 4 levels, 2 synced, then we should have</span>
+        <span class="c1"># [1/4, 1/2, 1, 1] * eps_dis</span>
+
+        <span class="n">num_levels_synced</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">num_levels_with_dt_coarse</span>
+
+        <span class="c1"># First, the ones with the values halved</span>
+        <span class="n">eps_dis_levels</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">level</span><span class="p">:</span> <span class="n">eps_dis_finest</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">num_levels_synced</span> <span class="o">-</span> <span class="n">level</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_levels_synced</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Next, we add all the ones that are eps_dis_finest</span>
+        <span class="n">eps_dis_levels</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="n">level</span><span class="p">:</span> <span class="n">eps_dis_finest</span>
+                <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+                    <span class="n">num_levels_synced</span><span class="p">,</span>
+                    <span class="n">num_levels</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">prescription</span> <span class="o">==</span> <span class="n">DissPrescription</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
+        <span class="c1"># Proportional to the local size, so there&#39;s a factor of 2**order for every</span>
+        <span class="c1"># refinement level</span>
+        <span class="n">eps_dis_levels</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">level</span><span class="p">:</span> <span class="n">eps_dis_finest</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">num_levels</span> <span class="o">-</span> <span class="n">level</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">**</span> <span class="n">order</span>
+            <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_levels</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">Dissipation</span><span class="p">(</span><span class="n">eps_dis_levels</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add_to_dissipation"><a class="viewcode-back" href="../../dissipation_ref.html#jhuki.dissipation.add_to_dissipation">[docs]</a><span class="k">def</span> <span class="nf">add_to_dissipation</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a function that adds variables to the given Dissipation.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">dissipation</span><span class="p">):</span>
+        <span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="k">return</span> <span class="n">Dissipation</span><span class="p">(</span>
+            <span class="n">dissipation</span><span class="o">.</span><span class="n">epsdis_per_level</span><span class="p">,</span>
+            <span class="n">dissipation</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+            <span class="n">dissipation</span><span class="o">.</span><span class="n">variables</span> <span class="o">+</span> <span class="n">variables</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">inner</span></div>
+
+
+<span class="n">_lean_vars</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;LeanBSSNMoL::conf_fac&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LeanBSSNMoL::hmetric&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LeanBSSNMoL::hcurv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LeanBSSNMoL::trk&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LeanBSSNMoL::gammat&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">_gauge_vars</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ADMBase::lapse&quot;</span><span class="p">,</span> <span class="s2">&quot;ADMBase::shift&quot;</span><span class="p">]</span>
+
+<span class="n">_proca_vars</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ProcaBase::Ei&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ProcaBase::Ai&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ProcaBase::Aphi&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ProcaBase::Zeta&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">add_Lean</span> <span class="o">=</span> <span class="n">add_to_dissipation</span><span class="p">(</span>
+    <span class="n">_lean_vars</span><span class="p">,</span>
+    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Dissipation` with Lean&#39;s variables added.</span>
+
+<span class="sd">    :param dissipation: Dissipation that has to be used as base.</span>
+<span class="sd">    :type dissipation: :py:class:`~.Dissipation`</span>
+<span class="sd">    :returns: Dissipation with Lean&#39;s variables added.</span>
+<span class="sd">    :rtype: :py:class:`~.Dissipation`&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">add_gauge</span> <span class="o">=</span> <span class="n">add_to_dissipation</span><span class="p">(</span>
+    <span class="n">_gauge_vars</span><span class="p">,</span>
+    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Dissipation` with guage variables added.</span>
+
+<span class="sd">    :param dissipation: Dissipation that has to be used as base.</span>
+<span class="sd">    :type dissipation: :py:class:`~.Dissipation`</span>
+<span class="sd">    :returns: Dissipation with guage variables added.</span>
+<span class="sd">    :rtype: :py:class:`~.Dissipation`&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">add_Proca</span> <span class="o">=</span> <span class="n">add_to_dissipation</span><span class="p">(</span>
+    <span class="n">_proca_vars</span><span class="p">,</span>
+    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Dissipation` with Proca variables added.</span>
+
+<span class="sd">    :param dissipation: Dissipation that has to be used as base.</span>
+<span class="sd">    :type dissipation: :py:class:`~.Dissipation`</span>
+<span class="sd">    :returns: Dissipation with Proca variables added.</span>
+<span class="sd">    :rtype: :py:class:`~.Dissipation`&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">jhuki.dissipation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Gabriele Bozzola.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

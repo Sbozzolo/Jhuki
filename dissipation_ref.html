@@ -1,0 +1,189 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reference on jhuki.dissipation &#8212; Jhuki 0.1.0-dev5 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Reference on jhuki.twochargedpunctures" href="twochargedpunctures_ref.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="twochargedpunctures_ref.html" title="Reference on jhuki.twochargedpunctures"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Reference on jhuki.dissipation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-jhuki.dissipation">
+<span id="reference-on-jhuki-dissipation"></span><h1>Reference on jhuki.dissipation<a class="headerlink" href="#module-jhuki.dissipation" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-jhuki.dissipation" title="jhuki.dissipation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dissipation</span></code></a> module takes care of setting parameters for the
+dissipation thorn. The main class is <a class="reference internal" href="#jhuki.dissipation.Dissipation" title="jhuki.dissipation.Dissipation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dissipation</span></code></a>, but it is more
+convenient to use helper functions to setup this object. For example, to set
+up dissipation for a simulation with Lean, the simplest way is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dis</span> <span class="o">=</span> <span class="n">add_gauge</span><span class="p">(</span><span class="n">add_Lean</span><span class="p">(</span><span class="n">create_dissipation_from_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>where 0.3 is the value of <code class="docutils literal notranslate"><span class="pre">eps_dis</span></code> at the finest level.</p>
+<dl class="py class">
+<dt id="jhuki.dissipation.DissPrescription">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jhuki.dissipation.</span></code><code class="sig-name descname"><span class="pre">DissPrescription</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/dissipation.html#DissPrescription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.dissipation.DissPrescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>DissPrescription for how to set up the dissipation.</p>
+<p>Three different prescriptions are available:
+- <code class="docutils literal notranslate"><span class="pre">const</span></code>: set the same <code class="docutils literal notranslate"><span class="pre">eps_dis</span></code> everywhere,
+- <code class="docutils literal notranslate"><span class="pre">dtfac</span></code>: set <code class="docutils literal notranslate"><span class="pre">eps_dis</span></code> proportional to the local dtfac,
+- <code class="docutils literal notranslate"><span class="pre">continuous</span></code>: set <code class="docutils literal notranslate"><span class="pre">eps_dis</span></code> proportional to the local grid spacing</p>
+<blockquote>
+<div><p>to the power of the order</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py class">
+<dt id="jhuki.dissipation.Dissipation">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jhuki.dissipation.</span></code><code class="sig-name descname"><span class="pre">Dissipation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epsdis_per_level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/dissipation.html#Dissipation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.dissipation.Dissipation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that describes the dissipation. Best used in combination with helper
+functions.</p>
+<p>This class is immutable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>epsdis_per_level</strong> – Dictionary that maps the value of the dissipation on
+each refinement level.</p></li>
+<li><p><strong>order</strong> – Order of the dissipation.</p></li>
+<li><p><strong>variables</strong> – List of variables to which the dissipation has to be applied.</p></li>
+</ul>
+</dd>
+</dl>
+<p>It is your responsibility to provide meaningful eps_dis_per_level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>epsdis_per_level</strong> (<em>dict</em>) – Dictionary that maps the value of the
+dissipation on each refinement level.</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – Order of the dissipation.</p></li>
+<li><p><strong>variables</strong> (<em>list of str</em>) – List of variables to which the dissipation has to be
+applied.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="jhuki.dissipation.Dissipation.parfile_code">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">parfile_code</span></code><a class="headerlink" href="#jhuki.dissipation.Dissipation.parfile_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the code you would put in your parfile.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jhuki.dissipation.add_to_dissipation">
+<code class="sig-prename descclassname"><span class="pre">jhuki.dissipation.</span></code><code class="sig-name descname"><span class="pre">add_to_dissipation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/dissipation.html#add_to_dissipation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.dissipation.add_to_dissipation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a function that adds variables to the given Dissipation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jhuki.dissipation.create_dissipation_from_grid">
+<code class="sig-prename descclassname"><span class="pre">jhuki.dissipation.</span></code><code class="sig-name descname"><span class="pre">create_dissipation_from_grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">grid</span></em>, <em class="sig-param"><span class="pre">eps_dis_finest</span></em>, <em class="sig-param"><span class="pre">variables=None</span></em>, <em class="sig-param"><span class="pre">prescription=&lt;DissPrescription.dtfact:</span> <span class="pre">2&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/dissipation.html#create_dissipation_from_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.dissipation.create_dissipation_from_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <a class="reference internal" href="#jhuki.dissipation.Dissipation" title="jhuki.dissipation.Dissipation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dissipation</span></code></a> object from a given <a class="reference internal" href="grid_ref.html#jhuki.grid.Grid" title="jhuki.grid.Grid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code></a>.</p>
+<p>The order of the dissipation is deduced from the number of ghost zones.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="grid_ref.html#jhuki.grid.Grid" title="jhuki.grid.Grid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code></a>) – Simulation grid.</p></li>
+<li><p><strong>epsdis_per_level</strong> (<em>dict</em>) – Dictionary that maps the value of the dissipation
+on each refinement level.</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – Order of the dissipation.</p></li>
+<li><p><strong>variables</strong> (<em>list of str</em>) – List of variables to which the dissipation has to be
+applied.</p></li>
+<li><p><strong>prescription</strong> (<a class="reference internal" href="#jhuki.dissipation.DissPrescription" title="jhuki.dissipation.DissPrescription"><code class="xref py py-class docutils literal notranslate"><span class="pre">DissPrescription</span></code></a>) – How to set <code class="docutils literal notranslate"><span class="pre">eps_dis</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dissipation object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jhuki.dissipation.Dissipation" title="jhuki.dissipation.Dissipation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dissipation</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="twochargedpunctures_ref.html"
+                        title="previous chapter">Reference on jhuki.twochargedpunctures</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="twochargedpunctures_ref.html" title="Reference on jhuki.twochargedpunctures"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Jhuki 0.1.0-dev5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Reference on jhuki.dissipation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Gabriele Bozzola.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

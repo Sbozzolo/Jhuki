@@ -63,10 +63,20 @@
 <span class="sd">&quot;&quot;&quot;The :py:mod:`~.simfactory` module provides functions to interface with</span>
 <span class="sd">SimFactory.</span>
 
-<span class="sd">The available functions are: - :py:func:`~.simfactory_option`, which helps</span>
-<span class="sd">setting up options that are controllable by SimFactory.</span>
+<span class="sd">The available functions are:</span>
+
+<span class="sd">- :py:func:`~.simfactory_option`, which helps setting up options that are</span>
+<span class="sd">controllable by SimFactory.</span>
+
+<span class="sd">- :py:func:`~.write_parfile`, which write the `.par` file from a template</span>
+<span class="sd">when the file is executed as `.rpar` by SimFactory.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">inspect</span>  <span class="c1"># Needed to capture locals() of the caller to write the parfile</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">jhuki.parfile</span> <span class="kn">import</span> <span class="n">write_one_parfile_from_template</span>
 
 
 <div class="viewcode-block" id="simfactory_option"><a class="viewcode-back" href="../../simfactory_ref.html#jhuki.simfactory.simfactory_option">[docs]</a><span class="k">def</span> <span class="nf">simfactory_option</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
@@ -116,6 +126,50 @@
     <span class="n">type_</span> <span class="o">=</span> <span class="nb">float</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">type_</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;@&quot;</span> <span class="k">else</span> <span class="n">type_</span><span class="p">(</span><span class="n">default</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_parfile"><a class="viewcode-back" href="../../simfactory_ref.html#jhuki.simfactory.write_parfile">[docs]</a><span class="k">def</span> <span class="nf">write_parfile</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Write parfile from given template using locals() as substitution</span>
+<span class="sd">    dictionary.</span>
+
+<span class="sd">    The variables in template get substituted with the values in the local scope</span>
+<span class="sd">    of the calling function. So, you can safely put this function at the end of</span>
+<span class="sd">    your rpar file to have the template substituted with the variables you have</span>
+<span class="sd">    defined there.</span>
+
+<span class="sd">    :param template: Template of parfile to write. See</span>
+<span class="sd">                     :py:func:`~.write_one_parfile_from_template`</span>
+<span class="sd">    :type template: str</span>
+<span class="sd">    :param file_name: Name of the file that is calling this function.</span>
+<span class="sd">                      (Used only for debug purposes.)</span>
+<span class="sd">    :type file_name: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># The regular expression matches something that has the form FILENAME.rpar</span>
+    <span class="n">rpar_rx</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(.*)\.rpar$&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">rpar_rx</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Function was not called by a rpar file&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Replace &quot;file_name.rpar&quot; with &quot;file_name.par&quot;</span>
+    <span class="n">output_file_name</span> <span class="o">=</span> <span class="n">rpar_rx</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\1.par&quot;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+
+    <span class="c1"># We want to capture the locals() of the caller (to use it as substitution</span>
+    <span class="c1"># dictionary). This function should be called directly from the `rpar` file</span>
+
+    <span class="c1"># From https://stackoverflow.com/a/62885157</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># frame.f_locals is the locals() of the calling function</span>
+        <span class="n">write_one_parfile_from_template</span><span class="p">(</span>
+            <span class="n">template</span><span class="p">,</span> <span class="n">sub_dict</span><span class="o">=</span><span class="n">frame</span><span class="o">.</span><span class="n">f_locals</span><span class="p">,</span> <span class="n">out_file</span><span class="o">=</span><span class="n">output_file_name</span>
+        <span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Ensure that we release the resources</span>
+        <span class="k">del</span> <span class="n">frame</span></div>
 </pre></div>
 
             <div class="clearer"></div>

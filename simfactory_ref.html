@@ -53,8 +53,15 @@
 <span id="reference-on-jhuki-simfactory"></span><h1>Reference on jhuki.simfactory<a class="headerlink" href="#module-jhuki.simfactory" title="Permalink to this headline">¶</a></h1>
 <p>The <a class="reference internal" href="#module-jhuki.simfactory" title="jhuki.simfactory"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simfactory</span></code></a> module provides functions to interface with
 SimFactory.</p>
-<p>The available functions are: - <a class="reference internal" href="#jhuki.simfactory.simfactory_option" title="jhuki.simfactory.simfactory_option"><code class="xref py py-func docutils literal notranslate"><span class="pre">simfactory_option()</span></code></a>, which helps
-setting up options that are controllable by SimFactory.</p>
+<p>The available functions are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#jhuki.simfactory.simfactory_option" title="jhuki.simfactory.simfactory_option"><code class="xref py py-func docutils literal notranslate"><span class="pre">simfactory_option()</span></code></a>, which helps setting up options that are</p></li>
+</ul>
+<p>controllable by SimFactory.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#jhuki.simfactory.write_parfile" title="jhuki.simfactory.write_parfile"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_parfile()</span></code></a>, which write the <cite>.par</cite> file from a template</p></li>
+</ul>
+<p>when the file is executed as <cite>.rpar</cite> by SimFactory.</p>
 <dl class="py function">
 <dt id="jhuki.simfactory.simfactory_option">
 <code class="sig-prename descclassname"><span class="pre">jhuki.simfactory.</span></code><code class="sig-name descname"><span class="pre">simfactory_option</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/simfactory.html#simfactory_option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.simfactory.simfactory_option" title="Permalink to this definition">¶</a></dt>
@@ -84,6 +91,27 @@ otherwise the value defined with SimFactory.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float or str (integers are converted)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jhuki.simfactory.write_parfile">
+<code class="sig-prename descclassname"><span class="pre">jhuki.simfactory.</span></code><code class="sig-name descname"><span class="pre">write_parfile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/jhuki/simfactory.html#write_parfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.simfactory.write_parfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write parfile from given template using locals() as substitution
+dictionary.</p>
+<p>The variables in template get substituted with the values in the local scope
+of the calling function. So, you can safely put this function at the end of
+your rpar file to have the template substituted with the variables you have
+defined there.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template</strong> (<em>str</em>) – Template of parfile to write. See
+<a class="reference internal" href="parfile_ref.html#jhuki.parfile.write_one_parfile_from_template" title="jhuki.parfile.write_one_parfile_from_template"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_one_parfile_from_template()</span></code></a></p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the file that is calling this function.
+(Used only for debug purposes.)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
