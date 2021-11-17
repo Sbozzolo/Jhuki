@@ -145,8 +145,9 @@
 <span class="sd">    :type file_name: str</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">file_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Compact notation to say: if file_name is not None, file_name = file_name,</span>
+    <span class="c1"># otherwise it is sys.argv[0]</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span> <span class="ow">or</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># The regular expression matches something that has the form FILENAME.rpar</span>
     <span class="n">rpar_rx</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(.*)\.rpar$&quot;</span><span class="p">)</span>

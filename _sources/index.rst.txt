@@ -18,3 +18,4 @@ Reference material (classes, functions, ...)
    twopunctures_ref.rst
    twochargedpunctures_ref.rst
    dissipation_ref.rst
+   nanchecker_ref.rst
