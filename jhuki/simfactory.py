@@ -18,10 +18,20 @@
 """The :py:mod:`~.simfactory` module provides functions to interface with
 SimFactory.
 
-The available functions are: - :py:func:`~.simfactory_option`, which helps
-setting up options that are controllable by SimFactory.
+The available functions are:
+
+- :py:func:`~.simfactory_option`, which helps setting up options that are
+controllable by SimFactory.
+
+- :py:func:`~.write_parfile`, which write the `.par` file from a template
+when the file is executed as `.rpar` by SimFactory.
 
 """
+import inspect  # Needed to capture locals() of the caller to write the parfile
+import re
+import sys
+
+from jhuki.parfile import write_one_parfile_from_template
 
 
 def simfactory_option(name, default):
@@ -71,3 +81,58 @@ def simfactory_option(name, default):
     type_ = float if isinstance(default, int) else type(default)
 
     return type_(name) if name[0] != "@" else type_(default)
+
+
+def write_parfile(template: str, file_name=None) -> None:
+    """Write parfile from given template using locals() as substitution
+    dictionary.
+
+    The variables in template get substituted with the values in the local scope
+    of the calling function. So, you can safely put this function at the end of
+    your rpar file to have the template substituted with the variables you have
+    defined there.
+
+    :param template: Template of parfile to write. See
+                     :py:func:`~.write_one_parfile_from_template`
+    :type template: str
+    :param file_name: Name of the file that is calling this function.
+                      (Used only for debug purposes.)
+    :type file_name: str
+
+    """
+    # Compact notation to say: if file_name is not None, file_name = file_name,
+    # otherwise it is sys.argv[0]
+    file_name = file_name or sys.argv[0]
+
+    # The regular expression matches something that has the form FILENAME.rpar
+    rpar_rx = re.compile(r"^(.*)\.rpar$")
+
+    if not rpar_rx.match(file_name):
+        raise RuntimeError("Function was not called by a rpar file")
+
+    # Replace "file_name.rpar" with "file_name.par"
+    output_file_name = rpar_rx.sub(r"\1.par", file_name)
+
+    # We want to capture the locals() of the caller (to use it as substitution
+    # dictionary). This function should be called directly from the `rpar` file
+
+    # From https://stackoverflow.com/a/62885157
+    frame = inspect.currentframe().f_back
+    try:
+        # frame.f_locals is the locals() of the calling function
+        subs = frame.f_locals
+
+        # From here, we have to remove the template variable itself (otherwise
+        # we would have a template-ception)
+        #
+        # The easiest way to do this is to match the value in the dictionary
+        # subs. This is not particularly efficient, but we expect subs to be
+        # small
+        subs_no_template = {k: v for k, v in subs.items() if v != template}
+
+        write_one_parfile_from_template(
+            template, sub_dict=subs_no_template, out_file=output_file_name
+        )
+    finally:
+        # Ensure that we release the resources
+        del frame

@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <https://www.gnu.org/licenses/>.
 
+import os
+
 import pytest
 
 import jhuki.simfactory as jsf
@@ -33,3 +35,23 @@ def test_simfactory_option():
     # Check wrong type
     with pytest.raises(TypeError):
         assert jsf.simfactory_option(10.4, 20) == 10.4
+
+
+def test_write_parfile():
+
+    test_var = "HEY"
+
+    with pytest.raises(RuntimeError):
+        assert jsf.write_parfile("$test_var", "wrong_filename")
+
+    jsf.write_parfile("$test_var", "file.rpar")
+
+    out_file = "file.par"
+    with open(out_file, "r") as file_:
+        par_file_str = file_.read()
+
+    # We check that the content is what we expect:
+    # Variable written by Jhuki
+    assert "# test_var = HEY" in par_file_str
+
+    os.remove(out_file)
