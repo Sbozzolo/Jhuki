@@ -34,6 +34,81 @@ You can find the reference material at the website
 
 ## Examples
 
+
+### Integration with SimFactory
+
+`Jhuki` integrates well with `SimFactory`. Assume you have the following
+simple `test_sim.rpar` file:
+``` python
+#!/usr/bin/env python3
+
+from jhuki.simfactory import simfactory_option
+from jhuki.simfactory import write_parfile
+
+par_b = simfactory_option("@PARB@", 5)
+
+m_plus = 0.5
+
+lines="""
+TwoPunctures::par_b      = $par_b
+TwoPunctures::par_m_plus = $m_plus
+
+# Rest of the parameter file
+
+"""
+
+write_parfile(lines)
+```
+
+`SimFactory` can execute this Python file to produce a `.par` file to run:
+
+``` sh
+sim create-run test_sim.rpar
+```
+will run the parfile with content
+``` sh
+TwoPunctures::par_b      = 5
+TwoPunctures::par_m_plus = 0.5
+```
+The value for `par_b` is run-time adjustable:
+``` sh
+sim create-run test_sim.rpar --define PARB 10
+```
+will produce
+``` sh
+TwoPunctures::par_b      = 10
+TwoPunctures::par_m_plus = 0.5
+```
+Since arbitrary Python code can be executed before the parfile is written,
+all the features of `Jhuki` presented below can be used directly. For instance,
+as discussed below, one can prepare quasi circular inspirals with the function
+`prepare_quasicircular_inspiral`, so one can add the entire parfile code for
+the two puncture with:
+``` python
+#!/usr/bin/env python3
+
+from jhuki.simfactory import simfactory_option
+from jhuki.simfactory import write_parfile
+from jhuki.twopunctures import prepare_quasicircular_inspiral
+
+par_b = simfactory_option("@PARB@", 5)
+
+twopunctures = prepare_quasicircular_inspiral(mass_ratio=1,
+                                              coordinate_distance=par_b)
+
+lines="""
+
+$twopunctures
+
+# Rest of the parameter file
+"""
+
+write_parfile(lines)
+
+```
+This sets up a good fraction of the parfile needed to run quasi circular
+inspirals.
+
 ### Working with grid structures
 
 Problem: you want to generate the parfile code for a grid structure with two

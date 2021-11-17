@@ -2,8 +2,8 @@ Overview
 ========
 
 ``Jhuki`` is a set of tools to prepare simulations performed for the `Einstein
-Toolkit <https://einsteintoolkit.org/>`_.
-
+Toolkit <https://einsteintoolkit.org/>`_. It aims to provide an high-level
+interface which exposes the physics and hides the technical details.
 
 
 Reference material (classes, functions, ...)
