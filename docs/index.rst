@@ -17,3 +17,4 @@ Reference material (classes, functions, ...)
    simfactory_ref.rst
    twopunctures_ref.rst
    twochargedpunctures_ref.rst
+   dissipation_ref.rst
