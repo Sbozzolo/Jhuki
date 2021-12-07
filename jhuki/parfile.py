@@ -57,8 +57,8 @@ def write_one_parfile_from_template(template, sub_dict, out_file):
     substituted_variables = []
     for key, val in sorted(sub_dict.items()):
         # We ignore BaseThorns because they clutter the header with information
-        # that is already available in the parfile
-        if not isinstance(val, BaseThorn):
+        # that is already available in the parfile. We also ignore functions.
+        if not isinstance(val, BaseThorn) and not callable(val):
             # We cast everything to string and substitute all the newlines with
             # commented newlines so that we can ensure that multiline
             # parameters are properly commented.

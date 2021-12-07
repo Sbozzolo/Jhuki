@@ -15,9 +15,13 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <https://www.gnu.org/licenses/>.
 
+from math import sqrt
+
 import pytest
 
 from jhuki import grid as gr
+from jhuki.twopunctures import TwoPunctures
+from jhuki.twochargedpunctures import TwoChargedPunctures
 
 
 @pytest.fixture(scope="module")
@@ -449,3 +453,59 @@ def test_set_dt_max_grid(a_grid):
     )
 
     assert griddo.time_refinement_factors == '"[1,1,1,1,1,2]"'
+
+
+def test_create_twopuncture_grid():
+
+    tp = TwoPunctures(
+        mass_plus=0.5,
+        mass_minus=0.3,
+        coordinate_distance=10,
+        chi_plus=(0.1, 0.2, 0.3),
+        chi_minus=(0.15, 0.25, 0.35),
+    )
+
+    grid_tp = gr.create_twopunctures_grid(
+        tp,
+        points_on_horizon_radius=40,
+        minimum_outer_boundary=100,
+        tiny_shift=True,
+    )
+
+    # We cover the mass_minus horizon, which is the smallest.
+
+    spin_m = 0.3 * sqrt(0.15 ** 2 + 0.25 ** 2 + 0.35 ** 2)
+
+    ah_m = sqrt(0.3 ** 2 - spin_m ** 2) / 2
+
+    dx_fine = round(ah_m / 40, 4)
+
+    radius0 = dx_fine * (40 + 5)
+
+    assert grid_tp.tiny_shift is True
+    assert grid_tp.refinement_centers[0].dx_fine == dx_fine
+    assert grid_tp.refinement_centers[0].position == (tp.coord_x_plus, 0, 0)
+    assert grid_tp.refinement_centers[1].position == (tp.coord_x_minus, 0, 0)
+    assert grid_tp.refinement_centers[0].num_refinement_radii == 10
+    assert grid_tp.outer_boundary == pytest.approx(152.064)
+
+    tcp = TwoChargedPunctures(
+        mass_plus=0.5,
+        mass_minus=0.3,
+        coordinate_distance=10,
+        chi_plus=(0.1, 0.2, 0.3),
+        chi_minus=(0.15, 0.25, 0.35),
+        charge_minus=0.03,
+        swap_xz=True,
+    )
+
+    grid_tcp = gr.create_twopunctures_grid(
+        tcp, points_on_horizon_radius=40, minimum_outer_boundary=100
+    )
+
+    assert grid_tcp.refinement_centers[0].position == (0, 0, tcp.coord_x_plus)
+    assert grid_tcp.refinement_centers[1].position == (0, 0, tcp.coord_x_minus)
+
+    ah_m = sqrt(0.3 ** 2 - spin_m ** 2 - 0.03 ** 2) / 2
+    dx_fine = round(ah_m / 40, 4)
+    assert grid_tcp.refinement_centers[0].dx_fine == dx_fine

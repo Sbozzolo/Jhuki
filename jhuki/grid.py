@@ -34,16 +34,136 @@ synced so that the maximum timestep on the grid is the one you provided. This
 function is important because it can be used to produce grids that satisfy CFL
 conditions (like the ones due to damp_lorenz or eta_beta).
 
+Another useful function is :py:func:`~.create_twopunctures_grid`, which takes a
+:py:class:`~.TwoPunctures` and returns a grid built on top of it.
+
 Warning: at the moment we only support grids in which the three dimensions are
 the same in resolution and extent.
 
 """
 
+from math import sqrt
 from functools import lru_cache
 
 import logging
 
 from jhuki.base import BaseThorn
+from jhuki.twochargedpunctures import TwoChargedPunctures
+
+
+def create_twopunctures_grid(
+    two_punctures,
+    points_on_horizon_radius,
+    minimum_outer_boundary,
+    cfl_num=0.45,
+    horizon_padding_points=5,
+    **kwargs,
+):
+    """Create a grid centered around a given two punctures.
+
+    The grid has three identical refinement centers: two on the punctures and
+    one in the center.
+
+    The construction of the grid starts by estimating the horizon radius. Then,
+    the horizon is covered with ``points_on_horizon_radius``. From there,
+    refinement levels are added until the ``minimum_outer_boundary`` is reached.
+
+    This function does nothing fancy about the mass ratio: it simply considers
+    the smaller horizon and creates the grid starting from there.
+
+    Unknown arguments are passed to the constructor of :py:class:`~.Grid`.
+
+    :param two_punctures: Two punctures for which the grid has to be created.
+    :type two_punctures: :py:class:`~.TwoPunctures` or
+                         :py:class:`~.TwoChargedPunctures`
+    :param points_on_horizon_radius: Desired number of grid points on the
+                                     radius of the smaller horizon.
+    :type points_on_horizon_radius: int
+    :param minimum_outer_boundary: Minimum outer boundary that the grid has
+                                   to have
+    :type minimum_outer_boundary: float
+    :param cfl_num: CFL factor for the finest refinement level
+    :type cfl_num: float
+
+    :param horizon_padding_points: Add this number of points to the innermost
+                                   refinement level.
+    :type horizon_padding_points: int
+
+    :returns: Grid built on top of the given two punctures.
+    :rtype: :py:class:`~.Grid`
+
+    """
+
+    # First, we estimate the radius of the horizons
+
+    mp = two_punctures.mass_plus
+    mm = two_punctures.mass_minus
+
+    if isinstance(two_punctures, TwoChargedPunctures):
+        qp = two_punctures.charge_plus
+        qm = two_punctures.charge_minus
+    else:
+        qp, qm = 0, 0
+
+    # Spin
+    ap = mp * sqrt(sum(chi ** 2 for chi in two_punctures.chi_plus))
+    am = mm * sqrt(sum(chi ** 2 for chi in two_punctures.chi_minus))
+
+    guess_r_plus = sqrt(mp ** 2 - ap ** 2 - qp ** 2) / 2
+    guess_r_minus = sqrt(mm ** 2 - am ** 2 - qm ** 2) / 2
+
+    # Now, we can find the resolution needed to cover the smaller horizon with
+    # the desired number of points
+
+    # We truncate the dx to four decimals so that it is easy to ensure that we
+    # have an integer number of points
+    dx_fine = round(
+        min(guess_r_plus, guess_r_minus) / points_on_horizon_radius, 4
+    )
+
+    # radius0 is the radius of the innermost refinement level, the one that
+    # encompasses the horizon. We add 5 points so that we can ensure that the
+    # horizon is well contained
+    radius0 = dx_fine * (points_on_horizon_radius + 5)
+
+    # We can build up the hierarchy of levels. We add one level at the time
+    # until we are at the desired outer boundary.
+    radius_number = 0
+    radius = radius0
+
+    # Here is were the save the various radii
+    radii = []
+
+    while radius < minimum_outer_boundary:
+        radius = radius0 * 2 ** radius_number
+        radius_number += 1
+        radii.append(radius)
+
+    num_ref_radii = radius_number
+
+    # We do not want to include the outer boundary
+    radii, outer_boundary = radii[:-1], radii[-1]
+
+    if two_punctures.swap_xz:
+        pp = (0, 0, two_punctures.coord_x_plus)
+        pm = (0, 0, two_punctures.coord_x_minus)
+    else:
+        pp = (two_punctures.coord_x_plus, 0, 0)
+        pm = (two_punctures.coord_x_minus, 0, 0)
+
+    center1 = RefinementCenter(
+        radii, dx_fine, cfl_num, center_num=1, position=pp
+    )
+    center2 = RefinementCenter(
+        radii, dx_fine, cfl_num, center_num=2, position=pm
+    )
+    center3 = RefinementCenter(
+        radii, dx_fine, cfl_num, center_num=3, position=(0, 0, 0)
+    )
+
+    centers = (center1, center2, center3)
+
+    return Grid(centers, outer_boundary, **kwargs)
 
 
 def set_dt_max_grid(grid, dt_max):
