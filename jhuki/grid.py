@@ -42,10 +42,9 @@ the same in resolution and extent.
 
 """
 
-from math import sqrt
-from functools import lru_cache
-
 import logging
+from functools import lru_cache
+from math import sqrt
 
 from jhuki.base import BaseThorn
 from jhuki.twochargedpunctures import TwoChargedPunctures
@@ -138,8 +137,6 @@ def create_twopunctures_grid(
         radius = radius0 * 2 ** radius_number
         radius_number += 1
         radii.append(radius)
-
-    num_ref_radii = radius_number
 
     # We do not want to include the outer boundary
     radii, outer_boundary = radii[:-1], radii[-1]

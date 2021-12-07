@@ -181,7 +181,7 @@ def add_to_dissipation(variables, doc):
     """Return a function that adds variables to the given Dissipation."""
 
     def inner(dissipation):
-        __doc__ = doc
+        __doc__ = doc  # noqa: F841
         return Dissipation(
             dissipation.epsdis_per_level,
             dissipation.order,

@@ -21,10 +21,7 @@ everywhere in the codebase.
 
 """
 
-from abc import (
-    ABC,
-    abstractmethod,
-)
+from abc import ABC, abstractmethod
 
 
 class BaseThorn(ABC):

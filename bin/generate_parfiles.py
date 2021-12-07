@@ -24,8 +24,8 @@ dollar sign.
 
 """
 
-from argparse import ArgumentError
 import os.path
+from argparse import ArgumentError
 
 import configargparse
 

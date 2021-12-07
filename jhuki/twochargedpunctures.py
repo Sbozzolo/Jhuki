@@ -19,8 +19,8 @@
  for the case of charged black holes. The interface is nearly identical.
 """
 
-from math import sqrt
 from functools import lru_cache
+from math import sqrt
 
 from jhuki.externals.nrpypn import compute_quasicircular_momenta
 from jhuki.twopunctures import TwoPunctures

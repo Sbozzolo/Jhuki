@@ -27,8 +27,8 @@ Some functions are provided:
 
 from functools import lru_cache
 
-from jhuki.externals.nrpypn import compute_quasicircular_momenta
 from jhuki.base import BaseThorn
+from jhuki.externals.nrpypn import compute_quasicircular_momenta
 
 
 def prepare_quasicircular_inspiral(

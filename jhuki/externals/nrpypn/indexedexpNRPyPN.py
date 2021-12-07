@@ -53,7 +53,7 @@ def declarerank1(objname, DIM=-1):
 
 
 class NonInvertibleMatrixError(ZeroDivisionError):
-    """ Matrix Not Invertible; Division By Zero """
+    """Matrix Not Invertible; Division By Zero"""
 
 
 # Define the rank-3 version of the Levi-Civita symbol.

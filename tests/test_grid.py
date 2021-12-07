@@ -20,8 +20,8 @@ from math import sqrt
 import pytest
 
 from jhuki import grid as gr
-from jhuki.twopunctures import TwoPunctures
 from jhuki.twochargedpunctures import TwoChargedPunctures
+from jhuki.twopunctures import TwoPunctures
 
 
 @pytest.fixture(scope="module")
@@ -479,8 +479,6 @@ def test_create_twopuncture_grid():
     ah_m = sqrt(0.3 ** 2 - spin_m ** 2) / 2
 
     dx_fine = round(ah_m / 40, 4)
-
-    radius0 = dx_fine * (40 + 5)
 
     assert grid_tp.tiny_shift is True
     assert grid_tp.refinement_centers[0].dx_fine == dx_fine

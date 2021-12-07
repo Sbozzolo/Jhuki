@@ -1,0 +1,5 @@
+[flake8]
+ignore = E203, E501, W503
+max-line-length = 79
+max-complexity = 20
+exclude = .git,__pycache__,docs/conf.py,build,dist,jhuki/externals

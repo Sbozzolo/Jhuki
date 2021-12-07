@@ -39,9 +39,10 @@
 # Step 0: Add NRPy's directory to the path
 # https://stackoverflow.com/questions/16780014/import-file-from-parent-directory
 import sympy as sp  # SymPy: The Python computer algebra package upon which NRPy+ depends
+
 from . import (
-    indexedexpNRPyPN as ixp,
-)  # NRPy+: Symbolic indexed expression (e.g., tensors, vectors, etc.) support
+    indexedexpNRPyPN as ixp,  # NRPy+: Symbolic indexed expression (e.g., tensors, vectors, etc.) support
+)
 
 # Step 1: Declare several global variables used
 #         throughout NRPyPN

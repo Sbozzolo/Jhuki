@@ -39,7 +39,7 @@ def test_simfactory_option():
 
 def test_write_parfile():
 
-    test_var = "HEY"
+    test_var = "HEY"  # noqa: F841
 
     with pytest.raises(RuntimeError):
         assert jsf.write_parfile("$test_var", "wrong_filename")

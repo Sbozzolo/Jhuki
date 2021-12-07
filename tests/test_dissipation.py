@@ -17,8 +17,8 @@
 
 import pytest
 
-from jhuki import grid as gr
 from jhuki import dissipation as dis
+from jhuki import grid as gr
 
 
 @pytest.fixture(scope="module")

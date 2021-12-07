@@ -61,12 +61,13 @@
 # Step 0: Add NRPy's directory to the path
 # https://stackoverflow.com/questions/16780014/import-file-from-parent-directory
 import sympy as sp  # SymPy: The Python computer algebra package upon which NRPy+ depends
-from .NRPyPN_shortcuts import (
-    Pt,
+
+from .NRPyPN_shortcuts import (  # NRPyPN: shortcuts for e.g., vector operations
     Pr,
-    nU,
+    Pt,
     div,
-)  # NRPyPN: shortcuts for e.g., vector operations
+    nU,
+)
 
 #################################
 #################################
