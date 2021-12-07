@@ -102,8 +102,8 @@
     <span class="n">substituted_variables</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sub_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
         <span class="c1"># We ignore BaseThorns because they clutter the header with information</span>
-        <span class="c1"># that is already available in the parfile</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">BaseThorn</span><span class="p">):</span>
+        <span class="c1"># that is already available in the parfile. We also ignore functions.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">BaseThorn</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
             <span class="c1"># We cast everything to string and substitute all the newlines with</span>
             <span class="c1"># commented newlines so that we can ensure that multiline</span>
             <span class="c1"># parameters are properly commented.</span>

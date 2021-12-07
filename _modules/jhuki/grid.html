@@ -79,16 +79,133 @@
 <span class="sd">function is important because it can be used to produce grids that satisfy CFL</span>
 <span class="sd">conditions (like the ones due to damp_lorenz or eta_beta).</span>
 
+<span class="sd">Another useful function is :py:func:`~.create_twopunctures_grid`, which takes a</span>
+<span class="sd">:py:class:`~.TwoPunctures` and returns a grid built on top of it.</span>
+
 <span class="sd">Warning: at the moment we only support grids in which the three dimensions are</span>
 <span class="sd">the same in resolution and extent.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 
 <span class="kn">from</span> <span class="nn">jhuki.base</span> <span class="kn">import</span> <span class="n">BaseThorn</span>
+<span class="kn">from</span> <span class="nn">jhuki.twochargedpunctures</span> <span class="kn">import</span> <span class="n">TwoChargedPunctures</span>
+
+
+<div class="viewcode-block" id="create_twopunctures_grid"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.create_twopunctures_grid">[docs]</a><span class="k">def</span> <span class="nf">create_twopunctures_grid</span><span class="p">(</span>
+    <span class="n">two_punctures</span><span class="p">,</span>
+    <span class="n">points_on_horizon_radius</span><span class="p">,</span>
+    <span class="n">minimum_outer_boundary</span><span class="p">,</span>
+    <span class="n">cfl_num</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span>
+    <span class="n">horizon_padding_points</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a grid centered around a given two punctures.</span>
+
+<span class="sd">    The grid has three identical refinement centers: two on the punctures and</span>
+<span class="sd">    one in the center.</span>
+
+<span class="sd">    The construction of the grid starts by estimating the horizon radius. Then,</span>
+<span class="sd">    the horizon is covered with ``points_on_horizon_radius``. From there,</span>
+<span class="sd">    refinement levels are added until the ``minimum_outer_boundary`` is reached.</span>
+
+<span class="sd">    This function does nothing fancy about the mass ratio: it simply considers</span>
+<span class="sd">    the smaller horizon and creates the grid starting from there.</span>
+
+<span class="sd">    Unknown arguments are passed to the constructor of :py:class:`~.Grid`.</span>
+
+<span class="sd">    :param two_punctures: Two punctures for which the grid has to be created.</span>
+<span class="sd">    :type two_punctures: :py:class:`~.TwoPunctures` or</span>
+<span class="sd">                         :py:class:`~.TwoChargedPunctures`</span>
+<span class="sd">    :param points_on_horizon_radius: Desired number of grid points on the</span>
+<span class="sd">                                     radius of the smaller horizon.</span>
+<span class="sd">    :type points_on_horizon_radius: int</span>
+<span class="sd">    :param minimum_outer_boundary: Minimum outer boundary that the grid has</span>
+<span class="sd">                                   to have</span>
+<span class="sd">    :type minimum_outer_boundary: float</span>
+<span class="sd">    :param cfl_num: CFL factor for the finest refinement level</span>
+<span class="sd">    :type cfl_num: float</span>
+
+<span class="sd">    :param horizon_padding_points: Add this number of points to the innermost</span>
+<span class="sd">                                   refinement level.</span>
+<span class="sd">    :type horizon_padding_points: int</span>
+
+<span class="sd">    :returns: Grid built on top of the given two punctures.</span>
+<span class="sd">    :rtype: :py:class:`~.Grid`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># First, we estimate the radius of the horizons</span>
+
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">mass_plus</span>
+    <span class="n">mm</span> <span class="o">=</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">mass_minus</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">two_punctures</span><span class="p">,</span> <span class="n">TwoChargedPunctures</span><span class="p">):</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">charge_plus</span>
+        <span class="n">qm</span> <span class="o">=</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">charge_minus</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">qp</span><span class="p">,</span> <span class="n">qm</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+    <span class="c1"># Spin</span>
+    <span class="n">ap</span> <span class="o">=</span> <span class="n">mp</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">chi</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">chi</span> <span class="ow">in</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">chi_plus</span><span class="p">))</span>
+    <span class="n">am</span> <span class="o">=</span> <span class="n">mm</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">chi</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">chi</span> <span class="ow">in</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">chi_minus</span><span class="p">))</span>
+
+    <span class="n">guess_r_plus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mp</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">ap</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">qp</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">guess_r_minus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">am</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">qm</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c1"># Now, we can find the resolution needed to cover the smaller horizon with</span>
+    <span class="c1"># the desired number of points</span>
+
+    <span class="c1"># We truncate the dx to four decimals so that it is easy to ensure that we</span>
+    <span class="c1"># have an integer number of points</span>
+    <span class="n">dx_fine</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
+        <span class="nb">min</span><span class="p">(</span><span class="n">guess_r_plus</span><span class="p">,</span> <span class="n">guess_r_minus</span><span class="p">)</span> <span class="o">/</span> <span class="n">points_on_horizon_radius</span><span class="p">,</span> <span class="mi">4</span>
+    <span class="p">)</span>
+
+    <span class="c1"># radius0 is the radius of the innermost refinement level, the one that</span>
+    <span class="c1"># encompasses the horizon. We add 5 points so that we can ensure that the</span>
+    <span class="c1"># horizon is well contained</span>
+    <span class="n">radius0</span> <span class="o">=</span> <span class="n">dx_fine</span> <span class="o">*</span> <span class="p">(</span><span class="n">points_on_horizon_radius</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+
+    <span class="c1"># We can build up the hierarchy of levels. We add one level at the time</span>
+    <span class="c1"># until we are at the desired outer boundary.</span>
+    <span class="n">radius_number</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">radius0</span>
+
+    <span class="c1"># Here is were the save the various radii</span>
+    <span class="n">radii</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">while</span> <span class="n">radius</span> <span class="o">&lt;</span> <span class="n">minimum_outer_boundary</span><span class="p">:</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">radius0</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">radius_number</span>
+        <span class="n">radius_number</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">radii</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
+
+    <span class="c1"># We do not want to include the outer boundary</span>
+    <span class="n">radii</span><span class="p">,</span> <span class="n">outer_boundary</span> <span class="o">=</span> <span class="n">radii</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">radii</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">swap_xz</span><span class="p">:</span>
+        <span class="n">pp</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">coord_x_plus</span><span class="p">)</span>
+        <span class="n">pm</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">coord_x_minus</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pp</span> <span class="o">=</span> <span class="p">(</span><span class="n">two_punctures</span><span class="o">.</span><span class="n">coord_x_plus</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">pm</span> <span class="o">=</span> <span class="p">(</span><span class="n">two_punctures</span><span class="o">.</span><span class="n">coord_x_plus</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">center1</span> <span class="o">=</span> <span class="n">RefinementCenter</span><span class="p">(</span>
+        <span class="n">radii</span><span class="p">,</span> <span class="n">dx_fine</span><span class="p">,</span> <span class="n">cfl_num</span><span class="p">,</span> <span class="n">center_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">pp</span>
+    <span class="p">)</span>
+    <span class="n">center2</span> <span class="o">=</span> <span class="n">RefinementCenter</span><span class="p">(</span>
+        <span class="n">radii</span><span class="p">,</span> <span class="n">dx_fine</span><span class="p">,</span> <span class="n">cfl_num</span><span class="p">,</span> <span class="n">center_num</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">pm</span>
+    <span class="p">)</span>
+    <span class="n">center3</span> <span class="o">=</span> <span class="n">RefinementCenter</span><span class="p">(</span>
+        <span class="n">radii</span><span class="p">,</span> <span class="n">dx_fine</span><span class="p">,</span> <span class="n">cfl_num</span><span class="p">,</span> <span class="n">center_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">centers</span> <span class="o">=</span> <span class="p">(</span><span class="n">center1</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">center3</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Grid</span><span class="p">(</span><span class="n">centers</span><span class="p">,</span> <span class="n">outer_boundary</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="set_dt_max_grid"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.set_dt_max_grid">[docs]</a><span class="k">def</span> <span class="nf">set_dt_max_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">dt_max</span><span class="p">):</span>

@@ -66,6 +66,8 @@ with the exception that the timestep of the outermost refinement levels is
 synced so that the maximum timestep on the grid is the one you provided. This
 function is important because it can be used to produce grids that satisfy CFL
 conditions (like the ones due to damp_lorenz or eta_beta).</p>
+<p>Another useful function is <a class="reference internal" href="#jhuki.grid.create_twopunctures_grid" title="jhuki.grid.create_twopunctures_grid"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_twopunctures_grid()</span></code></a>, which takes a
+<a class="reference internal" href="twopunctures_ref.html#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a> and returns a grid built on top of it.</p>
 <p>Warning: at the moment we only support grids in which the three dimensions are
 the same in resolution and extent.</p>
 <dl class="py class">
@@ -304,6 +306,41 @@ same time.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt id="jhuki.grid.create_twopunctures_grid">
+<code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">create_twopunctures_grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">two_punctures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_on_horizon_radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_outer_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfl_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon_padding_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#create_twopunctures_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.create_twopunctures_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a grid centered around a given two punctures.</p>
+<p>The grid has three identical refinement centers: two on the punctures and
+one in the center.</p>
+<p>The construction of the grid starts by estimating the horizon radius. Then,
+the horizon is covered with <code class="docutils literal notranslate"><span class="pre">points_on_horizon_radius</span></code>. From there,
+refinement levels are added until the <code class="docutils literal notranslate"><span class="pre">minimum_outer_boundary</span></code> is reached.</p>
+<p>This function does nothing fancy about the mass ratio: it simply considers
+the smaller horizon and creates the grid starting from there.</p>
+<p>Unknown arguments are passed to the constructor of <a class="reference internal" href="#jhuki.grid.Grid" title="jhuki.grid.Grid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>two_punctures</strong> (<a class="reference internal" href="twopunctures_ref.html#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a> or
+<a class="reference internal" href="twochargedpunctures_ref.html#jhuki.twochargedpunctures.TwoChargedPunctures" title="jhuki.twochargedpunctures.TwoChargedPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoChargedPunctures</span></code></a>) – Two punctures for which the grid has to be created.</p></li>
+<li><p><strong>points_on_horizon_radius</strong> (<em>int</em>) – Desired number of grid points on the
+radius of the smaller horizon.</p></li>
+<li><p><strong>minimum_outer_boundary</strong> (<em>float</em>) – Minimum outer boundary that the grid has
+to have</p></li>
+<li><p><strong>cfl_num</strong> (<em>float</em>) – CFL factor for the finest refinement level</p></li>
+<li><p><strong>horizon_padding_points</strong> (<em>int</em>) – Add this number of points to the innermost
+refinement level.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Grid built on top of the given two punctures.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jhuki.grid.Grid" title="jhuki.grid.Grid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

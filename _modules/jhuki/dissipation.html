@@ -226,7 +226,7 @@
     <span class="sd">&quot;&quot;&quot;Return a function that adds variables to the given Dissipation.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">dissipation</span><span class="p">):</span>
-        <span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>  <span class="c1"># noqa: F841</span>
         <span class="k">return</span> <span class="n">Dissipation</span><span class="p">(</span>
             <span class="n">dissipation</span><span class="o">.</span><span class="n">epsdis_per_level</span><span class="p">,</span>
             <span class="n">dissipation</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
