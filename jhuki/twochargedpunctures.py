@@ -46,8 +46,8 @@ class TwoChargedPunctures(TwoPunctures):
         momenta_minus=None,
         chi_plus=None,
         chi_minus=None,
-        charge_plus=None,
-        charge_minus=None,
+        charge_plus=0,
+        charge_minus=0,
         swap_xz=False,
         give_bare_mass=False,
     ):
@@ -118,8 +118,8 @@ class TwoChargedPunctures(TwoPunctures):
             initial_alpha="psi^n",
         )
 
-        self.charge_plus = charge_plus if charge_plus is not None else 0
-        self.charge_minus = charge_minus if charge_minus is not None else 0
+        self.charge_plus = charge_plus
+        self.charge_minus = charge_minus
 
     @property
     @lru_cache(1)
