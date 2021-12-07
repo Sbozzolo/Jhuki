@@ -64,10 +64,89 @@
 <span class="sd"> for the case of charged black holes. The interface is nearly identical.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 
+<span class="kn">from</span> <span class="nn">jhuki.externals.nrpypn</span> <span class="kn">import</span> <span class="n">compute_quasicircular_momenta</span>
 <span class="kn">from</span> <span class="nn">jhuki.twopunctures</span> <span class="kn">import</span> <span class="n">TwoPunctures</span>
+
+
+<div class="viewcode-block" id="prepare_quasicircular_inspiral"><a class="viewcode-back" href="../../twochargedpunctures_ref.html#jhuki.twochargedpunctures.prepare_quasicircular_inspiral">[docs]</a><span class="k">def</span> <span class="nf">prepare_quasicircular_inspiral</span><span class="p">(</span>
+    <span class="n">mass_ratio</span><span class="p">,</span>
+    <span class="n">coordinate_distance</span><span class="p">,</span>
+    <span class="n">total_bare_mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">chi_plus</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="n">chi_minus</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="n">lambda_plus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">lambda_minus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a :py:class:`~.TwoChargedPunctures` that describes a quasi-circular inspiral.</span>
+<span class="sd">    We always assume that the plus puncture is the most massive one.</span>
+
+<span class="sd">    We compute the momenta starting from the uncharged case and scaling by</span>
+<span class="sd">    sqrt(1 - lambda1 * lambda2). This is essentially 0 PN. It works well for low</span>
+<span class="sd">    charge, but not that much for higher charge.</span>
+
+<span class="sd">    :param mass_ratio: Mass ratio of the binary.</span>
+<span class="sd">    :type mass_ratio: float</span>
+<span class="sd">    :param lambda_plus: Charge-to-mass-ratio of the black hole on the positive</span>
+<span class="sd">                        side of the x (or z) axis.</span>
+<span class="sd">    :type lambda_plus: float</span>
+<span class="sd">    :param lambda_minus: Charge-to-mass-ratio of the black hole on the negative</span>
+<span class="sd">                         side of the x (or z) axis.</span>
+<span class="sd">    :type lambda_minus: float</span>
+<span class="sd">    :param coordinate_distance: Initial coordinate separation.</span>
+<span class="sd">    :type coordinate_distance: float</span>
+<span class="sd">    :param total_bare_mass: Rescale masses and momenta so that the total bare mass of the</span>
+<span class="sd">                            system is this.</span>
+<span class="sd">    :type total_bare_mass: float</span>
+
+<span class="sd">    :param chi_plus: Dimensionless spin of the black hole on the positive side of the x</span>
+<span class="sd">                     (or z) axis along the three directions.</span>
+<span class="sd">    :type chi_plus: tuple/list with three numbers</span>
+
+<span class="sd">    :param chi_minus: Dimensionless spin of the black hole on the negative side of the x</span>
+<span class="sd">                     (or z) axis along the three directions.</span>
+<span class="sd">    :type chi_minus: tuple/list with three numbers</span>
+
+<span class="sd">    Unknown arguments are passed to :py:class:`~.TwoPunctures`.</span>
+
+<span class="sd">    :returns: A :py:class:`~.TwoPunctures` for a quasi-circular inspiral.</span>
+<span class="sd">    :rtype: :py:class:`~.TwoPunctures`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">mass_ratio</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">mass_ratio</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">mass_ratio</span>
+
+    <span class="n">Pt</span><span class="p">,</span> <span class="n">Pr</span> <span class="o">=</span> <span class="n">compute_quasicircular_momenta</span><span class="p">(</span>
+        <span class="n">mass_ratio</span><span class="p">,</span> <span class="n">coordinate_distance</span><span class="p">,</span> <span class="n">chi_plus</span><span class="p">,</span> <span class="n">chi_minus</span>
+    <span class="p">)</span>
+
+    <span class="n">mass_plus</span> <span class="o">=</span> <span class="n">mass_ratio</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">mass_ratio</span><span class="p">)</span> <span class="o">*</span> <span class="n">total_bare_mass</span>
+    <span class="n">mass_minus</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">mass_ratio</span><span class="p">)</span> <span class="o">*</span> <span class="n">total_bare_mass</span>
+
+    <span class="n">factor</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lambda_plus</span> <span class="o">*</span> <span class="n">lambda_minus</span><span class="p">)</span>
+
+    <span class="n">Pt</span><span class="p">,</span> <span class="n">Pr</span> <span class="o">=</span> <span class="n">Pt</span> <span class="o">*</span> <span class="n">total_bare_mass</span> <span class="o">*</span> <span class="n">factor</span><span class="p">,</span> <span class="n">Pr</span> <span class="o">*</span> <span class="n">total_bare_mass</span> <span class="o">*</span> <span class="n">factor</span>
+
+    <span class="n">momenta_plus</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">Pr</span><span class="p">,</span> <span class="n">Pt</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">momenta_minus</span> <span class="o">=</span> <span class="p">(</span><span class="n">Pr</span><span class="p">,</span> <span class="o">-</span><span class="n">Pt</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">TwoChargedPunctures</span><span class="p">(</span>
+        <span class="n">mass_plus</span><span class="p">,</span>
+        <span class="n">mass_minus</span><span class="p">,</span>
+        <span class="n">coordinate_distance</span><span class="p">,</span>
+        <span class="n">momenta_plus</span><span class="o">=</span><span class="n">momenta_plus</span><span class="p">,</span>
+        <span class="n">momenta_minus</span><span class="o">=</span><span class="n">momenta_minus</span><span class="p">,</span>
+        <span class="n">chi_plus</span><span class="o">=</span><span class="n">chi_plus</span><span class="p">,</span>
+        <span class="n">chi_minus</span><span class="o">=</span><span class="n">chi_minus</span><span class="p">,</span>
+        <span class="n">charge_plus</span><span class="o">=</span><span class="n">lambda_plus</span> <span class="o">*</span> <span class="n">mass_plus</span><span class="p">,</span>
+        <span class="n">charge_minus</span><span class="o">=</span><span class="n">lambda_minus</span> <span class="o">*</span> <span class="n">mass_minus</span><span class="p">,</span>
+        <span class="n">give_bare_mass</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TwoChargedPunctures"><a class="viewcode-back" href="../../twochargedpunctures_ref.html#jhuki.twochargedpunctures.TwoChargedPunctures">[docs]</a><span class="k">class</span> <span class="nc">TwoChargedPunctures</span><span class="p">(</span><span class="n">TwoPunctures</span><span class="p">):</span>
@@ -91,8 +170,8 @@
         <span class="n">momenta_minus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">chi_plus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">chi_minus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">charge_plus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">charge_minus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">charge_plus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">charge_minus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">swap_xz</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">give_bare_mass</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
@@ -163,8 +242,8 @@
             <span class="n">initial_alpha</span><span class="o">=</span><span class="s2">&quot;psi^n&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">charge_plus</span> <span class="o">=</span> <span class="n">charge_plus</span> <span class="k">if</span> <span class="n">charge_plus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">charge_minus</span> <span class="o">=</span> <span class="n">charge_minus</span> <span class="k">if</span> <span class="n">charge_minus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">charge_plus</span> <span class="o">=</span> <span class="n">charge_plus</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">charge_minus</span> <span class="o">=</span> <span class="n">charge_minus</span>
 
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
