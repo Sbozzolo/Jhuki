@@ -19,10 +19,89 @@
  for the case of charged black holes. The interface is nearly identical.
 """
 
-
+from math import sqrt
 from functools import lru_cache
 
+from jhuki.externals.nrpypn import compute_quasicircular_momenta
 from jhuki.twopunctures import TwoPunctures
+
+
+def prepare_quasicircular_inspiral(
+    mass_ratio,
+    coordinate_distance,
+    total_bare_mass=1,
+    chi_plus=(0, 0, 0),
+    chi_minus=(0, 0, 0),
+    lambda_plus=0,
+    lambda_minus=0,
+    **kwargs,
+):
+    """Return a :py:class:`~.TwoChargedPunctures` that describes a quasi-circular inspiral.
+    We always assume that the plus puncture is the most massive one.
+
+    We compute the momenta starting from the uncharged case and scaling by
+    sqrt(1 - lambda1 * lambda2). This is essentially 0 PN. It works well for low
+    charge, but not that much for higher charge.
+
+    :param mass_ratio: Mass ratio of the binary.
+    :type mass_ratio: float
+    :param lambda_plus: Charge-to-mass-ratio of the black hole on the positive
+                        side of the x (or z) axis.
+    :type lambda_plus: float
+    :param lambda_minus: Charge-to-mass-ratio of the black hole on the negative
+                         side of the x (or z) axis.
+    :type lambda_minus: float
+    :param coordinate_distance: Initial coordinate separation.
+    :type coordinate_distance: float
+    :param total_bare_mass: Rescale masses and momenta so that the total bare mass of the
+                            system is this.
+    :type total_bare_mass: float
+
+    :param chi_plus: Dimensionless spin of the black hole on the positive side of the x
+                     (or z) axis along the three directions.
+    :type chi_plus: tuple/list with three numbers
+
+    :param chi_minus: Dimensionless spin of the black hole on the negative side of the x
+                     (or z) axis along the three directions.
+    :type chi_minus: tuple/list with three numbers
+
+    Unknown arguments are passed to :py:class:`~.TwoPunctures`.
+
+    :returns: A :py:class:`~.TwoPunctures` for a quasi-circular inspiral.
+    :rtype: :py:class:`~.TwoPunctures`
+
+    """
+
+    if mass_ratio < 1:
+        mass_ratio = 1 / mass_ratio
+
+    Pt, Pr = compute_quasicircular_momenta(
+        mass_ratio, coordinate_distance, chi_plus, chi_minus
+    )
+
+    mass_plus = mass_ratio / (1 + mass_ratio) * total_bare_mass
+    mass_minus = 1 / (1 + mass_ratio) * total_bare_mass
+
+    factor = sqrt(1 - lambda_plus * lambda_minus)
+
+    Pt, Pr = Pt * total_bare_mass * factor, Pr * total_bare_mass * factor
+
+    momenta_plus = (-Pr, Pt, 0)
+    momenta_minus = (Pr, -Pt, 0)
+
+    return TwoChargedPunctures(
+        mass_plus,
+        mass_minus,
+        coordinate_distance,
+        momenta_plus=momenta_plus,
+        momenta_minus=momenta_minus,
+        chi_plus=chi_plus,
+        chi_minus=chi_minus,
+        charge_plus=lambda_plus * mass_plus,
+        charge_minus=lambda_minus * mass_minus,
+        give_bare_mass=False,
+        **kwargs,
+    )
 
 
 class TwoChargedPunctures(TwoPunctures):

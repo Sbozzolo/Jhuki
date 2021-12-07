@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <https://www.gnu.org/licenses/>.
 
+from math import sqrt
+
 from pytest import approx
 
 import jhuki.twochargedpunctures as jtcp
@@ -62,3 +64,29 @@ TwoChargedPunctures::par_q_minus = -0.2\
 """
 
     assert tp.parfile_code == expected_str
+
+
+def test_prepare_quasicircular_inspiral():
+
+    # Test mass ratio < 1
+    tp = jtcp.prepare_quasicircular_inspiral(
+        mass_ratio=0.2,
+        coordinate_distance=12,
+        lambda_plus=-0.1,
+        lambda_minus=0.2,
+    )
+
+    assert tp.mass_plus == 5 / 6
+    assert tp.mass_minus == 1 / 6
+
+    assert tp.charge_plus == approx(-0.1 * 5 / 6)
+    assert tp.charge_minus == approx(0.2 * 1 / 6)
+
+    factor = sqrt(1 + 0.1 * 0.2)
+
+    assert tp.momenta_plus == approx(
+        (-factor * 0.000169968781552016, factor * 0.0474161839456146, 0)
+    )
+    assert tp.momenta_minus == approx(
+        (factor * 0.000169968781552016, -factor * 0.0474161839456146, 0)
+    )
