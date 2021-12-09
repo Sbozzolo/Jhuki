@@ -92,6 +92,8 @@ TwoPunctures::center_offset[2] = 0.0\
     assert tp2.momenta_minus == (0.4, 0.5, 0.6)
     assert tp2.chi_plus == (-0.1, -0.2, -0.3)
     assert tp2.chi_minus == (-0.4, -0.5, -0.6)
+    assert tp2.a_plus == (-0.1, -0.2, -0.3)
+    assert tp2.a_minus == (-0.8, -1.0, -1.2)
     assert tp2.S_plus == (-0.1, -0.2, -0.3)
     assert tp2.S_minus == (-1.6, -2.0, -2.4)
     assert tp2.center_offset == (3, 0, 0)

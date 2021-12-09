@@ -105,11 +105,11 @@ def create_twopunctures_grid(
         qp, qm = 0, 0
 
     # Spin
-    ap = mp * sqrt(sum(chi ** 2 for chi in two_punctures.chi_plus))
-    am = mm * sqrt(sum(chi ** 2 for chi in two_punctures.chi_minus))
+    ap_sq = sum(a_i ** 2 for a_i in two_punctures.a_plus)
+    am_sq = sum(a_i ** 2 for a_i in two_punctures.a_minus)
 
-    guess_r_plus = sqrt(mp ** 2 - ap ** 2 - qp ** 2) / 2
-    guess_r_minus = sqrt(mm ** 2 - am ** 2 - qm ** 2) / 2
+    guess_r_plus = sqrt(mp ** 2 - ap_sq - qp ** 2) / 2
+    guess_r_minus = sqrt(mm ** 2 - am_sq - qm ** 2) / 2
 
     # Now, we can find the resolution needed to cover the smaller horizon with
     # the desired number of points

@@ -239,6 +239,11 @@ class TwoPunctures(BaseThorn):
         self.chi_plus = _par_or_zeros(chi_plus)
         self.chi_minus = _par_or_zeros(chi_minus)
 
+        # Specific angular momentum
+        self.a_plus = tuple(cp * self.mass_plus for cp in self.chi_plus)
+        self.a_minus = tuple(cm * self.mass_minus for cm in self.chi_minus)
+
+        # Angular momentum
         self.S_plus = tuple(cp * self.mass_plus ** 2 for cp in self.chi_plus)
         self.S_minus = tuple(
             cm * self.mass_minus ** 2 for cm in self.chi_minus
