@@ -101,6 +101,7 @@
     <span class="n">minimum_outer_boundary</span><span class="p">,</span>
     <span class="n">cfl_num</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span>
     <span class="n">horizon_padding_points</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">skip_radii</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a grid centered around a given two punctures.</span>
@@ -111,6 +112,11 @@
 <span class="sd">    The construction of the grid starts by estimating the horizon radius. Then,</span>
 <span class="sd">    the horizon is covered with ``points_on_horizon_radius``. From there,</span>
 <span class="sd">    refinement levels are added until the ``minimum_outer_boundary`` is reached.</span>
+<span class="sd">    Radii are placed at powers of 2 from the central one, unless the index is</span>
+<span class="sd">    in the ``skip_radii`` list. For example, if ``skip_radii = [2, 3]``, and the</span>
+<span class="sd">    refinement boundaries are supposed to be ``[1, 2, 4, 8, 16]``, the actual</span>
+<span class="sd">    one will be ``[1, 2, 16]``. This is useful to extend the grid without adding</span>
+<span class="sd">    too many refinement levels.</span>
 
 <span class="sd">    This function does nothing fancy about the mass ratio: it simply considers</span>
 <span class="sd">    the smaller horizon and creates the grid starting from there.</span>
@@ -132,6 +138,10 @@
 <span class="sd">    :param horizon_padding_points: Add this number of points to the innermost</span>
 <span class="sd">                                   refinement level.</span>
 <span class="sd">    :type horizon_padding_points: int</span>
+
+<span class="sd">    :param skip_radii: Do not add to the grid refinement boundaries with these</span>
+<span class="sd">                       indices.</span>
+<span class="sd">    :type skip_radii: list of int</span>
 
 <span class="sd">    :returns: Grid built on top of the given two punctures.</span>
 <span class="sd">    :rtype: :py:class:`~.Grid`</span>
@@ -174,14 +184,17 @@
     <span class="c1"># until we are at the desired outer boundary.</span>
     <span class="n">radius_number</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">radius</span> <span class="o">=</span> <span class="n">radius0</span>
-
     <span class="c1"># Here is were the save the various radii</span>
     <span class="n">radii</span> <span class="o">=</span> <span class="p">[]</span>
 
+    <span class="k">if</span> <span class="n">skip_radii</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">skip_radii</span> <span class="o">=</span> <span class="p">[]</span>
+
     <span class="k">while</span> <span class="n">radius</span> <span class="o">&lt;</span> <span class="n">minimum_outer_boundary</span><span class="p">:</span>
         <span class="n">radius</span> <span class="o">=</span> <span class="n">radius0</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">radius_number</span>
+        <span class="k">if</span> <span class="n">radius_number</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skip_radii</span><span class="p">:</span>
+            <span class="n">radii</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
         <span class="n">radius_number</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">radii</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
 
     <span class="c1"># We do not want to include the outer boundary</span>
     <span class="n">radii</span><span class="p">,</span> <span class="n">outer_boundary</span> <span class="o">=</span> <span class="n">radii</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">radii</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
