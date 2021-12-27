@@ -487,6 +487,8 @@ def test_create_twopuncture_grid():
     assert grid_tp.refinement_centers[0].num_refinement_radii == 10
     assert grid_tp.outer_boundary == pytest.approx(152.064)
 
+    # Let's also test skipping a couple of radii
+
     tcp = TwoChargedPunctures(
         mass_plus=0.5,
         mass_minus=0.3,
@@ -498,9 +500,23 @@ def test_create_twopuncture_grid():
     )
 
     grid_tcp = gr.create_twopunctures_grid(
-        tcp, points_on_horizon_radius=40, minimum_outer_boundary=100
+        tcp,
+        points_on_horizon_radius=40,
+        minimum_outer_boundary=100,
+        skip_radii=[2, 8],
     )
 
+    assert grid_tcp.refinement_centers[0].num_refinement_radii == 8
+    assert grid_tcp.refinement_centers[0].refinement_radii == (
+        76.032,
+        19.008,
+        9.504,
+        4.752,
+        2.376,
+        1.188,
+        0.297,
+        0.1485,
+    )
     assert grid_tcp.refinement_centers[0].position == (0, 0, tcp.coord_x_plus)
     assert grid_tcp.refinement_centers[1].position == (0, 0, tcp.coord_x_minus)
 

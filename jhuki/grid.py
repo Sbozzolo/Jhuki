@@ -56,6 +56,7 @@ def create_twopunctures_grid(
     minimum_outer_boundary,
     cfl_num=0.45,
     horizon_padding_points=5,
+    skip_radii=None,
     **kwargs,
 ):
     """Create a grid centered around a given two punctures.
@@ -66,6 +67,11 @@ def create_twopunctures_grid(
     The construction of the grid starts by estimating the horizon radius. Then,
     the horizon is covered with ``points_on_horizon_radius``. From there,
     refinement levels are added until the ``minimum_outer_boundary`` is reached.
+    Radii are placed at powers of 2 from the central one, unless the index is
+    in the ``skip_radii`` list. For example, if ``skip_radii = [2, 3]``, and the
+    refinement boundaries are supposed to be ``[1, 2, 4, 8, 16]``, the actual
+    one will be ``[1, 2, 16]``. This is useful to encompass regions of space with
+    the same resolution. Indices are counted from the innermost.
 
     This function does nothing fancy about the mass ratio: it simply considers
     the smaller horizon and creates the grid starting from there.
@@ -88,6 +94,10 @@ def create_twopunctures_grid(
                                    refinement level.
     :type horizon_padding_points: int
 
+    :param skip_radii: Do not add to the grid refinement boundaries with these
+                       indices.
+    :type skip_radii: list of int
+
     :returns: Grid built on top of the given two punctures.
     :rtype: :py:class:`~.Grid`
 
@@ -105,11 +115,11 @@ def create_twopunctures_grid(
         qp, qm = 0, 0
 
     # Spin
-    ap_sq = sum(a_i ** 2 for a_i in two_punctures.a_plus)
-    am_sq = sum(a_i ** 2 for a_i in two_punctures.a_minus)
+    ap_sq = sum(a_i**2 for a_i in two_punctures.a_plus)
+    am_sq = sum(a_i**2 for a_i in two_punctures.a_minus)
 
-    guess_r_plus = sqrt(mp ** 2 - ap_sq - qp ** 2) / 2
-    guess_r_minus = sqrt(mm ** 2 - am_sq - qm ** 2) / 2
+    guess_r_plus = sqrt(mp**2 - ap_sq - qp**2) / 2
+    guess_r_minus = sqrt(mm**2 - am_sq - qm**2) / 2
 
     # Now, we can find the resolution needed to cover the smaller horizon with
     # the desired number of points
@@ -129,14 +139,17 @@ def create_twopunctures_grid(
     # until we are at the desired outer boundary.
     radius_number = 0
     radius = radius0
-
     # Here is were the save the various radii
     radii = []
 
+    if skip_radii is None:
+        skip_radii = []
+
     while radius < minimum_outer_boundary:
-        radius = radius0 * 2 ** radius_number
+        radius = radius0 * 2**radius_number
+        if radius_number not in skip_radii:
+            radii.append(radius)
         radius_number += 1
-        radii.append(radius)
 
     # We do not want to include the outer boundary
     radii, outer_boundary = radii[:-1], radii[-1]
@@ -469,7 +482,7 @@ class RefinementCenter(BaseThorn):
         :rtype: tuple of float
         """
         return tuple(
-            self.dx_coarse * 0.5 ** level_num
+            self.dx_coarse * 0.5**level_num
             for level_num in range(self.num_refinement_levels)
         )
 
