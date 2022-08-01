@@ -474,9 +474,9 @@ def test_create_twopuncture_grid():
 
     # We cover the mass_minus horizon, which is the smallest.
 
-    spin_m = 0.3 * sqrt(0.15 ** 2 + 0.25 ** 2 + 0.35 ** 2)
+    spin_m = 0.3 * sqrt(0.15**2 + 0.25**2 + 0.35**2)
 
-    ah_m = sqrt(0.3 ** 2 - spin_m ** 2) / 2
+    ah_m = sqrt(0.3**2 - spin_m**2) / 2
 
     dx_fine = round(ah_m / 40, 4)
 
@@ -520,6 +520,6 @@ def test_create_twopuncture_grid():
     assert grid_tcp.refinement_centers[0].position == (0, 0, tcp.coord_x_plus)
     assert grid_tcp.refinement_centers[1].position == (0, 0, tcp.coord_x_minus)
 
-    ah_m = sqrt(0.3 ** 2 - spin_m ** 2 - 0.03 ** 2) / 2
+    ah_m = sqrt(0.3**2 - spin_m**2 - 0.03**2) / 2
     dx_fine = round(ah_m / 40, 4)
     assert grid_tcp.refinement_centers[0].dx_fine == dx_fine

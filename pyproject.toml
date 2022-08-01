@@ -13,12 +13,12 @@ documentation = "https://sbozzolo.github.io/Jhuki"
 "Bug Tracker" = "https://github.com/sbozzolo/Jhuki/issues"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
+python = "^3.6.2"
 ConfigArgParse = "^1.2.3"
 sympy = "^1.7.1"
 
 [tool.poetry.dev-dependencies]
-black = "^20.8b1"
+black = "^22.3.0"
 pytest = "^6.2.1"
 pytest-cov = "^2.10.1"
 Sphinx = "^3.5.4"
