@@ -292,13 +292,13 @@ def test_time_refinement_factors(a_grid):
     assert expected_time_refinement == a_grid.time_refinement_factors
 
 
-def test_reflection_axis(refinement_center, refinement_center2):
+def test_symmetry(refinement_center, refinement_center2):
 
     with pytest.raises(ValueError):
         gr.Grid(
             [refinement_center, refinement_center2],
             outer_boundary=10,
-            reflection_axis="bob",
+            symmetry="bob",
         )
 
 
@@ -316,16 +316,20 @@ CoordBase::boundary_size_x_upper = 3
 CoordBase::boundary_size_y_upper = 3
 CoordBase::boundary_size_z_upper = 3
 
+ReflectionSymmetry::avoid_origin_x = no
+ReflectionSymmetry::avoid_origin_y = no
+ReflectionSymmetry::avoid_origin_z = no
+
 CoordBase::domainsize = "minmax"
 CoordBase::xmax = 10
 CoordBase::ymax = 10
 CoordBase::zmax = 10
-CoordBase::xmin = -10
-CoordBase::ymin = -10
-CoordBase::zmin = -10
 CoordBase::dx = 2.0
 CoordBase::dy = 2.0
 CoordBase::dz = 2.0
+CoordBase::xmin = -10
+CoordBase::ymin = -10
+CoordBase::zmin = -10
 
 CarpetRegrid2::num_centres = 2
 Carpet::max_refinement_levels = 6
@@ -340,7 +344,7 @@ Carpet::time_refinement_factors = "[1,1,2,4,8,16]"
     grid_symmetry_x = gr.Grid(
         [refinement_center, refinement_center2],
         outer_boundary=10,
-        reflection_axis="x",
+        symmetry="x",
         num_ghost=4,
     )
 
@@ -356,20 +360,23 @@ CoordBase::boundary_size_x_upper = 4
 CoordBase::boundary_size_y_upper = 4
 CoordBase::boundary_size_z_upper = 4
 
+ReflectionSymmetry::avoid_origin_x = no
+ReflectionSymmetry::avoid_origin_y = no
+ReflectionSymmetry::avoid_origin_z = no
+
 CoordBase::domainsize = "minmax"
 CoordBase::xmax = 10
 CoordBase::ymax = 10
 CoordBase::zmax = 10
-CoordBase::xmin = 0
-CoordBase::ymin = -10
-CoordBase::zmin = -10
 CoordBase::dx = 2.0
 CoordBase::dy = 2.0
 CoordBase::dz = 2.0
+CoordBase::xmin = 0
+CoordBase::boundary_shiftout_x_lower = 1
+CoordBase::ymin = -10
+CoordBase::zmin = -10
 
 ReflectionSymmetry::reflection_x     = yes
-ReflectionSymmetry::avoid_origin_x   = no
-CoordBase::boundary_shiftout_x_lower = 1
 
 CarpetRegrid2::num_centres = 2
 Carpet::max_refinement_levels = 6
@@ -380,6 +387,109 @@ Carpet::time_refinement_factors = "[1,1,2,4,8,16]"
 """
 
     assert grid_symmetry_x.parfile_code == expected_str
+
+    # Rotational symmetry
+
+    grid_symmetry_90 = gr.Grid(
+        [refinement_center, refinement_center2],
+        outer_boundary=10,
+        symmetry="90",
+        num_ghost=4,
+    )
+
+    expected_str = f"""\
+CartGrid3D::type = "coordbase"
+Carpet::domain_from_coordbase = "yes"
+
+Driver::ghost_size = 4
+CoordBase::boundary_size_x_lower = 4
+CoordBase::boundary_size_y_lower = 4
+CoordBase::boundary_size_z_lower = 4
+CoordBase::boundary_size_x_upper = 4
+CoordBase::boundary_size_y_upper = 4
+CoordBase::boundary_size_z_upper = 4
+
+ReflectionSymmetry::avoid_origin_x = no
+ReflectionSymmetry::avoid_origin_y = no
+ReflectionSymmetry::avoid_origin_z = no
+
+CoordBase::domainsize = "minmax"
+CoordBase::xmax = 10
+CoordBase::ymax = 10
+CoordBase::zmax = 10
+CoordBase::dx = 2.0
+CoordBase::dy = 2.0
+CoordBase::dz = 2.0
+CoordBase::xmin = 0
+CoordBase::boundary_shiftout_x_lower = 1
+CoordBase::ymin = 0
+CoordBase::boundary_shiftout_y_lower = 1
+CoordBase::zmin = -10
+
+ActiveThorns = "RotatingSymmetry90"
+CarpetRegrid2::symmetry_rotating90 = yes
+
+
+CarpetRegrid2::num_centres = 2
+Carpet::max_refinement_levels = 6
+Carpet::time_refinement_factors = "[1,1,2,4,8,16]"
+
+{a_grid.refinement_centers[0].parfile_code}
+{a_grid.refinement_centers[1].parfile_code}\
+"""
+
+    assert grid_symmetry_90.parfile_code == expected_str
+
+    grid_symmetry_180z = gr.Grid(
+        [refinement_center, refinement_center2],
+        outer_boundary=10,
+        symmetry="180z",
+        num_ghost=4,
+    )
+
+    expected_str = f"""\
+CartGrid3D::type = "coordbase"
+Carpet::domain_from_coordbase = "yes"
+
+Driver::ghost_size = 4
+CoordBase::boundary_size_x_lower = 4
+CoordBase::boundary_size_y_lower = 4
+CoordBase::boundary_size_z_lower = 4
+CoordBase::boundary_size_x_upper = 4
+CoordBase::boundary_size_y_upper = 4
+CoordBase::boundary_size_z_upper = 4
+
+ReflectionSymmetry::avoid_origin_x = no
+ReflectionSymmetry::avoid_origin_y = no
+ReflectionSymmetry::avoid_origin_z = no
+
+CoordBase::domainsize = "minmax"
+CoordBase::xmax = 10
+CoordBase::ymax = 10
+CoordBase::zmax = 10
+CoordBase::dx = 2.0
+CoordBase::dy = 2.0
+CoordBase::dz = 2.0
+CoordBase::xmin = 0
+CoordBase::boundary_shiftout_x_lower = 1
+CoordBase::ymin = -10
+CoordBase::zmin = 0
+CoordBase::boundary_shiftout_z_lower = 1
+
+ActiveThorns = "RotatingSymmetry180"
+CarpetRegrid2::symmetry_rotating180 = yes
+
+ReflectionSymmetry::reflection_z     = yes
+
+CarpetRegrid2::num_centres = 2
+Carpet::max_refinement_levels = 6
+Carpet::time_refinement_factors = "[1,1,2,4,8,16]"
+
+{a_grid.refinement_centers[0].parfile_code}
+{a_grid.refinement_centers[1].parfile_code}\
+"""
+
+    assert grid_symmetry_180z.parfile_code == expected_str
 
 
 def test_set_dt_max_grid(a_grid):
@@ -417,7 +527,7 @@ def test_set_dt_max_grid(a_grid):
         outer_boundary=5,
         tiny_shift=True,
         num_ghost=4,
-        reflection_axis="xz",
+        symmetry="xz",
     )
 
     outer_boundary_plus = 5 + 0.25 / 7

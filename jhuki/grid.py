@@ -243,7 +243,7 @@ def set_dt_max_grid(grid, dt_max):
         new_refinement_centers,
         outer_boundary=grid.outer_boundary,
         num_ghost=grid.num_ghost,
-        reflection_axis=grid.reflection_axis,
+        symmetry=grid.symmetry,
         tiny_shift=grid.tiny_shift,
     )
 
@@ -666,15 +666,19 @@ class Grid(BaseThorn):
                                    levels.
     :vartype center_with_most_levels: :py:class:`~.RefinementCenter`
 
-    :ivar reflection_axis: If None, reflection symmetry is not enabled.
-                           If 'x', 'y', or 'z', enable reflection symmetry
-                           along that axis. If 'xy', 'yz', or 'xz', enable
-                           reflection symmetry along two axis. If 'xyz', enable
-                           octant symmetry.
-    :vartype reflection_axis: str, or None
+    :ivar symmetry: If None, no symmetry is not enabled. If 'x', 'y', or 'z',
+                    enable reflection symmetry along that axis. If 'xy', 'yz',
+                    or 'xz', enable reflection symmetry along two axis. If
+                    'xyz', enable octant symmetry. If `90` or `180`, enable
+                    rotational symmetry (about the z axis). Rotational symmetry
+                    is the kind of symmetry that exists for a single black hole
+                    (`90`), or for identical binary (`180`). Activate both
+                    rotational and reflection symmetries with `90z` or `180z`.
+    :vartype symmetry: str, or None
 
     :ivar num_ghost: Number of ghost zones.
     :vartype num_ghost: int
+
     """
 
     def __init__(
@@ -682,7 +686,7 @@ class Grid(BaseThorn):
         refinement_centers,
         outer_boundary,
         num_ghost=3,
-        reflection_axis=None,
+        symmetry=None,
         tiny_shift=False,
     ):
         """Constructor.
@@ -701,12 +705,17 @@ class Grid(BaseThorn):
                               directions.
         :vartype outer_boundary: float or None
 
-        :param reflection_axis: If None, reflection symmetry is not enabled.
-                                If 'x', 'y', or 'z', enable reflection symmetry
-                                along that axis. If 'xy', 'yz', or 'xz', enable
-                                reflection symmetry along two axis. If 'xyz',
-                                enable octant symmetry.
-        :vartype reflection_axis: str, or None
+        :param symmetry: If None, no symmetry is not enabled. If 'x', 'y', or
+                             'z', enable reflection symmetry along that axis. If
+                             'xy', 'yz', or 'xz', enable reflection symmetry
+                             along two axis. If 'xyz', enable octant symmetry.
+                             If `90` or `180`, enable rotational symmetry (about
+                             the z axis). Rotational symmetry is the kind of
+                             symmetry that exists for a single black hole
+                             (`90`), or for identical binary (`180`). Activate
+                             both rotational and reflection symmetries with
+                             `90z` or `180z`.
+        :vartype symmetry: str, or None
 
         :param tiny_shift: Apply a tiny (subpixel) shift to the outer boundary so
                            that the point (0,0,0) is not on the grid. This is
@@ -715,6 +724,7 @@ class Grid(BaseThorn):
 
         :param num_ghost: Number of ghost zones.
         :type num_ghost: int
+
         """
         if not all(
             (isinstance(m, RefinementCenter) for m in refinement_centers)
@@ -783,7 +793,7 @@ class Grid(BaseThorn):
         self.outer_boundary = outer_boundary
         self.tiny_shift = tiny_shift
 
-        if reflection_axis not in (
+        _allowed_symmetries = (
             "x",
             "y",
             "z",
@@ -791,13 +801,19 @@ class Grid(BaseThorn):
             "yz",
             "xz",
             "xyz",
+            "90",
+            "90z",
+            "180",
+            "180z",
             None,
-        ):
+        )
+
+        if symmetry not in _allowed_symmetries:
             raise ValueError(
-                "reflection_axis has to be one between x, y, z, xy, yz, xz, xyz, or None"
+                f"symmetry has to be one in {_allowed_symmetries}"
             )
 
-        self.reflection_axis = reflection_axis
+        self.symmetry = symmetry
 
         self.num_ghost = num_ghost
 
@@ -875,28 +891,70 @@ CoordBase::boundary_size_x_upper = {self.num_ghost}
 CoordBase::boundary_size_y_upper = {self.num_ghost}
 CoordBase::boundary_size_z_upper = {self.num_ghost}
 
+ReflectionSymmetry::avoid_origin_x = no
+ReflectionSymmetry::avoid_origin_y = no
+ReflectionSymmetry::avoid_origin_z = no
+
 CoordBase::domainsize = "minmax"
 CoordBase::xmax = {outer_boundary_plus}
 CoordBase::ymax = {outer_boundary_plus}
 CoordBase::zmax = {outer_boundary_plus}
-CoordBase::xmin = {0 if (self.reflection_axis is not None and 'x' in self.reflection_axis) else outer_boundary_minus}
-CoordBase::ymin = {0 if (self.reflection_axis is not None and 'y' in self.reflection_axis) else outer_boundary_minus}
-CoordBase::zmin = {0 if (self.reflection_axis is not None and 'z' in self.reflection_axis) else outer_boundary_minus}
 CoordBase::dx = {self.dx_coarse}
 CoordBase::dy = {self.dx_coarse}
-CoordBase::dz = {self.dx_coarse}
-"""
+CoordBase::dz = {self.dx_coarse}"""
         )
 
-        if self.reflection_axis:
-            for ref_axis in self.reflection_axis:
+        # When it comes to the lower boundaries, some symmetries are equivalent:
+        # 90 ~ xy, 90z ~ xyz, 180 ~ x, 180z ~ xz
+
+        _map = {"90": "xy", "90z": "xyz", "180": "x", "180z": "xz", None: ""}
+
+        # What is this funny business?
+
+        # _map translates the rotational symmetries to reflection ones (in terms
+        # of boundaries). Then, we set effective_symmetry_for_boundary to
+        # something that has always the format of a reflection symmetry (ie,
+        # some letters). This is done by either getting the value out of the
+        # _map dictionary (when the symmetry is a rotational one, so it is in
+        # _map), or the symmetry itself (when the symmetry is already reflection)
+        effective_symmetry_for_boundary = _map.get(
+            self.symmetry, self.symmetry
+        )
+
+        for dim in ("x", "y", "z"):
+            if dim in effective_symmetry_for_boundary:
+                ret.append(assign_parameter(f"{dim}min", 0, thorn="CoordBase"))
                 ret.append(
-                    f"""\
-ReflectionSymmetry::reflection_{ref_axis}     = yes
-ReflectionSymmetry::avoid_origin_{ref_axis}   = no
-CoordBase::boundary_shiftout_{ref_axis}_lower = 1
-"""
+                    assign_parameter(
+                        f"boundary_shiftout_{dim}_lower", 1, thorn="CoordBase"
+                    )
                 )
+            else:
+                ret.append(
+                    assign_parameter(
+                        f"{dim}min", outer_boundary_minus, thorn="CoordBase"
+                    )
+                )
+
+        # Will add a blank line
+        ret.append("")
+
+        if self.symmetry in ("90", "90z"):
+            ret.append('ActiveThorns = "RotatingSymmetry90"')
+            ret.append("CarpetRegrid2::symmetry_rotating90 = yes\n")
+        elif self.symmetry in ("180", "180z"):
+            ret.append('ActiveThorns = "RotatingSymmetry180"')
+            ret.append("CarpetRegrid2::symmetry_rotating180 = yes\n")
+
+        # Add reflection
+        if self.symmetry is not None:
+            for dim in ("x", "y", "z"):
+                if dim in self.symmetry:
+                    ret.append(
+                        f"ReflectionSymmetry::reflection_{dim}     = yes"
+                    )
+            # Will add a blank line
+            ret.append("")
 
         ret.append(
             assign_parameter(

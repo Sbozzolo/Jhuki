@@ -141,7 +141,7 @@ grid_synced = pg.set_dt_max_grid(grid_not_synced, dt_max=1)
 
 print(grid_synced)
 ```
-This will output
+This will output something along the lines of
 
 ``` sh
 CartGrid3D::type = "coordbase"
