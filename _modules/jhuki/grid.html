@@ -115,8 +115,8 @@
 <span class="sd">    Radii are placed at powers of 2 from the central one, unless the index is</span>
 <span class="sd">    in the ``skip_radii`` list. For example, if ``skip_radii = [2, 3]``, and the</span>
 <span class="sd">    refinement boundaries are supposed to be ``[1, 2, 4, 8, 16]``, the actual</span>
-<span class="sd">    one will be ``[1, 2, 16]``. This is useful to extend the grid without adding</span>
-<span class="sd">    too many refinement levels.</span>
+<span class="sd">    one will be ``[1, 2, 16]``. This is useful to encompass regions of space with</span>
+<span class="sd">    the same resolution. Indices are counted from the innermost.</span>
 
 <span class="sd">    This function does nothing fancy about the mass ratio: it simply considers</span>
 <span class="sd">    the smaller horizon and creates the grid starting from there.</span>
@@ -160,11 +160,11 @@
         <span class="n">qp</span><span class="p">,</span> <span class="n">qm</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
 
     <span class="c1"># Spin</span>
-    <span class="n">ap_sq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a_i</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a_i</span> <span class="ow">in</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">a_plus</span><span class="p">)</span>
-    <span class="n">am_sq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a_i</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a_i</span> <span class="ow">in</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">a_minus</span><span class="p">)</span>
+    <span class="n">ap_sq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a_i</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a_i</span> <span class="ow">in</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">a_plus</span><span class="p">)</span>
+    <span class="n">am_sq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a_i</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a_i</span> <span class="ow">in</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">a_minus</span><span class="p">)</span>
 
-    <span class="n">guess_r_plus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mp</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">ap_sq</span> <span class="o">-</span> <span class="n">qp</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="n">guess_r_minus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">am_sq</span> <span class="o">-</span> <span class="n">qm</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">guess_r_plus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mp</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">ap_sq</span> <span class="o">-</span> <span class="n">qp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">guess_r_minus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mm</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">am_sq</span> <span class="o">-</span> <span class="n">qm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
     <span class="c1"># Now, we can find the resolution needed to cover the smaller horizon with</span>
     <span class="c1"># the desired number of points</span>
@@ -191,7 +191,7 @@
         <span class="n">skip_radii</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">while</span> <span class="n">radius</span> <span class="o">&lt;</span> <span class="n">minimum_outer_boundary</span><span class="p">:</span>
-        <span class="n">radius</span> <span class="o">=</span> <span class="n">radius0</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">radius_number</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">radius0</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="n">radius_number</span>
         <span class="k">if</span> <span class="n">radius_number</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skip_radii</span><span class="p">:</span>
             <span class="n">radii</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
         <span class="n">radius_number</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -288,7 +288,7 @@
         <span class="n">new_refinement_centers</span><span class="p">,</span>
         <span class="n">outer_boundary</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">outer_boundary</span><span class="p">,</span>
         <span class="n">num_ghost</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">num_ghost</span><span class="p">,</span>
-        <span class="n">reflection_axis</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">,</span>
+        <span class="n">symmetry</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">symmetry</span><span class="p">,</span>
         <span class="n">tiny_shift</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">tiny_shift</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -527,7 +527,7 @@
 <span class="sd">        :rtype: tuple of float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">**</span> <span class="n">level_num</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span> <span class="o">*</span> <span class="mf">0.5</span><span class="o">**</span><span class="n">level_num</span>
             <span class="k">for</span> <span class="n">level_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="p">)</span>
         <span class="p">)</span>
 
@@ -711,15 +711,19 @@
 <span class="sd">                                   levels.</span>
 <span class="sd">    :vartype center_with_most_levels: :py:class:`~.RefinementCenter`</span>
 
-<span class="sd">    :ivar reflection_axis: If None, reflection symmetry is not enabled.</span>
-<span class="sd">                           If &#39;x&#39;, &#39;y&#39;, or &#39;z&#39;, enable reflection symmetry</span>
-<span class="sd">                           along that axis. If &#39;xy&#39;, &#39;yz&#39;, or &#39;xz&#39;, enable</span>
-<span class="sd">                           reflection symmetry along two axis. If &#39;xyz&#39;, enable</span>
-<span class="sd">                           octant symmetry.</span>
-<span class="sd">    :vartype reflection_axis: str, or None</span>
+<span class="sd">    :ivar symmetry: If None, no symmetry is not enabled. If &#39;x&#39;, &#39;y&#39;, or &#39;z&#39;,</span>
+<span class="sd">                    enable reflection symmetry along that axis. If &#39;xy&#39;, &#39;yz&#39;,</span>
+<span class="sd">                    or &#39;xz&#39;, enable reflection symmetry along two axis. If</span>
+<span class="sd">                    &#39;xyz&#39;, enable octant symmetry. If `90` or `180`, enable</span>
+<span class="sd">                    rotational symmetry (about the z axis). Rotational symmetry</span>
+<span class="sd">                    is the kind of symmetry that exists for a single black hole</span>
+<span class="sd">                    (`90`), or for identical binary (`180`). Activate both</span>
+<span class="sd">                    rotational and reflection symmetries with `90z` or `180z`.</span>
+<span class="sd">    :vartype symmetry: str, or None</span>
 
 <span class="sd">    :ivar num_ghost: Number of ghost zones.</span>
 <span class="sd">    :vartype num_ghost: int</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -727,7 +731,7 @@
         <span class="n">refinement_centers</span><span class="p">,</span>
         <span class="n">outer_boundary</span><span class="p">,</span>
         <span class="n">num_ghost</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-        <span class="n">reflection_axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">symmetry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">tiny_shift</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor.</span>
@@ -746,12 +750,17 @@
 <span class="sd">                              directions.</span>
 <span class="sd">        :vartype outer_boundary: float or None</span>
 
-<span class="sd">        :param reflection_axis: If None, reflection symmetry is not enabled.</span>
-<span class="sd">                                If &#39;x&#39;, &#39;y&#39;, or &#39;z&#39;, enable reflection symmetry</span>
-<span class="sd">                                along that axis. If &#39;xy&#39;, &#39;yz&#39;, or &#39;xz&#39;, enable</span>
-<span class="sd">                                reflection symmetry along two axis. If &#39;xyz&#39;,</span>
-<span class="sd">                                enable octant symmetry.</span>
-<span class="sd">        :vartype reflection_axis: str, or None</span>
+<span class="sd">        :param symmetry: If None, no symmetry is not enabled. If &#39;x&#39;, &#39;y&#39;, or</span>
+<span class="sd">                             &#39;z&#39;, enable reflection symmetry along that axis. If</span>
+<span class="sd">                             &#39;xy&#39;, &#39;yz&#39;, or &#39;xz&#39;, enable reflection symmetry</span>
+<span class="sd">                             along two axis. If &#39;xyz&#39;, enable octant symmetry.</span>
+<span class="sd">                             If `90` or `180`, enable rotational symmetry (about</span>
+<span class="sd">                             the z axis). Rotational symmetry is the kind of</span>
+<span class="sd">                             symmetry that exists for a single black hole</span>
+<span class="sd">                             (`90`), or for identical binary (`180`). Activate</span>
+<span class="sd">                             both rotational and reflection symmetries with</span>
+<span class="sd">                             `90z` or `180z`.</span>
+<span class="sd">        :vartype symmetry: str, or None</span>
 
 <span class="sd">        :param tiny_shift: Apply a tiny (subpixel) shift to the outer boundary so</span>
 <span class="sd">                           that the point (0,0,0) is not on the grid. This is</span>
@@ -760,6 +769,7 @@
 
 <span class="sd">        :param num_ghost: Number of ghost zones.</span>
 <span class="sd">        :type num_ghost: int</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
             <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">RefinementCenter</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">refinement_centers</span><span class="p">)</span>
@@ -828,7 +838,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">outer_boundary</span> <span class="o">=</span> <span class="n">outer_boundary</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tiny_shift</span> <span class="o">=</span> <span class="n">tiny_shift</span>
 
-        <span class="k">if</span> <span class="n">reflection_axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="n">_allowed_symmetries</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;x&quot;</span><span class="p">,</span>
             <span class="s2">&quot;y&quot;</span><span class="p">,</span>
             <span class="s2">&quot;z&quot;</span><span class="p">,</span>
@@ -836,13 +846,19 @@
             <span class="s2">&quot;yz&quot;</span><span class="p">,</span>
             <span class="s2">&quot;xz&quot;</span><span class="p">,</span>
             <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;90&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;90z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;180&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;180z&quot;</span><span class="p">,</span>
             <span class="kc">None</span><span class="p">,</span>
-        <span class="p">):</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">symmetry</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_allowed_symmetries</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;reflection_axis has to be one between x, y, z, xy, yz, xz, xyz, or None&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;symmetry has to be one in </span><span class="si">{</span><span class="n">_allowed_symmetries</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span> <span class="o">=</span> <span class="n">reflection_axis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">symmetry</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span> <span class="o">=</span> <span class="n">num_ghost</span>
 
@@ -920,28 +936,68 @@
 <span class="s2">CoordBase::boundary_size_y_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
 <span class="s2">CoordBase::boundary_size_z_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
 
+<span class="s2">ReflectionSymmetry::avoid_origin_x = no</span>
+<span class="s2">ReflectionSymmetry::avoid_origin_y = no</span>
+<span class="s2">ReflectionSymmetry::avoid_origin_z = no</span>
+
 <span class="s2">CoordBase::domainsize = &quot;minmax&quot;</span>
 <span class="s2">CoordBase::xmax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span><span class="s2"></span>
 <span class="s2">CoordBase::ymax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span><span class="s2"></span>
 <span class="s2">CoordBase::zmax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::xmin = </span><span class="si">{</span><span class="mi">0</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;x&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">)</span> <span class="k">else</span> <span class="n">outer_boundary_minus</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::ymin = </span><span class="si">{</span><span class="mi">0</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;y&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">)</span> <span class="k">else</span> <span class="n">outer_boundary_minus</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::zmin = </span><span class="si">{</span><span class="mi">0</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;z&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">)</span> <span class="k">else</span> <span class="n">outer_boundary_minus</span><span class="si">}</span><span class="s2"></span>
 <span class="s2">CoordBase::dx = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2"></span>
 <span class="s2">CoordBase::dy = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::dz = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">CoordBase::dz = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">ref_axis</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_axis</span><span class="p">:</span>
+        <span class="c1"># When it comes to the lower boundaries, some symmetries are equivalent:</span>
+        <span class="c1"># 90 ~ xy, 90z ~ xyz, 180 ~ x, 180z ~ xz</span>
+
+        <span class="n">_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;90&quot;</span><span class="p">:</span> <span class="s2">&quot;xy&quot;</span><span class="p">,</span> <span class="s2">&quot;90z&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="s2">&quot;180&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;180z&quot;</span><span class="p">:</span> <span class="s2">&quot;xz&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
+
+        <span class="c1"># What is this funny business?</span>
+
+        <span class="c1"># _map translates the rotational symmetries to reflection ones (in terms</span>
+        <span class="c1"># of boundaries). Then, we set effective_symmetry_for_boundary to</span>
+        <span class="c1"># something that has always the format of a reflection symmetry (ie,</span>
+        <span class="c1"># some letters). This is done by either getting the value out of the</span>
+        <span class="c1"># _map dictionary (when the symmetry is a rotational one, so it is in</span>
+        <span class="c1"># _map), or the symmetry itself (when the symmetry is already reflection)</span>
+        <span class="n">effective_symmetry_for_boundary</span> <span class="o">=</span> <span class="n">_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">symmetry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetry</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">effective_symmetry_for_boundary</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assign_parameter</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">min&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">thorn</span><span class="o">=</span><span class="s2">&quot;CoordBase&quot;</span><span class="p">))</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
-<span class="s2">ReflectionSymmetry::reflection_</span><span class="si">{</span><span class="n">ref_axis</span><span class="si">}</span><span class="s2">     = yes</span>
-<span class="s2">ReflectionSymmetry::avoid_origin_</span><span class="si">{</span><span class="n">ref_axis</span><span class="si">}</span><span class="s2">   = no</span>
-<span class="s2">CoordBase::boundary_shiftout_</span><span class="si">{</span><span class="n">ref_axis</span><span class="si">}</span><span class="s2">_lower = 1</span>
-<span class="s2">&quot;&quot;&quot;</span>
+                    <span class="n">assign_parameter</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;boundary_shiftout_</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">_lower&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">thorn</span><span class="o">=</span><span class="s2">&quot;CoordBase&quot;</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">assign_parameter</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">min&quot;</span><span class="p">,</span> <span class="n">outer_boundary_minus</span><span class="p">,</span> <span class="n">thorn</span><span class="o">=</span><span class="s2">&quot;CoordBase&quot;</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Will add a blank line</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetry</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;90&quot;</span><span class="p">,</span> <span class="s2">&quot;90z&quot;</span><span class="p">):</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ActiveThorns = &quot;RotatingSymmetry90&quot;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetry</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;180&quot;</span><span class="p">,</span> <span class="s2">&quot;180z&quot;</span><span class="p">):</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ActiveThorns = &quot;RotatingSymmetry180&quot;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Add reflection</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetry</span><span class="p">:</span>
+                    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;ReflectionSymmetry::reflection_</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">     = yes&quot;</span>
+                    <span class="p">)</span>
+            <span class="c1"># Will add a blank line</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
         <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="n">assign_parameter</span><span class="p">(</span>

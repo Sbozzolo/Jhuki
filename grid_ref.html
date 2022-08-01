@@ -72,7 +72,7 @@ conditions (like the ones due to damp_lorenz or eta_beta).</p>
 the same in resolution and extent.</p>
 <dl class="py class">
 <dt id="jhuki.grid.Grid">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">Grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement_centers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outer_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_ghost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflection_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiny_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#Grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.Grid" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">Grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement_centers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outer_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_ghost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiny_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#Grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.Grid" title="Permalink to this definition">¶</a></dt>
 <dd><p>A grid is a collection of <a class="reference internal" href="#jhuki.grid.RefinementCenter" title="jhuki.grid.RefinementCenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefinementCenter</span></code></a> objects. For example,
 a binary black hole simulation will likely have two
 <a class="reference internal" href="#jhuki.grid.RefinementCenter" title="jhuki.grid.RefinementCenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefinementCenter</span></code></a>, centered each black hole.</p>
@@ -97,11 +97,14 @@ grid.</p></li>
 <li><p><strong>cfl_coarse</strong> (<em>float</em>) – Courant factor on the coarsest level.</p></li>
 <li><p><strong>center_with_most_levels</strong> (<a class="reference internal" href="#jhuki.grid.RefinementCenter" title="jhuki.grid.RefinementCenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefinementCenter</span></code></a>) – Refinement center that has the largest number of
 levels.</p></li>
-<li><p><strong>reflection_axis</strong> (<em>str</em><em>, or </em><em>None</em>) – If None, reflection symmetry is not enabled.
-If ‘x’, ‘y’, or ‘z’, enable reflection symmetry
-along that axis. If ‘xy’, ‘yz’, or ‘xz’, enable
-reflection symmetry along two axis. If ‘xyz’, enable
-octant symmetry.</p></li>
+<li><p><strong>symmetry</strong> (<em>str</em><em>, or </em><em>None</em>) – If None, no symmetry is not enabled. If ‘x’, ‘y’, or ‘z’,
+enable reflection symmetry along that axis. If ‘xy’, ‘yz’,
+or ‘xz’, enable reflection symmetry along two axis. If
+‘xyz’, enable octant symmetry. If <cite>90</cite> or <cite>180</cite>, enable
+rotational symmetry (about the z axis). Rotational symmetry
+is the kind of symmetry that exists for a single black hole
+(<cite>90</cite>), or for identical binary (<cite>180</cite>). Activate both
+rotational and reflection symmetries with <cite>90z</cite> or <cite>180z</cite>.</p></li>
 <li><p><strong>num_ghost</strong> (<em>int</em>) – Number of ghost zones.</p></li>
 </ul>
 </dd>
@@ -116,11 +119,16 @@ outer levels. They can have different number of levels.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>refinement_centers</strong> (list or tuple of <a class="reference internal" href="#jhuki.grid.RefinementCenter" title="jhuki.grid.RefinementCenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefinementCenter</span></code></a>) – List of mesh refinements corresponding to
 the various different centers.</p></li>
-<li><p><strong>reflection_axis</strong> – If None, reflection symmetry is not enabled.
-If ‘x’, ‘y’, or ‘z’, enable reflection symmetry
-along that axis. If ‘xy’, ‘yz’, or ‘xz’, enable
-reflection symmetry along two axis. If ‘xyz’,
-enable octant symmetry.</p></li>
+<li><p><strong>symmetry</strong> – If None, no symmetry is not enabled. If ‘x’, ‘y’, or
+‘z’, enable reflection symmetry along that axis. If
+‘xy’, ‘yz’, or ‘xz’, enable reflection symmetry
+along two axis. If ‘xyz’, enable octant symmetry.
+If <cite>90</cite> or <cite>180</cite>, enable rotational symmetry (about
+the z axis). Rotational symmetry is the kind of
+symmetry that exists for a single black hole
+(<cite>90</cite>), or for identical binary (<cite>180</cite>). Activate
+both rotational and reflection symmetries with
+<cite>90z</cite> or <cite>180z</cite>.</p></li>
 <li><p><strong>tiny_shift</strong> (<em>bool</em>) – Apply a tiny (subpixel) shift to the outer boundary so
 that the point (0,0,0) is not on the grid. This is
 hard-coded to be 1/7 of a pixel.</p></li>
@@ -320,8 +328,8 @@ refinement levels are added until the <code class="docutils literal notranslate"
 Radii are placed at powers of 2 from the central one, unless the index is
 in the <code class="docutils literal notranslate"><span class="pre">skip_radii</span></code> list. For example, if <code class="docutils literal notranslate"><span class="pre">skip_radii</span> <span class="pre">=</span> <span class="pre">[2,</span> <span class="pre">3]</span></code>, and the
 refinement boundaries are supposed to be <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">4,</span> <span class="pre">8,</span> <span class="pre">16]</span></code>, the actual
-one will be <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">16]</span></code>. This is useful to extend the grid without adding
-too many refinement levels.</p>
+one will be <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">16]</span></code>. This is useful to encompass regions of space with
+the same resolution. Indices are counted from the innermost.</p>
 <p>This function does nothing fancy about the mass ratio: it simply considers
 the smaller horizon and creates the grid starting from there.</p>
 <p>Unknown arguments are passed to the constructor of <a class="reference internal" href="#jhuki.grid.Grid" title="jhuki.grid.Grid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code></a>.</p>
