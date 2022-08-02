@@ -25,7 +25,7 @@ copyright = "2021, Gabriele Bozzola"
 author = "Gabriele Bozzola"
 
 # The full version, including alpha/beta/rc tags
-release = "0.1.0-dev7"
+release = "0.1.0-dev8"
 
 
 # -- General configuration ---------------------------------------------------
