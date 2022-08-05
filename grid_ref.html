@@ -318,18 +318,19 @@ same time.</p>
 
 <dl class="py function">
 <dt id="jhuki.grid.create_twopunctures_grid">
-<code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">create_twopunctures_grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">two_punctures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_on_horizon_radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_outer_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfl_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon_padding_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_radii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#create_twopunctures_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.create_twopunctures_grid" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">create_twopunctures_grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">two_punctures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_on_horizon_radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_outer_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfl_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon_padding_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_radii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_radii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#create_twopunctures_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.create_twopunctures_grid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a grid centered around a given two punctures.</p>
 <p>The grid has three identical refinement centers: two on the punctures and
 one in the center.</p>
 <p>The construction of the grid starts by estimating the horizon radius. Then,
 the horizon is covered with <code class="docutils literal notranslate"><span class="pre">points_on_horizon_radius</span></code>. From there,
 refinement levels are added until the <code class="docutils literal notranslate"><span class="pre">minimum_outer_boundary</span></code> is reached.
-Radii are placed at powers of 2 from the central one, unless the index is
-in the <code class="docutils literal notranslate"><span class="pre">skip_radii</span></code> list. For example, if <code class="docutils literal notranslate"><span class="pre">skip_radii</span> <span class="pre">=</span> <span class="pre">[2,</span> <span class="pre">3]</span></code>, and the
-refinement boundaries are supposed to be <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">4,</span> <span class="pre">8,</span> <span class="pre">16]</span></code>, the actual
-one will be <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">16]</span></code>. This is useful to encompass regions of space with
-the same resolution. Indices are counted from the innermost.</p>
+Radii are placed at powers of the given <code class="docutils literal notranslate"><span class="pre">step_radii</span></code> from the central one,
+unless the index is in the <code class="docutils literal notranslate"><span class="pre">skip_radii</span></code> list. For example, if <code class="docutils literal notranslate"><span class="pre">skip_radii</span>
+<span class="pre">=</span> <span class="pre">[2,</span> <span class="pre">3]</span></code>, and the refinement boundaries are supposed to be <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">4,</span> <span class="pre">8,</span>
+<span class="pre">16]</span></code>, the actual one will be <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">16]</span></code>. This is useful to encompass
+regions of space with the same resolution. Indices are counted from the
+innermost.</p>
 <p>This function does nothing fancy about the mass ratio: it simply considers
 the smaller horizon and creates the grid starting from there.</p>
 <p>Unknown arguments are passed to the constructor of <a class="reference internal" href="#jhuki.grid.Grid" title="jhuki.grid.Grid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code></a>.</p>
@@ -345,6 +346,10 @@ to have</p></li>
 <li><p><strong>cfl_num</strong> (<em>float</em>) – CFL factor for the finest refinement level</p></li>
 <li><p><strong>horizon_padding_points</strong> (<em>int</em>) – Add this number of points to the innermost
 refinement level.</p></li>
+<li><p><strong>step_radii</strong> (<em>float</em>) – Place radii multiplying the previous one with this value.
+For example, if the first radius is at 1, and
+<code class="docutils literal notranslate"><span class="pre">step_radii</span></code> is 3, the second radius will be 9 and
+the third will be 27.</p></li>
 <li><p><strong>skip_radii</strong> (<em>list of int</em>) – Do not add to the grid refinement boundaries with these
 indices.</p></li>
 </ul>
