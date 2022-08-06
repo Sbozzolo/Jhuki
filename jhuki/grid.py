@@ -44,7 +44,7 @@ the same in resolution and extent.
 
 import logging
 from functools import lru_cache
-from math import sqrt
+from math import ceil, sqrt
 
 from jhuki.base import BaseThorn
 from jhuki.twochargedpunctures import TwoChargedPunctures
@@ -172,6 +172,11 @@ def create_twopunctures_grid(
     )
 
     centers = (center1, center2, center3)
+
+    # We adjust the outer boundary to ensure that it is multiple of dx_coarse
+    # This gives the first larger value that is multiple of dx_coarse
+    dx_coarse = center1.dx_coarse
+    outer_boundary = ceil(outer_boundary / dx_coarse) * dx_coarse
 
     return Grid(centers, outer_boundary, **kwargs)
 
