@@ -89,7 +89,7 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span><span class="p">,</span> <span class="n">sqrt</span>
 
 <span class="kn">from</span> <span class="nn">jhuki.base</span> <span class="kn">import</span> <span class="n">BaseThorn</span>
 <span class="kn">from</span> <span class="nn">jhuki.twochargedpunctures</span> <span class="kn">import</span> <span class="n">TwoChargedPunctures</span>
@@ -206,6 +206,10 @@
 
     <span class="c1"># We do not want to include the outer boundary</span>
     <span class="n">radii</span><span class="p">,</span> <span class="n">outer_boundary</span> <span class="o">=</span> <span class="n">radii</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">radii</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># We adjust the outer boundary to ensure that it is multiple of dx_fine</span>
+    <span class="c1"># This gives the first larger value that is multiple of dx_fine</span>
+    <span class="n">outer_boundary</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="n">outer_boundary</span> <span class="o">/</span> <span class="n">dx_fine</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx_fine</span>
 
     <span class="k">if</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">swap_xz</span><span class="p">:</span>
         <span class="n">pp</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">coord_x_plus</span><span class="p">)</span>
