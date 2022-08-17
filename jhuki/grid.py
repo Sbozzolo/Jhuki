@@ -102,7 +102,6 @@ def create_twopunctures_grid(
     :rtype: :py:class:`~.Grid`
 
     """
-
     # First, we estimate the radius of the horizons
 
     mp = two_punctures.mass_plus
@@ -118,8 +117,12 @@ def create_twopunctures_grid(
     ap_sq = sum(a_i**2 for a_i in two_punctures.a_plus)
     am_sq = sum(a_i**2 for a_i in two_punctures.a_minus)
 
-    guess_r_plus = sqrt(mp**2 - ap_sq - qp**2) / 2
-    guess_r_minus = sqrt(mm**2 - am_sq - qm**2) / 2
+    # For the size at t = 0, we would divide this by 2. In practice, the
+    # horizons expand in a few Ms to reach the guess_r size, so that's the more
+    # relevant quantity.
+
+    guess_r_plus = sqrt(mp**2 - ap_sq - qp**2)
+    guess_r_minus = sqrt(mm**2 - am_sq - qm**2)
 
     # Now, we can find the resolution needed to cover the smaller horizon with
     # the desired number of points
@@ -167,8 +170,43 @@ def create_twopunctures_grid(
     center2 = RefinementCenter(
         radii, dx_fine, cfl_num, center_num=2, position=pm
     )
+
+    # The refinement level in the center is needed mostly to ensure that the
+    # interaction is well resolved. We define "well resolved" as in the coarsest
+    # resolution that we allow is dx = dist / 80, meaning, we have at least 80
+    # points to cover the distance.
+    min_dx_on_separatrix = two_punctures.coordinate_distance / 80
+
+    # Now, we find what is the dx and number of the first level that satisfied
+    # this condition
+
+    target_index = None
+
+    # Note, center1.dx is boundary-to-center, which is the opposite direction of
+    # everything else, so, we reverse it. Here, we traverse from center to
+    # boundary and we find the first level for which the resolution is not good
+    # enough.
+    dxs_center_to_boundary = list(reversed(center1.dx))
+
+    for ref_index, dx in enumerate(dxs_center_to_boundary):
+        if dx > min_dx_on_separatrix:
+            # We subtract one because the last good level was the previous
+            target_index = ref_index - 1
+            break
+
+    if target_index is None:
+        raise RuntimeError(
+            "There is not enough points to resolve the separatrix well"
+        )
+
+    dx_fine_center = dxs_center_to_boundary[target_index]
+
     center3 = RefinementCenter(
-        radii, dx_fine, cfl_num, center_num=3, position=(0, 0, 0)
+        radii[target_index:],
+        dx_fine_center,
+        cfl_num,
+        center_num=3,
+        position=(0, 0, 0),
     )
 
     centers = (center1, center2, center3)

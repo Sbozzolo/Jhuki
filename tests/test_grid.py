@@ -596,7 +596,7 @@ def test_create_twopuncture_grid():
 
     spin_m = 0.3 * sqrt(0.15**2 + 0.25**2 + 0.35**2)
 
-    ah_m = sqrt(0.3**2 - spin_m**2) / 2
+    ah_m = sqrt(0.3**2 - spin_m**2)
 
     dx_fine = round(ah_m / 40, 4)
 
@@ -604,8 +604,8 @@ def test_create_twopuncture_grid():
     assert grid_tp.refinement_centers[0].dx_fine == dx_fine
     assert grid_tp.refinement_centers[0].position == (tp.coord_x_plus, 0, 0)
     assert grid_tp.refinement_centers[1].position == (tp.coord_x_minus, 0, 0)
-    assert grid_tp.refinement_centers[0].num_refinement_radii == 10
-    assert grid_tp.outer_boundary == pytest.approx(152.064)
+    assert grid_tp.refinement_centers[0].num_refinement_radii == 9
+    assert grid_tp.outer_boundary == pytest.approx(154.368)
 
     # Let's also test skipping a couple of radii
 
@@ -623,10 +623,10 @@ def test_create_twopuncture_grid():
         tcp,
         points_on_horizon_radius=40,
         minimum_outer_boundary=100,
-        skip_radii=[2, 8],
+        skip_radii=[1, 7],
     )
 
-    assert grid_tcp.refinement_centers[0].num_refinement_radii == 8
+    assert grid_tcp.refinement_centers[0].num_refinement_radii == 7
     assert grid_tcp.refinement_centers[0].refinement_radii == (
         76.032,
         19.008,
@@ -635,11 +635,10 @@ def test_create_twopuncture_grid():
         2.376,
         1.188,
         0.297,
-        0.1485,
     )
     assert grid_tcp.refinement_centers[0].position == (0, 0, tcp.coord_x_plus)
     assert grid_tcp.refinement_centers[1].position == (0, 0, tcp.coord_x_minus)
 
-    ah_m = sqrt(0.3**2 - spin_m**2 - 0.03**2) / 2
+    ah_m = sqrt(0.3**2 - spin_m**2 - 0.03**2)
     dx_fine = round(ah_m / 40, 4)
     assert grid_tcp.refinement_centers[0].dx_fine == dx_fine
