@@ -133,7 +133,7 @@ def create_twopunctures_grid(
     # radius0 is the radius of the innermost refinement level, the one that
     # encompasses the horizon. We add 5 points so that we can ensure that the
     # horizon is well contained
-    radius0 = dx_fine * (points_on_horizon_radius + 5)
+    radius0 = dx_fine * (points_on_horizon_radius + horizon_padding_points)
 
     # We can build up the hierarchy of levels. We add one level at the time
     # until we are at the desired outer boundary.
