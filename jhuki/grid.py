@@ -597,6 +597,24 @@ class RefinementCenter(BaseThorn):
             for ref_level in range(self.num_refinement_levels)
         )
 
+    @lru_cache(128)
+    def dx_at(self, radius: float) -> float:
+        """Return dx at the given radius.
+
+        :param radius: Distance from the center.
+        :type radius: float
+
+        :returns: Resolution at given point.
+        :rtype: float
+        """
+        # We only care about positive radii
+        radius = abs(radius)
+        for ref_index, ref_rad in enumerate(self.refinement_radii):
+            # If radius == ref_radii, we want the finer dx
+            if radius > ref_rad:
+                return self.dx[ref_index]
+        return self.dx[-1]
+
     def get_summary(self, outer_boundary=9999.999):
         """Return a summary of all the refinement levels.
 

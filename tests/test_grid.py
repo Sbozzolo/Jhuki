@@ -79,6 +79,16 @@ def test_dx(refinement_center):
     assert refinement_center.dx == expected_dx
 
 
+def test_dx_at(refinement_center):
+    # Levels are at 1, 2, 3
+
+    assert refinement_center.dx_at(4) == 2.0
+    assert refinement_center.dx_at(2.5) == 1.0
+    assert refinement_center.dx_at(2.0) == 0.5
+    assert refinement_center.dx_at(0.5) == 0.25
+    assert refinement_center.dx_at(0.0) == 0.25
+
+
 def test_dt(refinement_center):
     expected_dt = (1.0, 1.0, 0.5, 0.25)
 
