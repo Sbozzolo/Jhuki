@@ -113,12 +113,12 @@ applied.</p></li>
 <dl class="py function">
 <dt id="jhuki.dissipation.create_dissipation_from_grid">
 <code class="sig-prename descclassname"><span class="pre">jhuki.dissipation.</span></code><code class="sig-name descname"><span class="pre">create_dissipation_from_grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">grid</span></em>, <em class="sig-param"><span class="pre">eps_dis_finest</span></em>, <em class="sig-param"><span class="pre">variables=None</span></em>, <em class="sig-param"><span class="pre">prescription=&lt;DissPrescription.dtfact:</span> <span class="pre">2&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/dissipation.html#create_dissipation_from_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.dissipation.create_dissipation_from_grid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a <a class="reference internal" href="#jhuki.dissipation.Dissipation" title="jhuki.dissipation.Dissipation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dissipation</span></code></a> object from a given <code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code>.</p>
+<dd><p>Create a <a class="reference internal" href="#jhuki.dissipation.Dissipation" title="jhuki.dissipation.Dissipation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dissipation</span></code></a> object from a given <a class="reference internal" href="grid_ref.html#jhuki.grid.Grid" title="jhuki.grid.Grid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code></a>.</p>
 <p>The order of the dissipation is deduced from the number of ghost zones.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code>) – Simulation grid.</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="grid_ref.html#jhuki.grid.Grid" title="jhuki.grid.Grid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code></a>) – Simulation grid.</p></li>
 <li><p><strong>epsdis_per_level</strong> (<em>dict</em>) – Dictionary that maps the value of the dissipation
 on each refinement level.</p></li>
 <li><p><strong>order</strong> (<em>int</em>) – Order of the dissipation.</p></li>

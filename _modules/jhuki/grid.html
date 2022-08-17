@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>jhuki.grid &#8212; Jhuki 0.1.0-dev8 documentation</title>
+    <title>jhuki.grid &#8212; Jhuki 0.1.0-dev9 documentation</title>
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
     
@@ -31,7 +31,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev8 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">jhuki.grid</a></li> 
       </ul>
@@ -147,7 +147,6 @@
 <span class="sd">    :rtype: :py:class:`~.Grid`</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># First, we estimate the radius of the horizons</span>
 
     <span class="n">mp</span> <span class="o">=</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">mass_plus</span>
@@ -163,8 +162,12 @@
     <span class="n">ap_sq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a_i</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a_i</span> <span class="ow">in</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">a_plus</span><span class="p">)</span>
     <span class="n">am_sq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a_i</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a_i</span> <span class="ow">in</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">a_minus</span><span class="p">)</span>
 
-    <span class="n">guess_r_plus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mp</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">ap_sq</span> <span class="o">-</span> <span class="n">qp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="n">guess_r_minus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mm</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">am_sq</span> <span class="o">-</span> <span class="n">qm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="c1"># For the size at t = 0, we would divide this by 2. In practice, the</span>
+    <span class="c1"># horizons expand in a few Ms to reach the guess_r size, so that&#39;s the more</span>
+    <span class="c1"># relevant quantity.</span>
+
+    <span class="n">guess_r_plus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mp</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">ap_sq</span> <span class="o">-</span> <span class="n">qp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">guess_r_minus</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mm</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">am_sq</span> <span class="o">-</span> <span class="n">qm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># Now, we can find the resolution needed to cover the smaller horizon with</span>
     <span class="c1"># the desired number of points</span>
@@ -178,7 +181,7 @@
     <span class="c1"># radius0 is the radius of the innermost refinement level, the one that</span>
     <span class="c1"># encompasses the horizon. We add 5 points so that we can ensure that the</span>
     <span class="c1"># horizon is well contained</span>
-    <span class="n">radius0</span> <span class="o">=</span> <span class="n">dx_fine</span> <span class="o">*</span> <span class="p">(</span><span class="n">points_on_horizon_radius</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">radius0</span> <span class="o">=</span> <span class="n">dx_fine</span> <span class="o">*</span> <span class="p">(</span><span class="n">points_on_horizon_radius</span> <span class="o">+</span> <span class="n">horizon_padding_points</span><span class="p">)</span>
 
     <span class="c1"># We can build up the hierarchy of levels. We add one level at the time</span>
     <span class="c1"># until we are at the desired outer boundary.</span>
@@ -212,8 +215,43 @@
     <span class="n">center2</span> <span class="o">=</span> <span class="n">RefinementCenter</span><span class="p">(</span>
         <span class="n">radii</span><span class="p">,</span> <span class="n">dx_fine</span><span class="p">,</span> <span class="n">cfl_num</span><span class="p">,</span> <span class="n">center_num</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">pm</span>
     <span class="p">)</span>
+
+    <span class="c1"># The refinement level in the center is needed mostly to ensure that the</span>
+    <span class="c1"># interaction is well resolved. We define &quot;well resolved&quot; as in the coarsest</span>
+    <span class="c1"># resolution that we allow is dx = dist / 80, meaning, we have at least 80</span>
+    <span class="c1"># points to cover the distance.</span>
+    <span class="n">min_dx_on_separatrix</span> <span class="o">=</span> <span class="n">two_punctures</span><span class="o">.</span><span class="n">coordinate_distance</span> <span class="o">/</span> <span class="mi">80</span>
+
+    <span class="c1"># Now, we find what is the dx and number of the first level that satisfied</span>
+    <span class="c1"># this condition</span>
+
+    <span class="n">target_index</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Note, center1.dx is boundary-to-center, which is the opposite direction of</span>
+    <span class="c1"># everything else, so, we reverse it. Here, we traverse from center to</span>
+    <span class="c1"># boundary and we find the first level for which the resolution is not good</span>
+    <span class="c1"># enough.</span>
+    <span class="n">dxs_center_to_boundary</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">center1</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">ref_index</span><span class="p">,</span> <span class="n">dx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dxs_center_to_boundary</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dx</span> <span class="o">&gt;</span> <span class="n">min_dx_on_separatrix</span><span class="p">:</span>
+            <span class="c1"># We subtract one because the last good level was the previous</span>
+            <span class="n">target_index</span> <span class="o">=</span> <span class="n">ref_index</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">target_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;There is not enough points to resolve the separatrix well&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">dx_fine_center</span> <span class="o">=</span> <span class="n">dxs_center_to_boundary</span><span class="p">[</span><span class="n">target_index</span><span class="p">]</span>
+
     <span class="n">center3</span> <span class="o">=</span> <span class="n">RefinementCenter</span><span class="p">(</span>
-        <span class="n">radii</span><span class="p">,</span> <span class="n">dx_fine</span><span class="p">,</span> <span class="n">cfl_num</span><span class="p">,</span> <span class="n">center_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">radii</span><span class="p">[</span><span class="n">target_index</span><span class="p">:],</span>
+        <span class="n">dx_fine_center</span><span class="p">,</span>
+        <span class="n">cfl_num</span><span class="p">,</span>
+        <span class="n">center_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
     <span class="p">)</span>
 
     <span class="n">centers</span> <span class="o">=</span> <span class="p">(</span><span class="n">center1</span><span class="p">,</span> <span class="n">center2</span><span class="p">,</span> <span class="n">center3</span><span class="p">)</span>
@@ -642,6 +680,24 @@
             <span class="k">for</span> <span class="n">ref_level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="p">)</span>
         <span class="p">)</span>
 
+<div class="viewcode-block" id="RefinementCenter.dx_at"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.RefinementCenter.dx_at">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">dx_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return dx at the given radius.</span>
+
+<span class="sd">        :param radius: Distance from the center.</span>
+<span class="sd">        :type radius: float</span>
+
+<span class="sd">        :returns: Resolution at given point.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># We only care about positive radii</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ref_index</span><span class="p">,</span> <span class="n">ref_rad</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refinement_radii</span><span class="p">):</span>
+            <span class="c1"># If radius == ref_radii, we want the finer dx</span>
+            <span class="k">if</span> <span class="n">radius</span> <span class="o">&gt;</span> <span class="n">ref_rad</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="n">ref_index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
 <div class="viewcode-block" id="RefinementCenter.get_summary"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.RefinementCenter.get_summary">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outer_boundary</span><span class="o">=</span><span class="mf">9999.999</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a summary of all the refinement levels.</span>
 
@@ -668,10 +724,11 @@
         <span class="k">for</span> <span class="n">ref_level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_refinement_levels</span><span class="p">):</span>
             <span class="n">prev_radius</span> <span class="o">=</span> <span class="n">refinement_level_boundaries</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span>
             <span class="n">curr_radius</span> <span class="o">=</span> <span class="n">refinement_level_boundaries</span><span class="p">[</span><span class="n">ref_level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span>
             <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Ref level </span><span class="si">{</span><span class="n">ref_level</span><span class="si">:</span><span class="s2">2</span><span class="si">}</span><span class="s2">: &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Radius range = (</span><span class="si">{</span><span class="n">prev_radius</span><span class="si">:</span><span class="s2"> 9.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">curr_radius</span><span class="si">:</span><span class="s2"> 9.3f</span><span class="si">}</span><span class="s2">), &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;dx = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;dx = </span><span class="si">{</span><span class="n">dx</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2"> (~ 1/</span><span class="si">{</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">dx</span><span class="p">)</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">), &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;dt = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">, &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;cfl = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cfl</span><span class="p">[</span><span class="n">ref_level</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
@@ -1063,7 +1120,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev8 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Jhuki 0.1.0-dev9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">jhuki.grid</a></li> 
       </ul>

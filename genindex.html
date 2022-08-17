@@ -48,9 +48,11 @@
  <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#J"><strong>J</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#W"><strong>W</strong></a>
@@ -67,7 +69,13 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grid_ref.html#jhuki.grid.RefinementCenter.cfl">cfl() (jhuki.grid.RefinementCenter property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="dissipation_ref.html#jhuki.dissipation.create_dissipation_from_grid">create_dissipation_from_grid() (in module jhuki.dissipation)</a>
+</li>
+      <li><a href="grid_ref.html#jhuki.grid.create_twopunctures_grid">create_twopunctures_grid() (in module jhuki.grid)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -77,9 +85,27 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="dissipation_ref.html#jhuki.dissipation.Dissipation">Dissipation (class in jhuki.dissipation)</a>
 </li>
+      <li><a href="dissipation_ref.html#jhuki.dissipation.DissPrescription">DissPrescription (class in jhuki.dissipation)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dissipation_ref.html#jhuki.dissipation.DissPrescription">DissPrescription (class in jhuki.dissipation)</a>
+      <li><a href="grid_ref.html#jhuki.grid.RefinementCenter.dt">dt() (jhuki.grid.RefinementCenter property)</a>
+</li>
+      <li><a href="grid_ref.html#jhuki.grid.RefinementCenter.dx">dx() (jhuki.grid.RefinementCenter property)</a>
+</li>
+      <li><a href="grid_ref.html#jhuki.grid.RefinementCenter.dx_at">dx_at() (jhuki.grid.RefinementCenter method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grid_ref.html#jhuki.grid.RefinementCenter.get_summary">get_summary() (jhuki.grid.RefinementCenter method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grid_ref.html#jhuki.grid.Grid">Grid (class in jhuki.grid)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -95,12 +121,21 @@
 </li>
       </ul></li>
       <li>
+    jhuki.grid
+
+      <ul>
+        <li><a href="grid_ref.html#module-jhuki.grid">module</a>
+</li>
+      </ul></li>
+      <li>
     jhuki.parfile
 
       <ul>
         <li><a href="parfile_ref.html#module-jhuki.parfile">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     jhuki.simfactory
 
@@ -108,8 +143,6 @@
         <li><a href="simfactory_ref.html#module-jhuki.simfactory">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     jhuki.twochargedpunctures
 
@@ -136,6 +169,8 @@
       <ul>
         <li><a href="dissipation_ref.html#module-jhuki.dissipation">jhuki.dissipation</a>
 </li>
+        <li><a href="grid_ref.html#module-jhuki.grid">jhuki.grid</a>
+</li>
         <li><a href="parfile_ref.html#module-jhuki.parfile">jhuki.parfile</a>
 </li>
         <li><a href="simfactory_ref.html#module-jhuki.simfactory">jhuki.simfactory</a>
@@ -154,6 +189,10 @@
       <li><a href="dissipation_ref.html#jhuki.dissipation.Dissipation.parfile_code">parfile_code() (jhuki.dissipation.Dissipation property)</a>
 
       <ul>
+        <li><a href="grid_ref.html#jhuki.grid.Grid.parfile_code">(jhuki.grid.Grid property)</a>
+</li>
+        <li><a href="grid_ref.html#jhuki.grid.RefinementCenter.parfile_code">(jhuki.grid.RefinementCenter property)</a>
+</li>
         <li><a href="twochargedpunctures_ref.html#jhuki.twochargedpunctures.TwoChargedPunctures.parfile_code">(jhuki.twochargedpunctures.TwoChargedPunctures property)</a>
 </li>
         <li><a href="twopunctures_ref.html#jhuki.twopunctures.TwoPunctures.parfile_code">(jhuki.twopunctures.TwoPunctures property)</a>
@@ -170,9 +209,31 @@
   </ul></td>
 </tr></table>
 
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grid_ref.html#jhuki.grid.RefinementCenter">RefinementCenter (class in jhuki.grid)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grid_ref.html#jhuki.grid.Grid.rl_synced_every">rl_synced_every() (jhuki.grid.Grid property)</a>
+
+      <ul>
+        <li><a href="grid_ref.html#jhuki.grid.RefinementCenter.rl_synced_every">(jhuki.grid.RefinementCenter property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grid_ref.html#jhuki.grid.set_dt_max">set_dt_max() (in module jhuki.grid)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="grid_ref.html#jhuki.grid.set_dt_max_grid">set_dt_max_grid() (in module jhuki.grid)</a>
+</li>
       <li><a href="simfactory_ref.html#jhuki.simfactory.simfactory_option">simfactory_option() (in module jhuki.simfactory)</a>
 </li>
   </ul></td>
@@ -181,10 +242,12 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="twochargedpunctures_ref.html#jhuki.twochargedpunctures.TwoChargedPunctures">TwoChargedPunctures (class in jhuki.twochargedpunctures)</a>
+      <li><a href="grid_ref.html#jhuki.grid.Grid.time_refinement_factors">time_refinement_factors() (jhuki.grid.Grid property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="twochargedpunctures_ref.html#jhuki.twochargedpunctures.TwoChargedPunctures">TwoChargedPunctures (class in jhuki.twochargedpunctures)</a>
+</li>
       <li><a href="twopunctures_ref.html#jhuki.twopunctures.TwoPunctures">TwoPunctures (class in jhuki.twopunctures)</a>
 </li>
   </ul></td>
