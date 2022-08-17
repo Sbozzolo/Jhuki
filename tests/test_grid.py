@@ -161,19 +161,19 @@ def test_summary(refinement_center):
 
     expected_str = """\
 Refinement center 2 (x =  1.00, y =  0.00,  z =  0.00)
-Ref level  0: Radius range = (    5.000,     3.000), dx = 2.0000e+00, dt = 1.0000e+00, cfl = 0.500
-Ref level  1: Radius range = (    3.000,     2.000), dx = 1.0000e+00, dt = 1.0000e+00, cfl = 1.000
-Ref level  2: Radius range = (    2.000,     1.000), dx = 5.0000e-01, dt = 5.0000e-01, cfl = 1.000
-Ref level  3: Radius range = (    1.000,     0.000), dx = 2.5000e-01, dt = 2.5000e-01, cfl = 1.000\
+Ref level  0: Radius range = (    5.000,     3.000), dx = 2.0000e+00 (~ 1/  0.50), dt = 1.0000e+00, cfl = 0.500
+Ref level  1: Radius range = (    3.000,     2.000), dx = 1.0000e+00 (~ 1/  1.00), dt = 1.0000e+00, cfl = 1.000
+Ref level  2: Radius range = (    2.000,     1.000), dx = 5.0000e-01 (~ 1/  2.00), dt = 5.0000e-01, cfl = 1.000
+Ref level  3: Radius range = (    1.000,     0.000), dx = 2.5000e-01 (~ 1/  4.00), dt = 2.5000e-01, cfl = 1.000\
 """
     assert expected_str == refinement_center.get_summary(outer_boundary=5)
 
     expected_str9 = """\
 Refinement center 2 (x =  1.00, y =  0.00,  z =  0.00)
-Ref level  0: Radius range = ( 9999.999,     3.000), dx = 2.0000e+00, dt = 1.0000e+00, cfl = 0.500
-Ref level  1: Radius range = (    3.000,     2.000), dx = 1.0000e+00, dt = 1.0000e+00, cfl = 1.000
-Ref level  2: Radius range = (    2.000,     1.000), dx = 5.0000e-01, dt = 5.0000e-01, cfl = 1.000
-Ref level  3: Radius range = (    1.000,     0.000), dx = 2.5000e-01, dt = 2.5000e-01, cfl = 1.000\
+Ref level  0: Radius range = ( 9999.999,     3.000), dx = 2.0000e+00 (~ 1/  0.50), dt = 1.0000e+00, cfl = 0.500
+Ref level  1: Radius range = (    3.000,     2.000), dx = 1.0000e+00 (~ 1/  1.00), dt = 1.0000e+00, cfl = 1.000
+Ref level  2: Radius range = (    2.000,     1.000), dx = 5.0000e-01 (~ 1/  2.00), dt = 5.0000e-01, cfl = 1.000
+Ref level  3: Radius range = (    1.000,     0.000), dx = 2.5000e-01 (~ 1/  4.00), dt = 2.5000e-01, cfl = 1.000\
 """
     assert expected_str9 == refinement_center.get_summary()
 

@@ -641,10 +641,11 @@ class RefinementCenter(BaseThorn):
         for ref_level in range(self.num_refinement_levels):
             prev_radius = refinement_level_boundaries[ref_level]
             curr_radius = refinement_level_boundaries[ref_level + 1]
+            dx = self.dx[ref_level]
             ret.append(
                 f"Ref level {ref_level:2}: "
                 f"Radius range = ({prev_radius: 9.3f}, {curr_radius: 9.3f}), "
-                f"dx = {self.dx[ref_level]:.4e}, "
+                f"dx = {dx:.4e} (~ 1/{(1/dx):6.2f}), "
                 f"dt = {self.dt[ref_level]:.4e}, "
                 f"cfl = {self.cfl[ref_level]:.3f}"
             )
