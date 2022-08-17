@@ -36,6 +36,6 @@ $(window).resize(function(){
         $("li.nav-item-0 a").text("Top");
     }
     else {
-        $("li.nav-item-0 a").text("Jhuki 0.1.0-dev8 documentation");
+        $("li.nav-item-0 a").text("Jhuki 0.1.0-dev9 documentation");
     }
 });
