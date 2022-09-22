@@ -61,11 +61,18 @@ up dissipation for a simulation with Lean, the simplest way is:</p>
 <dd><p>DissPrescription for how to set up the dissipation.</p>
 <p>Three different prescriptions are available:
 - <code class="docutils literal notranslate"><span class="pre">const</span></code>: set the same <code class="docutils literal notranslate"><span class="pre">eps_dis</span></code> everywhere,
-- <code class="docutils literal notranslate"><span class="pre">dtfac</span></code>: set <code class="docutils literal notranslate"><span class="pre">eps_dis</span></code> proportional to the local dtfac,
+- <code class="docutils literal notranslate"><span class="pre">dtfact</span></code>: set <code class="docutils literal notranslate"><span class="pre">eps_dis</span></code> proportional to the local dtfac,
 - <code class="docutils literal notranslate"><span class="pre">continuous</span></code>: set <code class="docutils literal notranslate"><span class="pre">eps_dis</span></code> proportional to the local grid spacing</p>
 <blockquote>
-<div><p>to the power of the order</p>
+<div><p>to the power of the order,</p>
 </div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">partially_continuous</span></code>: constant except where levels are synced, in</dt><dd><p>which case, use the continuous integration.</p>
+</dd>
+</dl>
+</li>
+</ul>
 </dd></dl>
 
 <dl class="py class">
