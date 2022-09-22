@@ -110,6 +110,21 @@ def test_create_dissipation_from_grid():
         6: 0.1,
     }
 
+    # partially_continuous
+    ds = dis.create_dissipation_from_grid(
+        grid, 0.1, prescription=dis.DissPrescription.partially_continuous
+    )
+
+    assert ds.epsdis_per_level == {
+        0: 0.1 / 2**10,
+        1: 0.1 / 2**5,
+        2: 0.1,
+        3: 0.1,
+        4: 0.1,
+        5: 0.1,
+        6: 0.1,
+    }
+
     # invalid
     with pytest.raises(ValueError):
         dis.create_dissipation_from_grid(grid, 0.1, prescription="bob")

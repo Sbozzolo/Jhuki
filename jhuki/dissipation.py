@@ -91,15 +91,18 @@ class DissPrescription(enum.Enum):
 
     Three different prescriptions are available:
     - ``const``: set the same ``eps_dis`` everywhere,
-    - ``dtfac``: set ``eps_dis`` proportional to the local dtfac,
+    - ``dtfact``: set ``eps_dis`` proportional to the local dtfac,
     - ``continuous``: set ``eps_dis`` proportional to the local grid spacing
-                      to the power of the order
+                      to the power of the order,
+    - ``partially_continuous``: constant except where levels are synced, in
+                                 which case, use the continuous integration.
 
     """
 
     const = enum.auto()
     dtfact = enum.auto()
     continuous = enum.auto()
+    partially_continuous = enum.auto()
 
 
 def create_dissipation_from_grid(
@@ -139,6 +142,8 @@ def create_dissipation_from_grid(
     # If we have N levels, we need to set up dissipation on N + 1 zones
     num_levels = grid.max_num_refinement_levels + 1
 
+    eps_dis_levels = {}
+
     if prescription == DissPrescription.const:
         # Same everywhere
         eps_dis_levels = {level: eps_dis_finest for level in range(num_levels)}
@@ -165,7 +170,6 @@ def create_dissipation_from_grid(
                 )
             }
         )
-
     elif prescription == DissPrescription.continuous:
         # Proportional to the local size, so there's a factor of 2**order for every
         # refinement level
@@ -173,6 +177,25 @@ def create_dissipation_from_grid(
             level: eps_dis_finest / (2 ** (num_levels - level - 1)) ** order
             for level in range(num_levels)
         }
+    elif prescription == DissPrescription.partially_continuous:
+        # Continuous where the levels are synced
+        num_levels_synced = grid.num_levels_with_dt_coarse
+
+        eps_dis_levels = {
+            level: eps_dis_finest / (2 ** (num_levels_synced - level)) ** order
+            for level in range(num_levels_synced)
+        }
+
+        # Next, we add all the ones that are eps_dis_finest
+        eps_dis_levels.update(
+            {
+                level: eps_dis_finest
+                for level in range(
+                    num_levels_synced,
+                    num_levels,
+                )
+            }
+        )
 
     return Dissipation(eps_dis_levels, order, variables)
 
