@@ -13,13 +13,13 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v3
         with:
-          python-version: 3.7
+          python-version: 3.11
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1.1.0
+        uses: snok/install-poetry@v1
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
@@ -54,6 +54,7 @@ jobs:
           git commit -m "Update documentation" -a || true
           # The above command will fail if no changes were present, so we ignore
           # the return code.
+
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
