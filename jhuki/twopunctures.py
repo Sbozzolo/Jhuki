@@ -213,6 +213,14 @@ class TwoPunctures(BaseThorn):
         :type initial_alpha: str
         """
 
+        if mass_plus * mass_minus < 0:
+            raise ValueError(
+                f"Mass cannot be negative (mass_plus = {mass_plus}, mass_minus = {mass_minus})"
+            )
+
+        if mass_plus + mass_minus < 1e-10:
+            raise ValueError("Both masses cannot be set to zero")
+
         # TODO: No sanity checks are performed here. We should at least check that P < m and so on
 
         def _par_or_zeros(par):
@@ -227,6 +235,7 @@ class TwoPunctures(BaseThorn):
 
         total_mass = self.mass_plus + self.mass_minus
 
+        # This is where the puncture will end up after we apply the offset
         self.coord_x_plus = (
             self.coordinate_distance * self.mass_minus / total_mass
         )

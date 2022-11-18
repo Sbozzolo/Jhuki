@@ -642,3 +642,23 @@ def test_create_twopuncture_grid():
     ah_m = sqrt(0.3**2 - spin_m**2 - 0.03**2)
     dx_fine = round(ah_m / 40, 4)
     assert grid_tcp.refinement_centers[0].dx_fine == dx_fine
+
+    # What if we have zeros in the masses?
+    grid_op = gr.create_twopunctures_grid(
+        TwoPunctures(mass_plus=1, mass_minus=0.0, coordinate_distance=10),
+        points_on_horizon_radius=40,
+        minimum_outer_boundary=100,
+    )
+
+    assert grid_op.refinement_centers[0].num_refinement_radii == 7
+    assert grid_op.refinement_centers[0].refinement_radii == (
+        72.0,
+        36.0,
+        18.0,
+        9.0,
+        4.5,
+        2.25,
+        1.125,
+    )
+    assert len(grid_op.refinement_centers) == 1
+    assert grid_op.refinement_centers[0].position == (0, 0, 0)

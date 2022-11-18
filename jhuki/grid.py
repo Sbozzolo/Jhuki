@@ -45,18 +45,20 @@ the same in resolution and extent.
 import logging
 from functools import lru_cache
 from math import ceil, sqrt
+from typing import Iterable, List, Optional, Union
 
 from jhuki.base import BaseThorn
 from jhuki.twochargedpunctures import TwoChargedPunctures
+from jhuki.twopunctures import TwoPunctures
 
 
 def create_twopunctures_grid(
-    two_punctures,
-    points_on_horizon_radius,
-    minimum_outer_boundary,
-    cfl_num=0.45,
-    horizon_padding_points=5,
-    skip_radii=None,
+    two_punctures: Union[TwoPunctures, TwoChargedPunctures],
+    points_on_horizon_radius: int,
+    minimum_outer_boundary: float,
+    cfl_num: float = 0.45,
+    horizon_padding_points: int = 5,
+    skip_radii: Optional[Iterable[int]] = None,
     **kwargs,
 ):
     """Create a grid centered around a given two punctures.
@@ -107,6 +109,11 @@ def create_twopunctures_grid(
     mp = two_punctures.mass_plus
     mm = two_punctures.mass_minus
 
+    # We take 1e-10 as a small number below which the punctures are assumed to
+    # be massless
+    mp_is_nonzero = mp > 1e-10
+    mm_is_nonzero = mm > 1e-10
+
     if isinstance(two_punctures, TwoChargedPunctures):
         qp = two_punctures.charge_plus
         qm = two_punctures.charge_minus
@@ -121,8 +128,10 @@ def create_twopunctures_grid(
     # horizons expand in a few Ms to reach the guess_r size, so that's the more
     # relevant quantity.
 
-    guess_r_plus = sqrt(mp**2 - ap_sq - qp**2)
-    guess_r_minus = sqrt(mm**2 - am_sq - qm**2)
+    # This is used only to compute dx, so we set the radius to a huge number
+    # when the mass is zero. The `min` below will select the correct puncture.
+    guess_r_plus = sqrt(mp**2 - ap_sq - qp**2) if mp_is_nonzero else 1e100
+    guess_r_minus = sqrt(mm**2 - am_sq - qm**2) if mm_is_nonzero else 1e100
 
     # Now, we can find the resolution needed to cover the smaller horizon with
     # the desired number of points
@@ -164,56 +173,74 @@ def create_twopunctures_grid(
         pp = (two_punctures.coord_x_plus, 0, 0)
         pm = (two_punctures.coord_x_minus, 0, 0)
 
-    center1 = RefinementCenter(
-        radii, dx_fine, cfl_num, center_num=1, position=pp
-    )
-    center2 = RefinementCenter(
-        radii, dx_fine, cfl_num, center_num=2, position=pm
-    )
+    centers: List[RefinementCenter] = []
 
-    # The refinement level in the center is needed mostly to ensure that the
-    # interaction is well resolved. We define "well resolved" as in the coarsest
-    # resolution that we allow is dx = dist / 80, meaning, we have at least 80
-    # points to cover the distance.
-    min_dx_on_separatrix = two_punctures.coordinate_distance / 80
-
-    # Now, we find what is the dx and number of the first level that satisfied
-    # this condition
-
-    target_index = None
-
-    # Note, center1.dx is boundary-to-center, which is the opposite direction of
-    # everything else, so, we reverse it. Here, we traverse from center to
-    # boundary and we find the first level for which the resolution is not good
-    # enough.
-    dxs_center_to_boundary = list(reversed(center1.dx))
-
-    for ref_index, dx in enumerate(dxs_center_to_boundary):
-        if dx > min_dx_on_separatrix:
-            # We subtract one because the last good level was the previous
-            target_index = ref_index - 1
-            break
-
-    if target_index is None:
-        raise RuntimeError(
-            "There is not enough points to resolve the separatrix well"
+    if mp_is_nonzero:
+        centers.append(
+            RefinementCenter(
+                radii,
+                dx_fine,
+                cfl_num,
+                center_num=len(centers) + 1,
+                position=pp,
+            )
+        )
+    if mm_is_nonzero:
+        centers.append(
+            RefinementCenter(
+                radii,
+                dx_fine,
+                cfl_num,
+                center_num=len(centers) + 1,
+                position=pm,
+            )
         )
 
-    dx_fine_center = dxs_center_to_boundary[target_index]
+    if mp_is_nonzero and mm_is_nonzero:
 
-    center3 = RefinementCenter(
-        radii[target_index:],
-        dx_fine_center,
-        cfl_num,
-        center_num=3,
-        position=(0, 0, 0),
-    )
+        # The refinement level in the center is needed mostly to ensure that the
+        # interaction is well resolved. We define "well resolved" as in the coarsest
+        # resolution that we allow is dx = dist / 80, meaning, we have at least 80
+        # points to cover the distance.
+        min_dx_on_separatrix = two_punctures.coordinate_distance / 80
 
-    centers = (center1, center2, center3)
+        # Now, we find what is the dx and number of the first level that satisfied
+        # this condition
+
+        target_index = None
+
+        # Note, center1.dx is boundary-to-center, which is the opposite direction of
+        # everything else, so, we reverse it. Here, we traverse from center to
+        # boundary and we find the first level for which the resolution is not good
+        # enough.
+        dxs_center_to_boundary = list(reversed(centers[0].dx))
+
+        for ref_index, dx in enumerate(dxs_center_to_boundary):
+            if dx > min_dx_on_separatrix:
+                # We subtract one because the last good level was the previous
+                target_index = ref_index - 1
+                break
+
+        if target_index is None:
+            raise RuntimeError(
+                "There is not enough points to resolve the separatrix well"
+            )
+
+        dx_fine_center = dxs_center_to_boundary[target_index]
+
+        centers.append(
+            RefinementCenter(
+                radii[target_index:],
+                dx_fine_center,
+                cfl_num,
+                center_num=len(centers) + 1,
+                position=(0, 0, 0),
+            )
+        )
 
     # We adjust the outer boundary to ensure that it is multiple of dx_coarse
     # This gives the first larger value that is multiple of dx_coarse
-    dx_coarse = center1.dx_coarse
+    dx_coarse = centers[0].dx_coarse
     outer_boundary = ceil(outer_boundary / dx_coarse) * dx_coarse
 
     return Grid(centers, outer_boundary, **kwargs)

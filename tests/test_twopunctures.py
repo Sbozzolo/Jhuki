@@ -15,12 +15,25 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <https://www.gnu.org/licenses/>.
 
+import pytest
 from pytest import approx
 
 import jhuki.twopunctures as jtp
 
 
 def test_TwoPunctures():
+
+    # Negative masses
+    with pytest.raises(ValueError):
+        # Plus
+        jtp.TwoPunctures(-0.5, 0.5, 12)
+    with pytest.raises(ValueError):
+        # Minus
+        jtp.TwoPunctures(0.5, -0.5, 12)
+
+    # Both zero masses
+    with pytest.raises(ValueError):
+        jtp.TwoPunctures(0.0, -0.0, 12)
 
     # Mass-ratio 1, everything else default
     tp = jtp.TwoPunctures(0.5, 0.5, 12)
@@ -131,6 +144,13 @@ TwoPunctures::swap_xz = yes\
 """
 
     assert tp2.parfile_code == expected_str
+
+    # One mass zero, everything else default
+    tp3 = jtp.TwoPunctures(0.0, 0.5, 12)
+    assert tp3.par_b == approx(6)
+    assert tp3.coord_x_plus == approx(12)
+    assert tp3.coord_x_minus == approx(0)
+    assert tp3.center_offset == (6, 0, 0)
 
 
 def test_prepare_quasicircular_inspiral():
