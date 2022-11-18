@@ -5,12 +5,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Reference on jhuki.twochargedpunctures &#8212; Jhuki 0.1.0-dev9 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
@@ -49,13 +50,13 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-jhuki.twochargedpunctures">
+  <section id="module-jhuki.twochargedpunctures">
 <span id="reference-on-jhuki-twochargedpunctures"></span><h1>Reference on jhuki.twochargedpunctures<a class="headerlink" href="#module-jhuki.twochargedpunctures" title="Permalink to this headline">¶</a></h1>
 <p>The <a class="reference internal" href="#module-jhuki.twochargedpunctures" title="jhuki.twochargedpunctures"><code class="xref py py-mod docutils literal notranslate"><span class="pre">twochargedpunctures</span></code></a> module extends <a class="reference internal" href="twopunctures_ref.html#module-jhuki.twopunctures" title="jhuki.twopunctures"><code class="xref py py-mod docutils literal notranslate"><span class="pre">twopunctures</span></code></a>
 for the case of charged black holes. The interface is nearly identical.</p>
 <dl class="py class">
-<dt id="jhuki.twochargedpunctures.TwoChargedPunctures">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jhuki.twochargedpunctures.</span></code><code class="sig-name descname"><span class="pre">TwoChargedPunctures</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass_plus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_minus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momenta_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momenta_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_xz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">give_bare_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/twochargedpunctures.html#TwoChargedPunctures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.twochargedpunctures.TwoChargedPunctures" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.twochargedpunctures.TwoChargedPunctures">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">jhuki.twochargedpunctures.</span></span><span class="sig-name descname"><span class="pre">TwoChargedPunctures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass_plus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_minus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momenta_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momenta_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_xz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">give_bare_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/twochargedpunctures.html#TwoChargedPunctures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.twochargedpunctures.TwoChargedPunctures" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <a class="reference internal" href="#jhuki.twochargedpunctures.TwoChargedPunctures" title="jhuki.twochargedpunctures.TwoChargedPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoChargedPunctures</span></code></a> extends <a class="reference internal" href="twopunctures_ref.html#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a> for
 the case charged black holes (to use with the <code class="docutils literal notranslate"><span class="pre">TwoChargedPunctures</span></code> thorn).</p>
 <p>As <a class="reference internal" href="twopunctures_ref.html#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPunctures</span></code></a>, this class is immutable.</p>
@@ -124,17 +125,17 @@ For example <code class="docutils literal notranslate"><span class="pre">(0,</sp
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt id="jhuki.twochargedpunctures.TwoChargedPunctures.parfile_code">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">parfile_code</span></code><a class="headerlink" href="#jhuki.twochargedpunctures.TwoChargedPunctures.parfile_code" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="jhuki.twochargedpunctures.TwoChargedPunctures.parfile_code">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parfile_code</span></span><a class="headerlink" href="#jhuki.twochargedpunctures.TwoChargedPunctures.parfile_code" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the code you would put in your parfile.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
-<dt id="jhuki.twochargedpunctures.prepare_quasicircular_inspiral">
-<code class="sig-prename descclassname"><span class="pre">jhuki.twochargedpunctures.</span></code><code class="sig-name descname"><span class="pre">prepare_quasicircular_inspiral</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_bare_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/twochargedpunctures.html#prepare_quasicircular_inspiral"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.twochargedpunctures.prepare_quasicircular_inspiral" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.twochargedpunctures.prepare_quasicircular_inspiral">
+<span class="sig-prename descclassname"><span class="pre">jhuki.twochargedpunctures.</span></span><span class="sig-name descname"><span class="pre">prepare_quasicircular_inspiral</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_bare_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_plus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_minus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/twochargedpunctures.html#prepare_quasicircular_inspiral"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.twochargedpunctures.prepare_quasicircular_inspiral" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a <a class="reference internal" href="#jhuki.twochargedpunctures.TwoChargedPunctures" title="jhuki.twochargedpunctures.TwoChargedPunctures"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoChargedPunctures</span></code></a> that describes a quasi-circular inspiral.
 We always assume that the plus puncture is the most massive one.</p>
 <p>We compute the momenta starting from the uncharged case and scaling by
@@ -169,7 +170,7 @@ system is this.</p></li>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -191,7 +192,7 @@ system is this.</p></li>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -222,7 +223,7 @@ system is this.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021-2022, Gabriele Bozzola.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
     </div>
   </body>
 </html>

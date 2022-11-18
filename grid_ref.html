@@ -5,12 +5,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Reference on jhuki.grid &#8212; Jhuki 0.1.0-dev9 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
@@ -49,7 +50,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-jhuki.grid">
+  <section id="module-jhuki.grid">
 <span id="reference-on-jhuki-grid"></span><h1>Reference on jhuki.grid<a class="headerlink" href="#module-jhuki.grid" title="Permalink to this headline">¶</a></h1>
 <p>The <a class="reference internal" href="#module-jhuki.grid" title="jhuki.grid"><code class="xref py py-mod docutils literal notranslate"><span class="pre">grid</span></code></a> module provides infrastructure to work with the grid
 structure of a simulation.</p>
@@ -71,8 +72,8 @@ conditions (like the ones due to damp_lorenz or eta_beta).</p>
 <p>Warning: at the moment we only support grids in which the three dimensions are
 the same in resolution and extent.</p>
 <dl class="py class">
-<dt id="jhuki.grid.Grid">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">Grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement_centers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outer_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_ghost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiny_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#Grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.Grid" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.grid.Grid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></span><span class="sig-name descname"><span class="pre">Grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement_centers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outer_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_ghost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiny_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#Grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.Grid" title="Permalink to this definition">¶</a></dt>
 <dd><p>A grid is a collection of <a class="reference internal" href="#jhuki.grid.RefinementCenter" title="jhuki.grid.RefinementCenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefinementCenter</span></code></a> objects. For example,
 a binary black hole simulation will likely have two
 <a class="reference internal" href="#jhuki.grid.RefinementCenter" title="jhuki.grid.RefinementCenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefinementCenter</span></code></a>, centered each black hole.</p>
@@ -141,15 +142,15 @@ We assume that it is the same for the three
 directions.</p>
 </dd>
 </dl>
-<dl class="py method">
-<dt id="jhuki.grid.Grid.parfile_code">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">parfile_code</span></code><a class="headerlink" href="#jhuki.grid.Grid.parfile_code" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="jhuki.grid.Grid.parfile_code">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parfile_code</span></span><a class="headerlink" href="#jhuki.grid.Grid.parfile_code" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the code you would put in your parfile.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="jhuki.grid.Grid.rl_synced_every">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">rl_synced_every</span></code><a class="headerlink" href="#jhuki.grid.Grid.rl_synced_every" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="jhuki.grid.Grid.rl_synced_every">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rl_synced_every</span></span><a class="headerlink" href="#jhuki.grid.Grid.rl_synced_every" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of iterations at which all the refinement levels are at the
 same time.</p>
 <dl class="field-list simple">
@@ -159,17 +160,17 @@ same time.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="jhuki.grid.Grid.time_refinement_factors">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">time_refinement_factors</span></code><a class="headerlink" href="#jhuki.grid.Grid.time_refinement_factors" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="jhuki.grid.Grid.time_refinement_factors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_refinement_factors</span></span><a class="headerlink" href="#jhuki.grid.Grid.time_refinement_factors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return parameters for Carpet to set up time_refinement_factors.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="jhuki.grid.RefinementCenter">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">RefinementCenter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement_radii</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx_fine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfl_fine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_levels_with_dt_coarse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#RefinementCenter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.RefinementCenter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.grid.RefinementCenter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></span><span class="sig-name descname"><span class="pre">RefinementCenter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement_radii</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx_fine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfl_fine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_levels_with_dt_coarse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#RefinementCenter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.RefinementCenter" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <a class="reference internal" href="#jhuki.grid.RefinementCenter" title="jhuki.grid.RefinementCenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefinementCenter</span></code></a> class contains all the information related
 to the grid structure around one single refinement center. This is not the
 entire grid structure for a simulation (unless you have only one refinement
@@ -247,9 +248,9 @@ minimum is 1 (the coarsest level itself).</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt id="jhuki.grid.RefinementCenter.cfl">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">cfl</span></code><a class="headerlink" href="#jhuki.grid.RefinementCenter.cfl" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="jhuki.grid.RefinementCenter.cfl">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cfl</span></span><a class="headerlink" href="#jhuki.grid.RefinementCenter.cfl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dt/dx at every level.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -261,9 +262,9 @@ minimum is 1 (the coarsest level itself).</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="jhuki.grid.RefinementCenter.dt">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dt</span></code><a class="headerlink" href="#jhuki.grid.RefinementCenter.dt" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="jhuki.grid.RefinementCenter.dt">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#jhuki.grid.RefinementCenter.dt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Timesteps at each refinement level.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -272,9 +273,9 @@ minimum is 1 (the coarsest level itself).</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="jhuki.grid.RefinementCenter.dx">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dx</span></code><a class="headerlink" href="#jhuki.grid.RefinementCenter.dx" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="jhuki.grid.RefinementCenter.dx">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dx</span></span><a class="headerlink" href="#jhuki.grid.RefinementCenter.dx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grid spacing at each refinement level.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -284,8 +285,8 @@ minimum is 1 (the coarsest level itself).</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="jhuki.grid.RefinementCenter.dx_at">
-<code class="sig-name descname"><span class="pre">dx_at</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/jhuki/grid.html#RefinementCenter.dx_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.RefinementCenter.dx_at" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.grid.RefinementCenter.dx_at">
+<span class="sig-name descname"><span class="pre">dx_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/jhuki/grid.html#RefinementCenter.dx_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.RefinementCenter.dx_at" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dx at the given radius.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -301,8 +302,8 @@ minimum is 1 (the coarsest level itself).</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="jhuki.grid.RefinementCenter.get_summary">
-<code class="sig-name descname"><span class="pre">get_summary</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outer_boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999.999</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#RefinementCenter.get_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.RefinementCenter.get_summary" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.grid.RefinementCenter.get_summary">
+<span class="sig-name descname"><span class="pre">get_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outer_boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999.999</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#RefinementCenter.get_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.RefinementCenter.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a summary of all the refinement levels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -313,15 +314,15 @@ None, a large number full of nines will be used.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="jhuki.grid.RefinementCenter.parfile_code">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">parfile_code</span></code><a class="headerlink" href="#jhuki.grid.RefinementCenter.parfile_code" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="jhuki.grid.RefinementCenter.parfile_code">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parfile_code</span></span><a class="headerlink" href="#jhuki.grid.RefinementCenter.parfile_code" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the code you would put in your parfile.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="jhuki.grid.RefinementCenter.rl_synced_every">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">rl_synced_every</span></code><a class="headerlink" href="#jhuki.grid.RefinementCenter.rl_synced_every" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="jhuki.grid.RefinementCenter.rl_synced_every">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rl_synced_every</span></span><a class="headerlink" href="#jhuki.grid.RefinementCenter.rl_synced_every" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of iterations at which all the refinement levels are at the
 same time.</p>
 <dl class="field-list simple">
@@ -334,8 +335,8 @@ same time.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="jhuki.grid.create_twopunctures_grid">
-<code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">create_twopunctures_grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">two_punctures</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="twopunctures_ref.html#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><span class="pre">jhuki.twopunctures.TwoPunctures</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="twochargedpunctures_ref.html#jhuki.twochargedpunctures.TwoChargedPunctures" title="jhuki.twochargedpunctures.TwoChargedPunctures"><span class="pre">jhuki.twochargedpunctures.TwoChargedPunctures</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_on_horizon_radius</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_outer_boundary</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfl_num</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon_padding_points</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_radii</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#create_twopunctures_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.create_twopunctures_grid" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.grid.create_twopunctures_grid">
+<span class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></span><span class="sig-name descname"><span class="pre">create_twopunctures_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">two_punctures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="twopunctures_ref.html#jhuki.twopunctures.TwoPunctures" title="jhuki.twopunctures.TwoPunctures"><span class="pre">jhuki.twopunctures.TwoPunctures</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="twochargedpunctures_ref.html#jhuki.twochargedpunctures.TwoChargedPunctures" title="jhuki.twochargedpunctures.TwoChargedPunctures"><span class="pre">jhuki.twochargedpunctures.TwoChargedPunctures</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_on_horizon_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_outer_boundary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfl_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon_padding_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#create_twopunctures_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.create_twopunctures_grid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a grid centered around a given two punctures.</p>
 <p>The grid has three identical refinement centers: two on the punctures and
 one in the center.</p>
@@ -376,8 +377,8 @@ indices.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="jhuki.grid.set_dt_max">
-<code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">set_dt_max</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#set_dt_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.set_dt_max" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.grid.set_dt_max">
+<span class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></span><span class="sig-name descname"><span class="pre">set_dt_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#set_dt_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.set_dt_max" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new <a class="reference internal" href="#jhuki.grid.RefinementCenter" title="jhuki.grid.RefinementCenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefinementCenter</span></code></a> with maximum timestep smaller than
 the given one. This is achieved by changing the parameter
 <cite>~.num_levels_with_dt_coarse</cite>.</p>
@@ -403,8 +404,8 @@ and its parameter eta_beta).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="jhuki.grid.set_dt_max_grid">
-<code class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></code><code class="sig-name descname"><span class="pre">set_dt_max_grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#set_dt_max_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.set_dt_max_grid" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.grid.set_dt_max_grid">
+<span class="sig-prename descclassname"><span class="pre">jhuki.grid.</span></span><span class="sig-name descname"><span class="pre">set_dt_max_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/grid.html#set_dt_max_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.grid.set_dt_max_grid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new <a class="reference internal" href="#jhuki.grid.Grid" title="jhuki.grid.Grid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grid</span></code></a> with maximum timestep smaller than
 the given one.</p>
 <p>This is achieved by applying <a class="reference internal" href="#jhuki.grid.set_dt_max" title="jhuki.grid.set_dt_max"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_dt_max()</span></code></a> to each refinement
@@ -428,7 +429,7 @@ and its parameter eta_beta).</p>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -450,7 +451,7 @@ and its parameter eta_beta).</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -481,7 +482,7 @@ and its parameter eta_beta).</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021-2022, Gabriele Bozzola.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
     </div>
   </body>
 </html>

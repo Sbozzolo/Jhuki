@@ -5,12 +5,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Reference on jhuki.simfactory &#8212; Jhuki 0.1.0-dev9 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
@@ -49,7 +50,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-jhuki.simfactory">
+  <section id="module-jhuki.simfactory">
 <span id="reference-on-jhuki-simfactory"></span><h1>Reference on jhuki.simfactory<a class="headerlink" href="#module-jhuki.simfactory" title="Permalink to this headline">¶</a></h1>
 <p>The <a class="reference internal" href="#module-jhuki.simfactory" title="jhuki.simfactory"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simfactory</span></code></a> module provides functions to interface with
 SimFactory.</p>
@@ -63,8 +64,8 @@ SimFactory.</p>
 </ul>
 <p>when the file is executed as <cite>.rpar</cite> by SimFactory.</p>
 <dl class="py function">
-<dt id="jhuki.simfactory.simfactory_option">
-<code class="sig-prename descclassname"><span class="pre">jhuki.simfactory.</span></code><code class="sig-name descname"><span class="pre">simfactory_option</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/simfactory.html#simfactory_option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.simfactory.simfactory_option" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.simfactory.simfactory_option">
+<span class="sig-prename descclassname"><span class="pre">jhuki.simfactory.</span></span><span class="sig-name descname"><span class="pre">simfactory_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/simfactory.html#simfactory_option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.simfactory.simfactory_option" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a variable to a SimFactory-controllable parameter.</p>
 <p>SimFactory can define arbitrary parameters using the <code class="docutils literal notranslate"><span class="pre">--define</span></code> keyword.
 With this function, you can define a variable that takes a specified default
@@ -96,8 +97,8 @@ otherwise the value defined with SimFactory.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="jhuki.simfactory.write_parfile">
-<code class="sig-prename descclassname"><span class="pre">jhuki.simfactory.</span></code><code class="sig-name descname"><span class="pre">write_parfile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/jhuki/simfactory.html#write_parfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.simfactory.write_parfile" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.simfactory.write_parfile">
+<span class="sig-prename descclassname"><span class="pre">jhuki.simfactory.</span></span><span class="sig-name descname"><span class="pre">write_parfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/jhuki/simfactory.html#write_parfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.simfactory.write_parfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write parfile from given template using locals() as substitution
 dictionary.</p>
 <p>The variables in template get substituted with the values in the local scope
@@ -116,7 +117,7 @@ defined there.</p>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -138,7 +139,7 @@ defined there.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -169,7 +170,7 @@ defined there.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021-2022, Gabriele Bozzola.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
     </div>
   </body>
 </html>

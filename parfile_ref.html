@@ -5,12 +5,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Reference on jhuki.parfile &#8212; Jhuki 0.1.0-dev9 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
@@ -49,7 +50,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-jhuki.parfile">
+  <section id="module-jhuki.parfile">
 <span id="reference-on-jhuki-parfile"></span><h1>Reference on jhuki.parfile<a class="headerlink" href="#module-jhuki.parfile" title="Permalink to this headline">¶</a></h1>
 <p>The <a class="reference internal" href="#module-jhuki.parfile" title="jhuki.parfile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">parfile</span></code></a> module provides functions to programmatically write
 parameter files. The main functions provided are:</p>
@@ -62,8 +63,8 @@ previous function (<a class="reference internal" href="#jhuki.parfile.write_one_
 on a multiple substitution lists to produce multiple files.</p></li>
 </ul>
 <dl class="py function">
-<dt id="jhuki.parfile.write_many_parfiles_from_template">
-<code class="sig-prename descclassname"><span class="pre">jhuki.parfile.</span></code><code class="sig-name descname"><span class="pre">write_many_parfiles_from_template</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subs_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file_prefix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/parfile.html#write_many_parfiles_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.parfile.write_many_parfiles_from_template" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.parfile.write_many_parfiles_from_template">
+<span class="sig-prename descclassname"><span class="pre">jhuki.parfile.</span></span><span class="sig-name descname"><span class="pre">write_many_parfiles_from_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subs_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file_prefix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/parfile.html#write_many_parfiles_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.parfile.write_many_parfiles_from_template" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write several parfiles from the template with substitution specified by the
 dictionary sub_dict_list. The dictionary has to have as keys the variables to
 be substituted and as values:
@@ -92,8 +93,8 @@ The parfiles will be saved as <code class="docutils literal notranslate"><span c
 </dd></dl>
 
 <dl class="py function">
-<dt id="jhuki.parfile.write_one_parfile_from_template">
-<code class="sig-prename descclassname"><span class="pre">jhuki.parfile.</span></code><code class="sig-name descname"><span class="pre">write_one_parfile_from_template</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/parfile.html#write_one_parfile_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.parfile.write_one_parfile_from_template" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jhuki.parfile.write_one_parfile_from_template">
+<span class="sig-prename descclassname"><span class="pre">jhuki.parfile.</span></span><span class="sig-name descname"><span class="pre">write_one_parfile_from_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jhuki/parfile.html#write_one_parfile_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jhuki.parfile.write_one_parfile_from_template" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a parfile to out_file from template with substitution
 specified by the dictionary sub_dict.</p>
 <p>We add an header with the list of variables that were introduced.</p>
@@ -112,7 +113,7 @@ substituted with their value.</p></li>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -134,7 +135,7 @@ substituted with their value.</p></li>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -165,7 +166,7 @@ substituted with their value.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021-2022, Gabriele Bozzola.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
     </div>
   </body>
 </html>
