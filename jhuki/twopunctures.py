@@ -68,7 +68,7 @@ def prepare_quasicircular_inspiral(
         mass_ratio = 1 / mass_ratio
 
     Pt, Pr = compute_quasicircular_momenta(
-        mass_ratio, coordinate_distance, chi_plus, chi_minus
+        mass_ratio, coordinate_distance / total_bare_mass, chi_plus, chi_minus
     )
 
     Pt, Pr = Pt * total_bare_mass, Pr * total_bare_mass
