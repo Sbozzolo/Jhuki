@@ -81,7 +81,7 @@
 
 
 <div class="viewcode-block" id="Dissipation"><a class="viewcode-back" href="../../dissipation_ref.html#jhuki.dissipation.Dissipation">[docs]</a><span class="k">class</span> <span class="nc">Dissipation</span><span class="p">(</span><span class="n">BaseThorn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class that describes the dissipation. Best used in combination with helper</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class that describes the dissipation. Best used in combination with helper</span>
 <span class="sd">    functions.</span>
 
 <span class="sd">    This class is immutable.</span>
@@ -97,7 +97,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsdis_per_level</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;It is your responsibility to provide meaningful eps_dis_per_level.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;It is your responsibility to provide meaningful eps_dis_per_level.</span>
 
 <span class="sd">        :param epsdis_per_level: Dictionary that maps the value of the</span>
 <span class="sd">                                 dissipation on each refinement level.</span>
@@ -116,7 +116,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">parfile_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
 
         <span class="n">eps_dis_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Dissipation::epsdis_for_level[</span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">epsdis</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -126,13 +126,13 @@
         <span class="n">vars_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
-<span class="s2">Dissipation::order = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">Dissipation::order = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="si">}</span>
 <span class="s2">Dissipation::vars  = &quot;</span><span class="si">{</span><span class="n">vars_str</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="si">{</span><span class="n">eps_dis_str</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="DissPrescription"><a class="viewcode-back" href="../../dissipation_ref.html#jhuki.dissipation.DissPrescription">[docs]</a><span class="k">class</span> <span class="nc">DissPrescription</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;DissPrescription for how to set up the dissipation.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DissPrescription for how to set up the dissipation.</span>
 
 <span class="sd">    Three different prescriptions are available:</span>
 <span class="sd">    - ``const``: set the same ``eps_dis`` everywhere,</span>
@@ -153,7 +153,7 @@
 <div class="viewcode-block" id="create_dissipation_from_grid"><a class="viewcode-back" href="../../dissipation_ref.html#jhuki.dissipation.create_dissipation_from_grid">[docs]</a><span class="k">def</span> <span class="nf">create_dissipation_from_grid</span><span class="p">(</span>
     <span class="n">grid</span><span class="p">,</span> <span class="n">eps_dis_finest</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prescription</span><span class="o">=</span><span class="n">DissPrescription</span><span class="o">.</span><span class="n">dtfact</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create a :py:class:`~.Dissipation` object from a given :py:class:`~.Grid`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`~.Dissipation` object from a given :py:class:`~.Grid`.</span>
 
 
 <span class="sd">    The order of the dissipation is deduced from the number of ghost zones.</span>
@@ -246,7 +246,7 @@
 
 
 <div class="viewcode-block" id="add_to_dissipation"><a class="viewcode-back" href="../../dissipation_ref.html#jhuki.dissipation.add_to_dissipation">[docs]</a><span class="k">def</span> <span class="nf">add_to_dissipation</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a function that adds variables to the given Dissipation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a function that adds variables to the given Dissipation.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">dissipation</span><span class="p">):</span>
         <span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>  <span class="c1"># noqa: F841</span>
@@ -278,7 +278,7 @@
 
 <span class="n">add_Lean</span> <span class="o">=</span> <span class="n">add_to_dissipation</span><span class="p">(</span>
     <span class="n">_lean_vars</span><span class="p">,</span>
-    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Dissipation` with Lean&#39;s variables added.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Dissipation` with Lean&#39;s variables added.</span>
 
 <span class="sd">    :param dissipation: Dissipation that has to be used as base.</span>
 <span class="sd">    :type dissipation: :py:class:`~.Dissipation`</span>
@@ -288,7 +288,7 @@
 
 <span class="n">add_gauge</span> <span class="o">=</span> <span class="n">add_to_dissipation</span><span class="p">(</span>
     <span class="n">_gauge_vars</span><span class="p">,</span>
-    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Dissipation` with guage variables added.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Dissipation` with guage variables added.</span>
 
 <span class="sd">    :param dissipation: Dissipation that has to be used as base.</span>
 <span class="sd">    :type dissipation: :py:class:`~.Dissipation`</span>
@@ -298,7 +298,7 @@
 
 <span class="n">add_Proca</span> <span class="o">=</span> <span class="n">add_to_dissipation</span><span class="p">(</span>
     <span class="n">_proca_vars</span><span class="p">,</span>
-    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Dissipation` with Proca variables added.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Dissipation` with Proca variables added.</span>
 
 <span class="sd">    :param dissipation: Dissipation that has to be used as base.</span>
 <span class="sd">    :type dissipation: :py:class:`~.Dissipation`</span>

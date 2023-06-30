@@ -106,7 +106,7 @@
     <span class="n">skip_radii</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create a grid centered around a given two punctures.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a grid centered around a given two punctures.</span>
 
 <span class="sd">    The grid has three identical refinement centers: two on the punctures and</span>
 <span class="sd">    one in the center.</span>
@@ -292,7 +292,7 @@
 
 
 <div class="viewcode-block" id="set_dt_max_grid"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.set_dt_max_grid">[docs]</a><span class="k">def</span> <span class="nf">set_dt_max_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">dt_max</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Grid` with maximum timestep smaller than</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.Grid` with maximum timestep smaller than</span>
 <span class="sd">    the given one.</span>
 
 <span class="sd">    This is achieved by applying :py:func:`~.set_dt_max` to each refinement</span>
@@ -364,7 +364,7 @@
 
 
 <div class="viewcode-block" id="set_dt_max"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.set_dt_max">[docs]</a><span class="k">def</span> <span class="nf">set_dt_max</span><span class="p">(</span><span class="n">ref_center</span><span class="p">,</span> <span class="n">dt_max</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.RefinementCenter` with maximum timestep smaller than</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new :py:class:`~.RefinementCenter` with maximum timestep smaller than</span>
 <span class="sd">    the given one. This is achieved by changing the parameter</span>
 <span class="sd">    `~.num_levels_with_dt_coarse`.</span>
 
@@ -432,7 +432,7 @@
 
 
 <div class="viewcode-block" id="RefinementCenter"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.RefinementCenter">[docs]</a><span class="k">class</span> <span class="nc">RefinementCenter</span><span class="p">(</span><span class="n">BaseThorn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The :py:class:`~.RefinementCenter` class contains all the information related</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The :py:class:`~.RefinementCenter` class contains all the information related</span>
 <span class="sd">    to the grid structure around one single refinement center. This is not the</span>
 <span class="sd">    entire grid structure for a simulation (unless you have only one refinement</span>
 <span class="sd">    center).</span>
@@ -511,7 +511,7 @@
         <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
         <span class="n">num_levels_with_dt_coarse</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
 
 <span class="sd">        :param refinement_radii: Radii over which a change in refinement happens.</span>
 <span class="sd">                                 This is what you would write in CarpetRegrid.</span>
@@ -592,7 +592,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">dx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Grid spacing at each refinement level.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Grid spacing at each refinement level.</span>
 
 <span class="sd">        :rtype: tuple of float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -604,7 +604,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Timesteps at each refinement level.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Timesteps at each refinement level.</span>
 
 <span class="sd">        :rtype: tuple of float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -636,7 +636,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">rl_synced_every</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of iterations at which all the refinement levels are at the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of iterations at which all the refinement levels are at the</span>
 <span class="sd">        same time.</span>
 
 <span class="sd">        :rtype: int</span>
@@ -649,7 +649,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">parfile_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">assign_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -676,7 +676,7 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;:py:class:`~.RefinementCenter` is an immutable object.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;:py:class:`~.RefinementCenter` is an immutable object.&quot;&quot;&quot;</span>
         <span class="n">hash_refinement_radii</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refinement_radii</span><span class="p">)</span>
         <span class="n">hash_center_num</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">center_num</span><span class="p">)</span>
         <span class="n">hash_position</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
@@ -697,7 +697,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">cfl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return dt/dx at every level.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return dt/dx at every level.</span>
 
 <span class="sd">        :returns: Courant factor on every refinement level.</span>
 <span class="sd">        :rtype: tuple</span>
@@ -709,7 +709,7 @@
 
 <div class="viewcode-block" id="RefinementCenter.dx_at"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.RefinementCenter.dx_at">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">dx_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return dx at the given radius.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return dx at the given radius.</span>
 
 <span class="sd">        :param radius: Distance from the center.</span>
 <span class="sd">        :type radius: float</span>
@@ -726,7 +726,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="RefinementCenter.get_summary"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.RefinementCenter.get_summary">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outer_boundary</span><span class="o">=</span><span class="mf">9999.999</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a summary of all the refinement levels.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a summary of all the refinement levels.</span>
 
 <span class="sd">        :param outer_boundary: Outer boundary of the grid. Used only for the</span>
 <span class="sd">                               aesthetics of having a table full of data. If</span>
@@ -763,7 +763,7 @@
 
 
 <div class="viewcode-block" id="Grid"><a class="viewcode-back" href="../../grid_ref.html#jhuki.grid.Grid">[docs]</a><span class="k">class</span> <span class="nc">Grid</span><span class="p">(</span><span class="n">BaseThorn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A grid is a collection of :py:class:`~.RefinementCenter` objects. For example,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A grid is a collection of :py:class:`~.RefinementCenter` objects. For example,</span>
 <span class="sd">    a binary black hole simulation will likely have two</span>
 <span class="sd">    :py:class:`~.RefinementCenter`, centered each black hole.</span>
 
@@ -823,7 +823,7 @@
         <span class="n">symmetry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">tiny_shift</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
 
 <span class="sd">        The different refinement centers that form a grid must be compatible.</span>
 <span class="sd">        They must have different ``center_num`` (as they identify different</span>
@@ -954,7 +954,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">time_refinement_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return parameters for Carpet to set up time_refinement_factors.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return parameters for Carpet to set up time_refinement_factors.&quot;&quot;&quot;</span>
 
         <span class="n">time_refinement</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">time_refinement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&quot;[&#39;</span><span class="p">)</span>
@@ -983,7 +983,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">rl_synced_every</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of iterations at which all the refinement levels are at the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of iterations at which all the refinement levels are at the</span>
 <span class="sd">        same time.</span>
 
 <span class="sd">        :rtype: int</span>
@@ -994,7 +994,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">parfile_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">assign_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">thorn</span><span class="o">=</span><span class="s2">&quot;Carpet&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">thorn</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1017,24 +1017,24 @@
 <span class="s2">CartGrid3D::type = &quot;coordbase&quot;</span>
 <span class="s2">Carpet::domain_from_coordbase = &quot;yes&quot;</span>
 
-<span class="s2">Driver::ghost_size = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::boundary_size_x_lower = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::boundary_size_y_lower = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::boundary_size_z_lower = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::boundary_size_x_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::boundary_size_y_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::boundary_size_z_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">Driver::ghost_size = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span>
+<span class="s2">CoordBase::boundary_size_x_lower = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span>
+<span class="s2">CoordBase::boundary_size_y_lower = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span>
+<span class="s2">CoordBase::boundary_size_z_lower = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span>
+<span class="s2">CoordBase::boundary_size_x_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span>
+<span class="s2">CoordBase::boundary_size_y_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span>
+<span class="s2">CoordBase::boundary_size_z_upper = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ghost</span><span class="si">}</span>
 
 <span class="s2">ReflectionSymmetry::avoid_origin_x = no</span>
 <span class="s2">ReflectionSymmetry::avoid_origin_y = no</span>
 <span class="s2">ReflectionSymmetry::avoid_origin_z = no</span>
 
 <span class="s2">CoordBase::domainsize = &quot;minmax&quot;</span>
-<span class="s2">CoordBase::xmax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::ymax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::zmax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::dx = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">CoordBase::dy = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">CoordBase::xmax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span>
+<span class="s2">CoordBase::ymax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span>
+<span class="s2">CoordBase::zmax = </span><span class="si">{</span><span class="n">outer_boundary_plus</span><span class="si">}</span>
+<span class="s2">CoordBase::dx = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span>
+<span class="s2">CoordBase::dy = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span>
 <span class="s2">CoordBase::dz = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dx_coarse</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="p">)</span>
 

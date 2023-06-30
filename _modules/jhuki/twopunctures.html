@@ -84,7 +84,7 @@
     <span class="n">chi_minus</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a :py:class:`~.TwoPunctures` that describes a quasi-circular inspiral.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a :py:class:`~.TwoPunctures` that describes a quasi-circular inspiral.</span>
 <span class="sd">    We always assume that the plus puncture is the most massive one.</span>
 
 <span class="sd">    :param mass_ratio: Mass ratio of the binary.</span>
@@ -113,7 +113,7 @@
         <span class="n">mass_ratio</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">mass_ratio</span>
 
     <span class="n">Pt</span><span class="p">,</span> <span class="n">Pr</span> <span class="o">=</span> <span class="n">compute_quasicircular_momenta</span><span class="p">(</span>
-        <span class="n">mass_ratio</span><span class="p">,</span> <span class="n">coordinate_distance</span><span class="p">,</span> <span class="n">chi_plus</span><span class="p">,</span> <span class="n">chi_minus</span>
+        <span class="n">mass_ratio</span><span class="p">,</span> <span class="n">coordinate_distance</span> <span class="o">/</span> <span class="n">total_bare_mass</span><span class="p">,</span> <span class="n">chi_plus</span><span class="p">,</span> <span class="n">chi_minus</span>
     <span class="p">)</span>
 
     <span class="n">Pt</span><span class="p">,</span> <span class="n">Pr</span> <span class="o">=</span> <span class="n">Pt</span> <span class="o">*</span> <span class="n">total_bare_mass</span><span class="p">,</span> <span class="n">Pr</span> <span class="o">*</span> <span class="n">total_bare_mass</span>
@@ -138,7 +138,7 @@
 
 
 <div class="viewcode-block" id="TwoPunctures"><a class="viewcode-back" href="../../twopunctures_ref.html#jhuki.twopunctures.TwoPunctures">[docs]</a><span class="k">class</span> <span class="nc">TwoPunctures</span><span class="p">(</span><span class="n">BaseThorn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The :py:class:`~.TwoPunctures` class contains all the information related to</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The :py:class:`~.TwoPunctures` class contains all the information related to</span>
 <span class="sd">    one or two black holes, their locations, and properties.</span>
 
 <span class="sd">    This class can set up parameters for the ``TwoPunctures`` thorn making sure that</span>
@@ -207,7 +207,7 @@
         <span class="n">give_bare_mass</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">initial_alpha</span><span class="o">=</span><span class="s2">&quot;twopunctures-averaged&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
 
 <span class="sd">        :param mass_plus: Mass of the black hole on the positive side of the x (or z) axis.</span>
 <span class="sd">        :type mass_plus: float</span>
@@ -312,7 +312,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">parfile_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">assign_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">which_bh</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">which_bh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -342,11 +342,11 @@
 <span class="s2">ADMBase::initial_dtlapse = &quot;zero&quot;</span>
 <span class="s2">ADMBase::initial_dtshift = &quot;zero&quot;</span>
 
-<span class="s2">TwoPunctures::give_bare_mass = &quot;</span><span class="si">{</span><span class="s2">&quot;yes&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">give_bare_mass</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">TwoPunctures::par_b = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">par_b</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">TwoPunctures::target_m_plus = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_plus</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">TwoPunctures::target_m_minus = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_minus</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">TwoPunctures::par_m_plus = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_plus</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">TwoPunctures::give_bare_mass = &quot;</span><span class="si">{</span><span class="s2">&quot;yes&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">give_bare_mass</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;no&quot;</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">TwoPunctures::par_b = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">par_b</span><span class="si">}</span>
+<span class="s2">TwoPunctures::target_m_plus = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_plus</span><span class="si">}</span>
+<span class="s2">TwoPunctures::target_m_minus = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_minus</span><span class="si">}</span>
+<span class="s2">TwoPunctures::par_m_plus = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_plus</span><span class="si">}</span>
 <span class="s2">TwoPunctures::par_m_minus = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_minus</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="p">)</span>
 

@@ -81,7 +81,7 @@
     <span class="n">lambda_minus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a :py:class:`~.TwoChargedPunctures` that describes a quasi-circular inspiral.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a :py:class:`~.TwoChargedPunctures` that describes a quasi-circular inspiral.</span>
 <span class="sd">    We always assume that the plus puncture is the most massive one.</span>
 
 <span class="sd">    We compute the momenta starting from the uncharged case and scaling by</span>
@@ -150,7 +150,7 @@
 
 
 <div class="viewcode-block" id="TwoChargedPunctures"><a class="viewcode-back" href="../../twochargedpunctures_ref.html#jhuki.twochargedpunctures.TwoChargedPunctures">[docs]</a><span class="k">class</span> <span class="nc">TwoChargedPunctures</span><span class="p">(</span><span class="n">TwoPunctures</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The :py:class:`~.TwoChargedPunctures` extends :py:class:`~.TwoPunctures` for</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The :py:class:`~.TwoChargedPunctures` extends :py:class:`~.TwoPunctures` for</span>
 <span class="sd">    the case charged black holes (to use with the ``TwoChargedPunctures`` thorn).</span>
 
 <span class="sd">    As :py:class:`~.TwoPunctures`, this class is immutable.</span>
@@ -175,7 +175,7 @@
         <span class="n">swap_xz</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">give_bare_mass</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
 
 <span class="sd">        :param mass_plus: Mass of the black hole on the positive side of the x (or z) axis.</span>
 <span class="sd">        :type mass_plus: float</span>
@@ -248,7 +248,7 @@
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">parfile_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the code you would put in your parfile.&quot;&quot;&quot;</span>
 
         <span class="n">uncharged_parfile</span> <span class="o">=</span> <span class="p">(</span>
             <span class="nb">super</span><span class="p">()</span>
